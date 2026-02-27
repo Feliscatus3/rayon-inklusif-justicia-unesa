@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<!-- PMII Rayon Inklusif Justicia UNESA Website Template
+Repository: https://github.com/PMII-Rayon-Inklusif-Justicia-UNESA
+
+This is a static HTML/CSS template for PMII Rayon Inklusif Justicia UNESA organization website.
+You may customize content, images, and styles as you wish.
+-->
+<html lang="id">
+  <head>
+    <!-- REQUIRED META TAGS -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- PAGE TITLE -->
+    <title>Beranda | PMII Rayon Inklusif Justicia UNESA</title>
+    <!-- BASIC SEO -->
+    <meta name="description" content="PMII Rayon Inklusif Justicia UNESA - Organisasi mahasiswa Islam Indonesia di Universitas Negeri Surabaya yang bergerak dalam bidang dakwah, sosial, dan keilmuan." />
+    <meta name="keywords" content="PMII, Rayon Inklusif, Justicia, UNESA, Organisasi Mahasiswa, Islam, Surabaya" />
+    <meta name="author" content="PMII Rayon Inklusif Justicia UNESA" />
+    <meta name="robots" content="index, follow" />
+    <!-- OPEN GRAPH / FACEBOOK / WHATSAPP -->
+    <meta property="og:locale" content="id_ID" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Beranda | PMII Rayon Inklusif Justicia UNESA" />
+    <meta property="og:description" content="PMII Rayon Inklusif Justicia UNESA - Organisasi mahasiswa Islam Indonesia di Universitas Negeri Surabaya" />
+    <meta property="og:url" content="https://pmii-rayon-inklusif-justicia-unesa.org/" />
+    <meta property="og:site_name" content="PMII Rayon Inklusif Justicia UNESA" />
+    <meta property="og:image" content="/assets/img/hai.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <!-- TWITTER CARD -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Beranda | PMII Rayon Inklusif Justicia UNESA" />
+    <meta name="twitter:description" content="PMII Rayon Inklusif Justicia UNESA - Organisasi mahasiswa Islam Indonesia di Universitas Negeri Surabaya" />
+    <meta name="twitter:image" content="/assets/img/hai.png" />
+    <!-- THEME COLOR FOR MOBILE BROWSER -->
+    <meta name="theme-color" content="#0055A4" />
+    <!-- STRUCTURED DATA (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "PMII Rayon Inklusif Justicia UNESA",
+    "url": "https://pmii-rayon-inklusif-justicia-unesa.org",
+    "logo": "/assets/img/logo/RAYON.png",
+    "sameAs": [
+      "https://www.instagram.com/pmii.justiciaunesa/",
+      "https://www.tiktok.com/@pmii.rayonjusticia",
+      "https://www.youtube.com/@pmiirayonjusticia"
+    ],
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Universitas Negeri Surabaya",
+      "addressLocality": "Surabaya",
+      "addressRegion": "Jawa Timur",
+      "addressCountry": "ID"
+    }
+  }
+  </script>
+    <!-- GOOGLE FONTS -->
+    <!-- Montserrat font family -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <!-- BOOTSTRAP ICONS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- BOOTSTRAP 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7"
+      crossorigin="anonymous"/>
+    <!-- CSS Sal.js -->
+    <link rel="stylesheet" href="https://unpkg.com/sal.js@0.8.5/dist/sal.css">
+    <!-- JS Sal.js -->
+    <script src="https://unpkg.com/sal.js@0.8.5/dist/sal.js"></script>
+    <!-- CUSTOM CSS FILES -->
+    <link rel="stylesheet" href="/assets/css/navbar.css">
+    <link rel="stylesheet" href="/assets/css/footer.css">
+    <link rel="stylesheet" href="/assets/css/home.css">
+  </head>
+
+  <body>
+    <!-- MAIN NAVIGATION -->
+    <nav class="navbar navbar-expand-lg fixed-top shadow-lg">
+      <div class="container">
+        <a class="navbar-brand" href="/">
+            <img class="img" src="/assets/img/logo/RAYON.png" alt="Logo PMII Rayon Inklusif Justicia" width="auto" height="40">
+          </a>
+        <button
+          class="navbar-toggler pe-0"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasNavbar"
+          aria-controls="offcanvasNavbar"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="offcanvas offcanvas-end"
+          tabindex="-1"
+          id="offcanvasNavbar"
+          aria-labelledby="offcanvasNavbarLabel"
+        >
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title text-uppercase" id="offcanvasNavbarLabel">pmii rayon inklusif justicia unesa</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="offcanvas"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="offcanvas-body">
+            <ul class="navbar-nav justify-content-center flex-grow-1 pe-3 text-capitalize">
+              <li class="nav-item">
+                <a class="nav-link link-nav mx-lg-2 active" aria-current="page" href="#">beranda</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link link-nav mx-lg-2" href="/page/profil.html">profil</a>
+              </li>
+
+              <li class="nav-item dropdown link-nav">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Rayon
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item link-nav-dropdown" href="/page/kopri.html">Kopri</a></li>
+                  <li><a class="dropdown-item link-nav-dropdown" href="/page/lej.html">LEJ</a></li>
+                </ul>
+              </li>
+              
+              <li class="nav-item">
+                <a class="nav-link link-nav mx-lg-2" href="/page/kegiatan.html">kegiatan</a>
+              </li>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <!-- End Navbar -->
+
+    <!-- HERO SECTION -->
+     <main>
+      <section class="hero-section">
+        <div data-sal="slide-up" data-sal-duration="900" class="container d-flex align-items-center justify-content-center fs-1 text-white flex-column d-sm text-center ">
+          <h1 class="display-3 fw-bold">PMII RAYON INKLUSIF JUSTICIA UNESA</h1>
+          <h2 class="d-sm fs-4"><em>Dzikir, Fikir, Amal Sholeh</em></h2>
+          <a href="#Tentang" class="btn btn-outline-light fw-bold m-3 text-capitalize">Pelajari Lebih Lanjut <i class="bi bi-arrow-down"></i> </a>
+        </div>
+      </section>
+      <!-- End Hero Section -->
+
+       
+    <!-- PROGRAM KERJA SECTION -->
+       <section class="py-5 ">
+        <div class="container">
+          <h2 class="text-center mb-4 fw-semibold">PROGRAM KERJA</h2>
+          <div class="row g-4">
+
+            <!-- Program Keagamaan -->
+            <div class="col-md-3">
+              <div class="card h-100 border-0 shadow">
+                <div class="card-body text-center">
+                  <i class="bi bi-moon-stars display-4 text-success"></i>
+                  <h5 class="mt-3">Keagamaan</h5>
+                  <p class="card-text">Mengembangkan kegiatan dakwah Keagamaan melalui pengajian rutin, kajian kitab, peringatan hari besar Keagamaan, dan kegiatan spiritual untuk memperkuat keimanan anggota</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Program Keilmuan -->
+            <div class="col-md-3">
+              <div class="card h-100 border-0 shadow">
+                <div class="card-body text-center">
+                  <i class="bi bi-book display-4 text-primary"></i>
+                  <h5 class="mt-3">Keilmuan</h5>
+                  <p class="card-text">Mengembangkan kapasitas intelektual anggota melalui seminar, workshop, diskusi akademis, pelatihan keterampilan, dan kegiatan pengembangan soft skills</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Program Sosial -->
+            <div class="col-md-3">
+              <div class="card h-100 border-0 shadow">
+                <div class="card-body text-center">
+                  <i class="bi bi-heart display-4 text-danger"></i>
+                  <h5 class="mt-3">Sosial</h5>
+                  <p class="card-text">Aktif dalam kegiatan sosial kemasyarakatan seperti bakti sosial, penggalangan dana untuk korban bencana, kunjungan ke panti asuhan, dan kepedulian sosial lainnya</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Program Politik -->
+            <div class="col-md-3">
+              <div class="card h-100 border-0 shadow">
+                <div class="card-body text-center">
+                  <i class="bi bi-flag display-4" style="color: #0055A4;"></i>
+                  <h5 class="mt-3">Politik</h5>
+                  <p class="card-text">Mengembangkan kesadaran politik dan kebangsaan anggota melalui diskusi kebangsaan, kelas politik, dan kegiatan yang memperkuat nilai-nilai NKRI dan Agama</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+       </section>
+       
+      <!-- WHY JOIN US SECTION -->
+      <section class="py-5 bg-dark text-capitalize text-white text-center">
+        <div class="container">
+          <h2 class="text-center mb-3 text-uppercase">mengapa bergabung dengan kami?</h2>
+          <div class="row">
+
+            <div data-sal="slide-up" data-sal-duration="900" class="col-md-4">
+                <i class="bi bi-people fs-1 fst-normal"><h5>komunitas solid</h5></i>
+              <p>Menjadi bagian dari keluarga besar PMII yang solid dan saling mendukung</p>
+            </div>
+
+            <div data-sal="slide-up" data-sal-duration="900" class="col-md-4">
+                <i class="bi bi-book fs-1 fst-normal"><h5>pengembangan diri</h5></i>       
+              <ul class="list-unstyled">
+                <li class="mb-3">
+                  <i class="bi bi-mortarboard fs-5"></i>
+                  pelatihan kepemimpinan
+                </li>
+
+                <li class="mb-3">
+                  <i class="bi bi-lightbulb fs-5"></i>
+                  pengembangan kreativitas
+                </li>
+
+                <li class="mb-3">
+                  <i class="bi bi-globe"></i>
+                  jaringan nasional
+                </li>
+
+              </ul>
+            </div>
+
+            <div data-sal="slide-up" data-sal-duration="900" class="col-md-4">
+              <i class="bi bi-heart fs-1 fst-normal">
+                <h5>bermakna</h5></i>
+              <p>Kontribusi nyata bagi masyarakat melalui berbagai kegiatan sosial dan dakwah</p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+<!-- END SECTION WHY JOIN US -->
+
+<!-- kegiatan SECTION -->
+ <div class="container py-5">
+  <div class="text-center mb-4">
+    <h2 class="text-uppercase mb-3 fw-bold">kegiatan terbaru</h2>
+    <a href="/page/kegiatan.html" class="btn btn-outline-dark text-capitalize mb-4 mb-md-3">kegiatan lainnya</a>
+  </div>
+
+  <div class="row g-3">
+    <!-- Main kegiatan - RTAR 1 -->
+    <div class="col-md-8">
+      <div data-sal="slide-up" class="card text-white border-0 overflow-hidden">
+        <img src="/assets/img/foto/RTAR I_20260225_180804_0020.webp" alt="RTAR 1 Inklusif Justicia" class="card-img" style="height: 500px; object-fit: cover" />
+        <div class="card-img-overlay img-bg-shadow d-flex flex-column justify-content-end p-3 p-md-4">
+          <h3 class="card-title news-text text-capitalize fs-2 fs-md-1 mb-2 mb-md-3">RTAR 1 "Inklusif" Justicia: Dari Evaluasi Menuju Aksi</h3>
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <i class="bi bi-calendar-event fs-6 fs-md-5"></i>
+            <span class="card-subtitle fs-6 fs-md-5">29-30 Januari 2026</span>
+          </div>
+          <a href="/berita/rtar-1-rayon-inklusif-justicia.html" class="btn btn-light btn-sm text-capitalize align-self-start fs-6 fs-md-5 py-2 px-3">baca selengkapnya <i class="bi bi-chevron-right ms-2"></i> </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- kegiatan Item 1 & 2 -->
+     <div class="col-md-4">
+      <div class="row h-100 g-3">
+
+        <!-- kegiatan 1 - Studi Banding -->
+         <div class="col-12">
+          <div data-sal="slide-up" class="card text-white border-0 h-100 overflow-hidden">
+            <img src="/assets/img/foto/STUDI_BANDING_KOLABORARI.webp" alt="Studi Banding Kolaborasi Rayon Hukum" class="card-img" style="height: 240px; object-fit:cover">
+            <div class="card-img-overlay img-bg-shadow d-flex flex-column justify-content-end p-3">
+              <h5 class="card-title news-text fs-5 fs-md-6 mb-2">Studi Banding Kolaborasi Rayon Hukum: Merajut Sinergi, Menguatkan Gerakan Progresif</h5>
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-calendar-event fs-7 fs-md-6"></i>
+                <span class="card-subbtitle fs-7 fs-md-6">31 Oktober 2025</span>
+              </div>
+              <a href="/berita/studi-banding-pmii-hukum-surabaya.html" class="btn btn-light btn-sm align-self-start fs-6 fs-md-5 py-1 px-2">Baca Selengkapnya <i class="bi bi-chevron-right ms-1"></i> </a>
+            </div>
+          </div>
+         </div>
+
+        <!-- kegiatan Item 2 - Simposium -->
+         <div class="col-12">
+          <div data-sal="slide-up" class="card text-white border-0 h-100 overflow-hidden">
+            <img src="/assets/img/foto/SIMPOSIUM_20260225_180803_0017.webp" alt="Simposium Sekolah Kaderisasi Nasional" class="card-img" style="height: 240px; object-fit:cover">
+            <div class="card-img-overlay img-bg-shadow d-flex flex-column justify-content-end p-3">
+              <h5 class="card-title news-text fs-5 fs-md-6 mb-2">Simposium Sekolah Kaderisasi Nasional: Merajut Kaderisasi, Memperkuat Pergerakan</h5>
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-calendar-event fs-7 fs-md-6"></i>
+                <span class="card-subbtitle fs-7 fs-md-6">15-17 Agustus 2025</span>
+              </div>
+              <a href="/berita/simposium-sekolah-kaderisasi-nasional.html" class="btn btn-light btn-sm align-self-start fs-6 fs-md-5 py-1 px-2">Baca Selengkapnya <i class="bi bi-chevron-right ms-1"></i> </a>
+            </div>
+          </div>
+         </div>
+
+  </div>
+ </div>
+<!-- END kegiatan SECTION -->
+
+ <!-- Section Testimonials -->
+ <div class="container py-5">
+  <div class="row mb-4">
+    <div class="col-12 col-md-10 col-lg-8">
+      <h3 class="fs-5 mb-2 text-secondary text-uppercase">testimoni</h3>
+      <h2 class="display-5 mb-4 text-capitalize fw-bolder">apa pendapat anggota kami?</h2>
+    </div>
+  </div>
+
+  <!-- Testimonial Carousel -->
+   <div class="row">
+    <div class="col-12">
+      <div id="testimoniCarousel" class="carousel slide carousel-fade">
+        <!-- Slides -->
+         <div class="carousel-inner">
+           <!-- Slide 1 -->
+           <div class="carousel-item active py-5">
+            <div class="card mx-auto" style="max-width: 600px;">
+        <div class="card">
+          <div class="card-body">
+            <blockquote class="mb-3"><i class="bi bi-quote text-primary"></i>PMII Rayon Justicia UNESA bukan sekadar organisasi, tapi ruang pembentukan karakter, solidaritas, dan komitmen perjuangan. ❞</blockquote>
+            <figure class="d-flex align-items-center m-0 p-0">
+              <img class="img-fluid rounded rounded-circle m-0 border border-2" loading="lazy" src="assets//img/kader/nizar.webp" alt="Anggota PMII">
+              <figcaption class="ms-3">
+                <h4 class="mb-1 h5">Nizar Fazari</h4>
+                <h5 class="fs-6 text-secondary mb-0">Ketua Rayon 2026/2027</h5>
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+           </div>
+
+           <!-- Slide 2 -->
+           <div class="carousel-item py-5">
+            <div class="card mx-auto" style="max-width: 600px;">
+              <div class="card">
+                <div class="card-body">
+                  <blockquote class="mb-3"><i class="bi bi-quote text-primary"></i>Kegiatan-kegiatan di Rayon Justicia selalu relevan dengan kebutuhan kader. Dari kaderisasi, kajian hukum, sampai penguatan spiritual, semuanya seimbang. ❞</blockquote>
+                  <figure class="d-flex align-items-center m-0 p-0">
+                    <img class="img-fluid rounded rounded-circle m-0 border border-2" loading="lazy" src="/assets/img/kader/fea.webp" alt="Anggota PMII">
+                    <figcaption class="ms-3">
+                      <h4 class="mb-1 h5">Dhiya Syafiyah Hidayah</h4>
+                      <h5 class="fs-6 text-secondary mb-0">Ketua KOPRI 2026/2027</h5>
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+           </div>
+
+           <!-- Slide 3 -->
+           <div class="carousel-item py-5">
+            <div class="card mx-auto" style="max-width: 600px;">
+              <div class="card">
+                <div class="card-body">
+                  <blockquote class="mb-3"><i class="bi bi-quote text-primary"></i>PMII Rayon Justicia UNESA adalah rumah belajar bagi saya. Di sini saya tidak hanya diajarkan teori, tetapi juga diajak peka terhadap realitas sosial dan hukum di masyarakat. ❞</blockquote>
+                  <figure class="d-flex align-items-center m-0 p-0">
+                    <img class="img-fluid rounded rounded-circle m-0 border border-2" loading="lazy" src="/assets/img/kader/reza.webp" alt="Anggota PMII">
+                    <figcaption class="ms-3">
+                      <h4 class="mb-1 h5">Reza Aditya</h4>
+                      <h5 class="fs-6 text-secondary mb-0">Anggota</h5>
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+           </div>
+
+           <!-- Slide 4 -->
+           <div class="carousel-item py-5">
+            <div class="card mx-auto" style="max-width: 600px;">
+              <div class="card">
+                <div class="card-body">
+                  <blockquote class="mb-3"><i class="bi bi-quote text-primary"></i>Bergabung di PMII Rayon Justicia membuat saya tumbuh secara intelektual dan mental. Diskusinya kritis, lingkungannya suportif, dan kadernya saling menguatkan. ❞</blockquote>
+                  <figure class="d-flex align-items-center m-0 p-0">
+                    <img class="img-fluid rounded rounded-circle m-0 border border-2" loading="lazy" src="/assets/img/kader/faqih.webp" alt="Anggota PMII">
+                    <figcaption class="ms-3">
+                      <h4 class="mb-1 h5">Faqih Aufa Bagaskara</h4>
+                      <h5 class="fs-6 text-secondary mb-0">Kabid Kaderisasi Rayon</h5>
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+           </div>
+
+           <!-- Slide 5 -->
+           <div class="carousel-item py-5">
+            <div class="card mx-auto" style="max-width: 600px;">
+              <div class="card">
+                <div class="card-body">
+                  <blockquote class="mb-3"><i class="bi bi-quote text-primary"></i>Rayon Justicia mengajarkan saya bahwa kader hukum tidak cukup paham pasal, tapi juga harus punya keberpihakan pada keadilan sosial. ❞</blockquote>
+                  <figure class="d-flex align-items-center m-0 p-0">
+                    <img class="img-fluid rounded rounded-circle m-0 border border-2" loading="lazy" src="/assets/img/kader/alam.webp" alt="Anggota PMII">
+                    <figcaption class="ms-3">
+                      <h4 class="mb-1 h5">Alam Narendra</h4>
+                      <h5 class="fs-6 text-secondary mb-0">Anggota</h5>
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+           </div>
+
+           <!-- Slide 6 -->
+           <div class="carousel-item py-5">
+            <div class="card mx-auto" style="max-width: 600px;">
+              <div class="card">
+                <div class="card-body">
+                  <blockquote class="mb-3"><i class="bi bi-quote text-primary"></i>PMII Rayon Justicia UNESA adalah ruang aman untuk berproses. Setiap pendapat dihargai dan setiap kader diberi kesempatan berkembang. ❞</blockquote>
+                  <figure class="d-flex align-items-center m-0 p-0">
+                    <img class="img-fluid rounded rounded-circle m-0 border border-2" loading="lazy" src="/assets/img/kader/izza.webp" alt="Anggota PMII">
+                    <figcaption class="ms-3">
+                      <h4 class="mb-1 h5">Izzatul Laila</h4>
+                      <h5 class="fs-6 text-secondary mb-0">Kabiro Kaderisasi KOPRI</h5>
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+           </div>
+
+           <!-- Slide 7 -->
+           <div class="carousel-item py-5">
+            <div class="card mx-auto" style="max-width: 600px;">
+              <div class="card">
+                <div class="card-body">
+                  <blockquote class="mb-3"><i class="bi bi-quote text-primary"></i>Saya menemukan makna pergerakan yang sesungguhnya di PMII Rayon Justicia berpikir kritis, bergerak kolektif, dan tetap berlandaskan nilai keaswajaan. ❞</blockquote>
+                  <figure class="d-flex align-items-center m-0 p-0">
+                    <img class="img-fluid rounded rounded-circle m-0 border border-2" loading="lazy" src="/assets/img/kader/noval.webp" alt="Anggota PMII">
+                    <figcaption class="ms-3">
+                      <h4 class="mb-1 h5">Noval Ferdiansyah</h4>
+                      <h5 class="fs-6 text-secondary mb-0">Anggota</h5>
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+           </div>
+
+           <!-- Slide 8 -->
+           <div class="carousel-item py-5">
+            <div class="card mx-auto" style="max-width: 600px;">
+              <div class="card">
+                <div class="card-body">
+                  <blockquote class="mb-3"><i class="bi bi-quote text-primary"></i>PMII Rayon Justicia membentuk saya menjadi pribadi yang lebih percaya diri, berani berbicara, dan bertanggung jawab dalam setiap peran. ❞</blockquote>
+                  <figure class="d-flex align-items-center m-0 p-0">
+                    <img class="img-fluid rounded rounded-circle m-0 border border-2" loading="lazy" src="/assets/img/kader/syafii.webp" alt="Anggota PMII">
+                    <figcaption class="ms-3">
+                      <h4 class="mb-1 h5">Imam Syafii</h4>
+                      <h5 class="fs-6 text-secondary mb-0">Kabid Komunikasi dan Jaringan Kerja Rayon</h5>
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+           </div>
+
+           <!-- Slide 9 -->
+           <div class="carousel-item py-5">
+            <div class="card mx-auto" style="max-width: 600px;">
+              <div class="card">
+                <div class="card-body">
+                  <blockquote class="mb-3"><i class="bi bi-quote text-primary"></i>Di Rayon Justicia, saya belajar bahwa perbedaan bukan penghalang, melainkan kekuatan untuk membangun gerakan yang inklusif. ❞</blockquote>
+                  <figure class="d-flex align-items-center m-0 p-0">
+                    <img class="img-fluid rounded rounded-circle m-0 border border-2" loading="lazy" src="/assets/img/kader/wahyu.webp" alt="Anggota PMII">
+                    <figcaption class="ms-3">
+                      <h4 class="mb-1 h5">Anggit Wahyu</h4>
+                      <h5 class="fs-6 text-secondary mb-0">Wakabid Politik Rayon</h5>
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+           </div>
+
+           <!-- Slide 10 -->
+           <div class="carousel-item py-5">
+            <div class="card mx-auto" style="max-width: 600px;">
+              <div class="card">
+                <div class="card-body">
+                  <blockquote class="mb-3"><i class="bi bi-quote text-primary"></i>Berproses di PMII Rayon Justicia membuat saya sadar bahwa perubahan besar selalu dimulai dari kader yang mau belajar dan bergerak bersama. ❞</blockquote>
+                  <figure class="d-flex align-items-center m-0 p-0">
+                    <img class="img-fluid rounded rounded-circle m-0 border border-2" loading="lazy" src="/assets/img/kader/inal.webp" alt="Anggota PMII">
+                    <figcaption class="ms-3">
+                      <h4 class="mb-1 h5">Zainal Suci</h4>
+                      <h5 class="fs-6 text-secondary mb-0">Wakabid Kaderisasi Rayon</h5>
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+           </div>
+
+           </div>
+           <!-- Navigasi -->
+            <button type="button" class="carousel-control-prev" data-bs-target="#testimoniCarousel" data-bs-slide="prev" aria-label="Sebelumnya">
+              <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button type="button" class="carousel-control-next" data-bs-target="#testimoniCarousel" data-bs-slide="next" aria-label="Berikutnya">
+              <span class="carousel-control-next-icon"></span>
+            </button>
+      </div>
+    </div>
+   </div>
+ </div>
+</div>
+</div>
+<!-- END SECTION TESTIMONIALS --> 
+ </main>
+
+ <!-- FOOTER -->
+<section class="bg-dark py-5">
+  <footer class="mt-auto bg-dark text-white pt-4 pb-4">
+    <div class="container">
+        <div class="row">
+          <!-- Brief information about the organization -->
+            <div class="col-md-3 mb-3">
+                <h5>PMII Rayon Inklusif Justicia UNESA</h5>
+                <p>Organisasi mahasiswa Islam Indonesia di Universitas Negeri Surabaya yang bergerak dalam bidang dakwah, sosial, dan keilmuan. Kami berkomitmen membentuk generasi Muslim yang berakhlakul karimah dan berintelektual.</p>
+            </div>
+
+            <!-- Quick link -->
+            <div class="col-md-3 mb-3">
+                <h5>Tautan Lainnya</h5>
+                <ul class="list-unstyled">
+                    <li class="nav-item">
+                        <a class="nav-link text-white link-footer" href="#">
+                            <i class="bi bi-house me-2"></i>Beranda
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white link-footer" href="/page/profil.html">
+                            <i class="bi bi-info-circle me-2"></i>Profil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white link-footer" href="/page/kopri.html">
+                            <i class="bi bi-people me-2"></i>Kopri
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white link-footer" href="/page/lej.html">
+                            <i class="bi bi-cash me-2"></i>LEJ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white link-footer" href="/page/kegiatan.html">
+                            <i class="bi bi-calendar-event me-2"></i>kegiatan
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="col-md-3 mb-3">
+                <h5>Kontak</h5>
+                <ul class="list-unstyled"> 
+                    <li class="nav-item">
+                      <a class="nav-link text-white link-footer" href="#" target="_blank">
+                        <i class="bi bi-geo-alt-fill me-2"></i>Universitas Negeri Surabaya
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link text-white link-footer" href="https://wa.me/6281931100426" target="_blank">
+                        <i class="bi bi-telephone-fill me-2"></i>+62 81931100426
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link text-white link-footer" href="mailto:pmiirayonjusticia@gmail.com">
+                        <i class="bi bi-envelope me-2"></i>pmiirayonjusticia@gmail.com
+                      </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Social Media -->
+            <div class="col-md-3 mb-3">
+                <h5>Media Sosial</h5>
+                <ul class="list-inline">
+                  <li class="list-inline-item"><a href="https://www.instagram.com/pmii.justiciaunesa/" target="_blank" class="text-white" aria-label="Instagram">
+                    <i class="bi bi-instagram fs-4"></i>
+                  </a>
+                </li>
+                  <li class="list-inline-item"><a href="https://www.tiktok.com/@pmii.rayonjusticia" target="_blank" class="text-white" aria-label="Tiktok">
+                    <i class="bi bi-tiktok fs-4"></i>
+                  </a>
+                </li>
+                  <li class="list-inline-item"><a href="https://www.youtube.com/@pmiirayonjusticia" target="_blank" class="text-white" aria-label="Youtube">
+                    <i class="bi bi-youtube fs-4"></i>
+                  </a>
+                </li>
+                </ul>
+            </div>
+        </div>
+
+        <hr class="bg-light">
+
+        <!-- Author/Creator Website -->
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <p class="mb-0">&copy; 2025 PMII Rayon Inklusif Justicia UNESA. Hak Cipta Dilindungi.</p>
+            </div>
+        </div>
+    </div>
+</footer>
+</section>
+  <!-- END FOOTER -->
+ 
+    <!-- Script JS Boostrap -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Sal.js Initialization -->
+     <script src="assets/js/sal.js"></script>
+  </body>
+</html>

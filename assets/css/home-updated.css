@@ -125,20 +125,22 @@ footer {
   width: 60px;
 }
 
-/* Testimonial Carousel Indicators */
+/* Carousel Testimonial Indicators */
 .carousel-indicators button {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background-color: #6c757d;
-  opacity: 0.5;
   margin: 0 4px;
+  background-color: #6c757d;
   border: none;
+  opacity: 0.5;
+  transition: all 0.3s ease;
 }
 
 .carousel-indicators button.active {
   background-color: #0055A4;
   opacity: 1;
+  transform: scale(1.2);
 }
 
 .carousel-indicators button:hover {
@@ -147,16 +149,11 @@ footer {
 
 /* Testimonial Card Styling */
 .carousel-item .card {
-  border-radius: 15px;
+  border: none;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
 }
 
-.carousel-item .card-body {
-  padding: 2rem;
-}
-
-.carousel-item blockquote {
-  font-size: 1.1rem;
-  line-height: 1.8;
-  color: #333;
+.carousel-item .card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }

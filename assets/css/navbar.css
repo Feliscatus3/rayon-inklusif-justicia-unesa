@@ -82,3 +82,26 @@
   font-weight: 500;
   position: relative;
 }
+
+/* Brand text styling */
+.navbar-brand-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0055A4;
+  line-height: 1.2;
+}
+
+/* Responsive brand text for mobile */
+@media (max-width: 576px) {
+  .navbar-brand-text {
+    font-size: 0.75rem;
+    max-width: 120px;
+  }
+}
+
+@media (max-width: 375px) {
+  .navbar-brand-text {
+    font-size: 0.65rem;
+    max-width: 100px;
+  }
+}

@@ -11,6 +11,16 @@ body {
   margin-top: 11rem;
 }
 
+.carousel-caption {
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.carousel-item {
+  transition: transform 0.8s ease-in-out;
+}
+
 .img-bg-shadow {
   background: linear-gradient(
     to top,

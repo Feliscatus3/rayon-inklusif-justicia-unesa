@@ -1,68 +1,97 @@
-// Fungsi pencarian berita
+// =======================
+// INIT SEARCH
+// =======================
 function initSearch() {
   const searchForm = document.querySelector('form[role="search"]');
   const searchInput = searchForm ? searchForm.querySelector('input[type="search"]') : null;
-  
+
   if (!searchForm || !searchInput) return;
-  
+
+  // SUBMIT
   searchForm.addEventListener('submit', function(e) {
     e.preventDefault();
-    const query = searchInput.value.toLowerCase().trim();
-    
-    if (query === '') {
-      currentPage = 1;
-      // Show featured berita again when search is cleared
-      const heroFeaturedContainer = document.getElementById('hero-featured');
-      if (heroFeaturedContainer) heroFeaturedContainer.style.display = '';
-      displayFeaturedBerita();
-      displayBerita(currentPage);
-      generatePagination();
-      return;
-    }
-    
-    const filteredBerita = beritaData.filter(berita => {
-      return berita.title.toLowerCase().includes(query) || 
-             berita.excerpt.toLowerCase().includes(query);
-    });
-    
-    displaySearchResults(filteredBerita, query);
+    handleSearch(searchInput);
   });
-  
+
+  // INPUT (LIVE SEARCH)
   searchInput.addEventListener('input', function() {
-    const query = searchInput.value.toLowerCase().trim();
-    if (query.length >= 3) {
-      const filteredBerita = beritaData.filter(berita => {
-        return berita.title.toLowerCase().includes(query) || 
-               berita.excerpt.toLowerCase().includes(query);
-      });
-      displaySearchResults(filteredBerita, query);
-    } else if (query.length === 0) {
-      currentPage = 1;
-      // Show featured berita again when search is cleared
-      const heroFeaturedContainer = document.getElementById('hero-featured');
-      if (heroFeaturedContainer) heroFeaturedContainer.style.display = '';
-      displayFeaturedBerita();
-      displayBerita(currentPage);
-      generatePagination();
+    if (searchInput.value.trim().length >= 2 || searchInput.value.length === 0) {
+      handleSearch(searchInput);
     }
   });
 }
 
+// =======================
+// HANDLE SEARCH (SATU PINTU)
+// =======================
+function handleSearch(searchInput) {
+  const query = searchInput.value.toLowerCase().trim();
+
+  // RESET KE DEFAULT
+  if (query === '') {
+    currentPage = 1;
+
+    const heroFeaturedContainer = document.getElementById('hero-featured');
+    const featuredContainer = document.getElementById('main-featured');
+    const sideFeaturedContainer = document.getElementById('side-featured');
+
+    if (heroFeaturedContainer) heroFeaturedContainer.style.display = '';
+    if (featuredContainer) featuredContainer.style.display = '';
+    if (sideFeaturedContainer) sideFeaturedContainer.style.display = '';
+
+    displayFeaturedBerita();
+    displayBerita(currentPage);
+    generatePagination();
+    return;
+  }
+
+  const results = filterAndSortBerita(query);
+  displaySearchResults(results, query);
+}
+
+// =======================
+// FILTER + SORT BERITA
+// =======================
+function filterAndSortBerita(query) {
+  const keywords = query.split(' ');
+
+  return beritaData
+    .map(berita => {
+      const text = (berita.title + ' ' + berita.excerpt).toLowerCase();
+      let score = 0;
+
+      keywords.forEach(k => {
+        if (berita.title.toLowerCase().includes(k)) score += 3;
+        if (berita.excerpt.toLowerCase().includes(k)) score += 1;
+      });
+
+      return { ...berita, score };
+    })
+    .filter(b => b.score > 0)
+    .sort((a, b) => {
+      // prioritas relevance dulu, lalu tanggal terbaru
+      if (b.score !== a.score) return b.score - a.score;
+      return new Date(b.uploadDate) - new Date(a.uploadDate);
+    });
+}
+
+// =======================
+// DISPLAY HASIL SEARCH
+// =======================
 function displaySearchResults(results, query) {
   const beritaContainer = document.getElementById('berita-list');
   if (!beritaContainer) return;
-  
-  // Hide only the featured berita row, keep title row visible
+
+  // SEMBUNYIKAN FEATURED
   const heroFeaturedContainer = document.getElementById('hero-featured');
   const featuredContainer = document.getElementById('main-featured');
   const sideFeaturedContainer = document.getElementById('side-featured');
-  
-  // Hide only the featured berita row (contains the images)
+
   if (heroFeaturedContainer) heroFeaturedContainer.style.display = 'none';
-  // Also hide the individual featured containers as fallback
   if (featuredContainer) featuredContainer.style.display = 'none';
   if (sideFeaturedContainer) sideFeaturedContainer.style.display = 'none';
-  
+
+  // JIKA TIDAK ADA HASIL
   if (results.length === 0) {
     beritaContainer.innerHTML = `
       <div class="col-12 text-center py-5">
@@ -71,13 +100,13 @@ function displaySearchResults(results, query) {
         <p class="text-muted">Coba kata kunci lain yang lebih spesifik</p>
       </div>
     `;
-    
+
     const paginationContainer = document.getElementById('pagination-container');
     if (paginationContainer) paginationContainer.innerHTML = '';
-    
     return;
   }
-  
+
+  // RENDER HASIL
   let html = '';
   results.forEach(berita => {
     html += `
@@ -87,24 +116,27 @@ function displaySearchResults(results, query) {
             <img src="${berita.image}" class="card-img-top img-news rounded" alt="${berita.title}">
             <div class="card-body ps-0">
               <h3 class="card-title">${berita.title}</h3>
-            </a>
-            <p class="card-text">${berita.excerpt}</p>
-            <p class="text-muted">
-              <i class="bi bi-calendar-event me-2"></i>${berita.date}
-            </p>
+          </a>
+              <p class="card-text">${berita.excerpt}</p>
+              <p class="text-muted">
+                <i class="bi bi-calendar-event me-2"></i>${berita.date}
+              </p>
           </div>
         </div>
       </div>
     `;
   });
-  
+
   beritaContainer.innerHTML = html;
-  
+
+  // HAPUS PAGINATION SAAT SEARCH
   const paginationContainer = document.getElementById('pagination-container');
   if (paginationContainer) paginationContainer.innerHTML = '';
 }
 
-// Initialize search when DOM is ready
+// =======================
+// INIT SAAT LOAD
+// =======================
 document.addEventListener('DOMContentLoaded', function() {
   initSearch();
 });

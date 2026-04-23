@@ -32,3 +32,26 @@
 - Tidak perlu reload halaman atau buat file HTML baru
 
 ## Status: ✅ SELESAI
+
+---
+
+# TODO: Perbaikan Kegiatan Terbaru & Berita Terbaru
+
+## Tujuan
+- **Kegiatan Terbaru**: Tetap menggunakan slide/carousel (berita `featured: true`)
+- **Berita Terbaru**: Menampilkan SEMUA berita dari id 1 sampai akhir (termasuk yang `featured: true`)
+
+## Langkah Pengerjaan
+- [x] 1. Analisis file terkait (`pagination.js`, `search.js`, `page/kegiatan.html`)
+- [x] 2. Susun rencana perbaikan dan dapatkan persetujuan user
+- [ ] 3. Perbaiki `assets/js/pagination.js`
+  - [ ] 3a. Fix syntax error (orphan return statements)
+  - [ ] 3b. Tambahkan fungsi `getAllBerita()`
+  - [ ] 3c. Ubah `displayBerita()` untuk menggunakan semua berita
+  - [ ] 3d. Ubah `generatePagination()` untuk menghitung dari semua berita
+  - [ ] 3e. Ubah `goToPage()` untuk menggunakan semua berita
+  - [ ] 3f. Ubah `loadNextPage()` untuk menggunakan semua berita
+- [ ] 4. Perbarui `assets/js/search.js` agar konsisten (reset search memperbarui slider)
+- [ ] 5. Verifikasi hasil
+
+## Status: 🔄 IN PROGRESS

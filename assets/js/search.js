@@ -39,6 +39,7 @@ function handleSearch(searchInput) {
     if (featuredContainer) featuredContainer.style.display = '';
     if (sideFeaturedContainer) sideFeaturedContainer.style.display = '';
 
+    displaySlider();
     displayFeaturedBerita();
     displayBerita(currentPage);
     generatePagination();
@@ -122,7 +123,6 @@ function displaySearchResults(results, query) {
                 <i class="bi bi-calendar-event me-2"></i>${berita.date}
               </p>
           </div>
-        </div>
       </div>
     `;
   });
@@ -133,10 +133,3 @@ function displaySearchResults(results, query) {
   const paginationContainer = document.getElementById('pagination-container');
   if (paginationContainer) paginationContainer.innerHTML = '';
 }
-
-// =======================
-// INIT SAAT LOAD
-// =======================
-document.addEventListener('DOMContentLoaded', function() {
-  initSearch();
-});

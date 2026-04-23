@@ -221,43 +221,68 @@ const beritaData = [
   }
 ];
 
-// Fungsi untuk mengurutkan berita berdasarkan uploadDate (terbaru di atas)
-function sortBeritaByUploadDate(data) {
-  return [...data].sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
-}
-
 // Konfigurasi pagination
 let currentPage = 1;
 const itemsPerPage = 6;
-document.addEventListener('DOMContentLoaded', function () {
-  displayBerita(currentPage);
-  generatePagination();
-});
 
-// Ambil semua berita dan urutkan global (terbaru di atas)
-function getAllSortedBerita() {
-  return [...beritaData].sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
+// Fungsi helper: urutkan berita berdasarkan ID
+function sortBeritaById(data) {
+  return [...data].sort((a, b) => a.id - b.id);
 }
 
-// Fungsi untuk mendapatkan berita non-featured - diurutkan berdasarkan uploadDate terbaru
+// Fungsi untuk mendapatkan berita non-featured - diurutkan berdasarkan ID
 function getNonFeaturedBerita() {
-  return getAllSortedBerita().filter(berita => !berita.featured);
+  return sortBeritaById(
+    beritaData.filter(berita => !berita.featured)
+  );
 }
 
-// Fungsi untuk mendapatkan berita featured - diurutkan berdasarkan uploadDate terbaru
+// Fungsi untuk mendapatkan berita featured - diurutkan berdasarkan ID
 function getFeaturedBerita() {
-  return getAllSortedBerita().filter(berita => berita.featured);
+  return sortBeritaById(
+    beritaData.filter(berita => berita.featured)
+  );
 }
 
-// Fungsi untuk menampilkan berita pada halaman tertentu
+// Fungsi untuk mendapatkan SEMUA berita - diurutkan berdasarkan ID
+function getAllBerita() {
+  return sortBeritaById([...beritaData]);
+}
+
+// ===== SLIDER (Kegiatan Terbaru) =====
+function displaySlider() {
+  const container = document.getElementById("hero-slider");
+  if (!container) return;
+
+  const featured = getFeaturedBerita();
+
+  let html = "";
+
+  featured.forEach((item, index) => {
+    html += `
+      <div class="carousel-item ${index === 0 ? "active" : ""}">
+        <img src="${item.image}" class="d-block w-100" style="height:500px; object-fit:cover">
+        <div class="carousel-caption text-start img-bg-shadow p-4">
+          <h3 class="news-text fs-2">${item.title}</h3>
+          <p><i class="bi bi-calendar-event me-2"></i>${item.date}</p>
+          <a href="${item.link}" class="btn btn-light btn-sm">
+            Baca Selengkapnya
+          </a>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+// ===== BERITA LIST (Berita Terbaru) =====
 function displayBerita(page) {
   const beritaContainer = document.getElementById('berita-list');
   if (!beritaContainer) return;
 
-  // 🔥 WAJIB: urut berdasarkan ID
-  const sortedData = sortBeritaById(
-    beritaData.filter(b => !b.featured)
-  );
+  // Tampilkan SEMUA berita (termasuk featured) diurutkan berdasarkan ID
+  const sortedData = getAllBerita();
 
   const start = (page - 1) * itemsPerPage;
   const end = start + itemsPerPage;
@@ -273,11 +298,11 @@ function displayBerita(page) {
             <img src="${berita.image}" class="card-img-top img-news rounded" alt="${berita.title}">
             <div class="card-body ps-0">
               <h3 class="card-title">${berita.title}</h3>
-            </a>
-            <p class="card-text">${berita.excerpt}</p>
-            <p class="text-muted">
-              <i class="bi bi-calendar-event me-2"></i>${berita.date}
-            </p>
+          </a>
+          <p class="card-text">${berita.excerpt}</p>
+          <p class="text-muted">
+            <i class="bi bi-calendar-event me-2"></i>${berita.date}
+          </p>
           </div>
         </div>
       </div>
@@ -287,16 +312,14 @@ function displayBerita(page) {
   beritaContainer.innerHTML = html;
 }
 
-// Fungsi untuk generate pagination buttons
+// ===== PAGINATION =====
 function generatePagination() {
   const paginationContainer = document.getElementById('pagination-container');
   if (!paginationContainer) return;
 
-  const filteredData = sortBeritaById(
-    beritaData.filter(b => !b.featured)
-  );
-
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  // Gunakan SEMUA berita untuk menghitung total halaman
+  const allBerita = getAllBerita();
+  const totalPages = Math.ceil(allBerita.length / itemsPerPage);
 
   let html = `
     <nav>
@@ -325,10 +348,10 @@ function generatePagination() {
   paginationContainer.innerHTML = html;
 }
 
-// Fungsi untuk pindah ke halaman tertentu
 function goToPage(page) {
-  const nonFeaturedBerita = getNonFeaturedBerita();
-  const totalPages = Math.ceil(nonFeaturedBerita.length / itemsPerPage);
+  // Gunakan SEMUA berita untuk validasi
+  const allBerita = getAllBerita();
+  const totalPages = Math.ceil(allBerita.length / itemsPerPage);
   
   if (page < 1 || page > totalPages) return;
   
@@ -343,65 +366,10 @@ function goToPage(page) {
   }
 }
 
-// Fungsi untuk menampilkan featured berita di hero section
-function displayFeaturedBerita() {
-  const featuredBerita = getFeaturedBerita();
-  
-  // Main featured (berita pertama)
-  const mainFeatured = featuredBerita[0];
-  const mainFeaturedContainer = document.getElementById('main-featured');
-  if (mainFeaturedContainer && mainFeatured) {
-    mainFeaturedContainer.innerHTML = `
-      <div class="card text-white border-0 overflow-hidden h-100">
-        <img src="${mainFeatured.image}" alt="${mainFeatured.title}" class="card-img" style="height: 500px; object-fit: cover" />
-        <div class="card-img-overlay img-bg-shadow d-flex flex-column justify-content-end p-3 p-md-4">
-          <h3 class="card-title news-text text-capitalize fs-2 fs-md-1 mb-2 mb-md-3">${mainFeatured.title}</h3>
-          <div class="d-flex align-items-center gap-2 mb-3">
-            <i class="bi bi-calendar-event fs-6 fs-md-5"></i>
-            <span class="card-subtitle fs-6 fs-md-5">${mainFeatured.date}</span>
-          </div>
-          <a href="${mainFeatured.link}" class="btn btn-light btn-sm text-capitalize align-self-start fs-md-5 py-2 px-3">baca selengkapnya<i class="bi bi-chevron-right ms-1"></i></a>
-        </div>
-      </div>
-    `;
-  }
-  
-  // Side featured (berita kedua dan ketiga)
-  const sideFeatured = featuredBerita.slice(1, 3);
-  const sideFeaturedContainer = document.getElementById('side-featured');
-  if (sideFeaturedContainer && sideFeatured.length > 0) {
-    let html = '<div class="row h-100 g-3">';
-    sideFeatured.forEach(berita => {
-      html += `
-        <div class="col-12">
-          <div class="card text-white border-0 h-100 overflow-hidden">
-            <img src="${berita.image}" alt="${berita.title}" class="card-img" style="height: 240px; object-fit:cover">
-            <div class="card-img-overlay img-bg-shadow d-flex flex-column justify-content-end p-3">
-              <h5 class="card-title news-text fs-5 fs-md-6 mb-2">${berita.title}</h5>
-              <div class="d-flex align-items-center gap-2 mb-2">
-                <i class="bi bi-calendar-event fs-7 fs-md-6"></i>
-                <span class="card-subbtitle fs-7 fs-md-6">${berita.date}</span>
-              </div>
-              <a href="${berita.link}" class="btn btn-light btn-sm align-self-start fs-md-5 py-1 px-2">Baca Selengkapnya<i class="bi bi-chevron-right ms-1"></i></a>
-            </div>
-          </div>
-        </div>
-      `;
-    });
-    html += '</div>';
-    sideFeaturedContainer.innerHTML = html;
-  }
-}
-
-// Konfigurasi auto-pagination (infinite scroll) - default OFF
+// ===== INFINITE SCROLL =====
 let isAutoPaginationEnabled = false;
 let isLoadingMore = false;
 
-function sortBeritaById(data) {
-  return data.sort((a, b) => a.id - b.id);
-}
-
-// Fungsi untuk infinite scroll
 function setupInfiniteScroll() {
   const sentinel = document.getElementById('pagination-sentinel');
   if (!sentinel) return;
@@ -409,8 +377,8 @@ function setupInfiniteScroll() {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting && isAutoPaginationEnabled && !isLoadingMore) {
-        const nonFeatured = getNonFeaturedBerita();
-        const totalPages = Math.ceil(nonFeatured.length / itemsPerPage);
+        const allBerita = getAllBerita();
+        const totalPages = Math.ceil(allBerita.length / itemsPerPage);
         
         if (currentPage < totalPages) {
           loadNextPage();
@@ -425,10 +393,9 @@ function setupInfiniteScroll() {
   observer.observe(sentinel);
 }
 
-// Fungsi untuk memuat halaman berikutnya
 function loadNextPage() {
-  const nonFeatured = getNonFeaturedBerita();
-  const totalPages = Math.ceil(nonFeatured.length / itemsPerPage);
+  const allBerita = getAllBerita();
+  const totalPages = Math.ceil(allBerita.length / itemsPerPage);
   
   if (currentPage >= totalPages) {
     const sentinel = document.getElementById('pagination-sentinel');
@@ -444,7 +411,7 @@ function loadNextPage() {
   
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const beritaToShow = nonFeatured.slice(startIndex, endIndex);
+  const beritaToShow = allBerita.slice(startIndex, endIndex);
   
   let html = '';
   beritaToShow.forEach(berita => {
@@ -455,11 +422,11 @@ function loadNextPage() {
             <img src="${berita.image}" class="card-img-top img-news rounded" alt="${berita.title}">
             <div class="card-body ps-0">
               <h3 class="card-title">${berita.title}</h3>
-            </a>
-            <p class="card-text">${berita.excerpt}</p>
-            <p class="text-muted">
-              <i class="bi bi-calendar-event me-2"></i>${berita.date}
-            </p>
+          </a>
+          <p class="card-text">${berita.excerpt}</p>
+          <p class="text-muted">
+            <i class="bi bi-calendar-event me-2"></i>${berita.date}
+          </p>
           </div>
         </div>
       </div>
@@ -484,23 +451,16 @@ function loadNextPage() {
   isLoadingMore = false;
 }
 
-// Fungsi untuk toggle auto-pagination
 function toggleAutoPagination() {
   isAutoPaginationEnabled = !isAutoPaginationEnabled;
   localStorage.setItem('autoPaginationEnabled', isAutoPaginationEnabled);
 }
 
-// Inisialisasi pagination saat halaman dimuat
-document.addEventListener('DOMContentLoaded', function() {
-  if (document.getElementById('berita-list')) {
-    const savedSetting = localStorage.getItem('autoPaginationEnabled');
-    if (savedSetting !== null) {
-      isAutoPaginationEnabled = savedSetting === 'true';
-    }
-    
-    displayFeaturedBerita();
-    displayBerita(currentPage);
-    generatePagination();
-    setupInfiniteScroll();
-  }
+// ===== INIT =====
+document.addEventListener("DOMContentLoaded", function () {
+  displaySlider();          // slider atas (Kegiatan Terbaru)
+  displayBerita(1);         // berita mulai dari ID 1 (Berita Terbaru)
+  generatePagination();
+  setupInfiniteScroll();
 });
+

@@ -12,13 +12,29 @@ body {
 }
 
 .carousel-caption {
+  pointer-events: auto;
   bottom: 0;
   left: 0;
   right: 0;
+  z-index: 2;
+}
+
+.carousel-caption a {
+  pointer-events: auto;
+  position: relative;
+  z-index: 5;
 }
 
 .carousel-item {
   transition: transform 0.8s ease-in-out;
+}
+
+.carousel-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  z-index: 1;
 }
 
 .img-bg-shadow {

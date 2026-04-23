@@ -224,10 +224,6 @@ const beritaData = [
 // Konfigurasi pagination
 let currentPage = 1;
 const itemsPerPage = 6;
-document.addEventListener('DOMContentLoaded', function () {
-  displayBerita(currentPage);
-  generatePagination();
-});
 
 // Fungsi untuk mendapatkan berita non-featured (untuk daftar berita)
 function getNonFeaturedBerita() {
@@ -250,7 +246,7 @@ function displayBerita(page) {
 
   // 🔥 WAJIB: urut berdasarkan ID
   const sortedData = sortBeritaById(
-    beritaData.filter(b => !b.featured)
+    getNonFeaturedBerita()
   );
 
   const start = (page - 1) * itemsPerPage;
@@ -497,15 +493,3 @@ function searchGoToPage(page, query) {
   if (beritaSection) beritaSection.scrollIntoView({ behavior: 'smooth' });
 }
 
-// Inisialisasi pagination saat halaman dimuat
-document.addEventListener('DOMContentLoaded', function() {
-  if (document.getElementById('berita-list')) {
-    displayFeaturedBerita();
-    displayBerita(currentPage);
-    generatePagination();
-  }
-  const searchInput = document.getElementById('search-input');
-  if (searchInput) {
-    searchInput.addEventListener('input', handleSearch);
-  }
-});

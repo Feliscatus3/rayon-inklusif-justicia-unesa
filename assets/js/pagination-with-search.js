@@ -16,7 +16,7 @@ const beritaData = [
     date: "21 April 2026",
     uploadDate: "2026-04-21",
     image: "/assets/img/foto/KARTINI.webp",
-    link: "/berita/kartini-2026-kopri-justicia.html",
+    link: "/berita/kopri-justicia-teladan-kartini.html",
     featured: true
   },
   {

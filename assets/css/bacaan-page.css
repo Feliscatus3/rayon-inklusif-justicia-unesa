@@ -1,0 +1,130 @@
+/* Bacaan Page Styles - Extends profil-page.css & berita-kegiatan.css */
+
+/* Hero section fix - full height, ensure content visible over navbar */
+.hero-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(/assets/img/foto/RAKER1.webp);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  padding-top: 76px; /* Navbar height + margin */
+  padding-bottom: 100px;
+}
+
+@media (max-width: 991px) {
+  .hero-section {
+    min-height: 80vh;
+    padding-top: 72px;
+    background-attachment: scroll;
+  }
+}
+
+/* Ensure hero text fully visible */
+.hero-section .container {
+  padding-left: 1.5rem !important;
+  padding-right: 1.5rem !important;
+}
+
+/* Upload Zone */
+.upload-zone {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background: linear-gradient(135deg, #f8f9ff 0%, #e9ecff 100%);
+}
+
+.upload-zone:hover,
+.upload-zone.dragover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.upload-zone .bi-cloud-upload {
+  transition: transform 0.3s ease;
+}
+
+.upload-zone:hover .bi-cloud-upload {
+  transform: scale(1.1);
+}
+
+/* Form styling */
+#bacaan-form label {
+  font-weight: 600;
+  color: #495057;
+}
+
+/* List Grid - like berita cards */
+.bacaan-card {
+  transition: transform 0.3s, box-shadow 0.3s;
+  height: 100%;
+}
+
+.bacaan-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15) !important;
+}
+
+.bacaan-icon {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  width: 80px;
+  height: 80px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.category-badge {
+  font-size: 0.75rem;
+  padding: 0.4em 0.8em;
+}
+
+.category-buku { background: #28a745; }
+.category-modul { background: #007bff; }
+.category-handbook { background: #ffc107; color: #000; }
+
+/* Status alerts */
+#upload-status .alert {
+  border-radius: 12px;
+  border: none;
+}
+
+/* Pagination - match kegiatan */
+#bacaan-pagination .pagination .page-link {
+  border-radius: 8px;
+  margin: 0 2px;
+}
+
+#bacaan-pagination .pagination .page-item.active .page-link {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .upload-zone {
+    padding: 2rem 1rem !important;
+  }
+  
+  .bacaan-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Text styles from profil */
+.text-justify {
+  text-align: justify;
+}

@@ -1,6 +1,26 @@
 const beritaData = [
-  {
+    {
     id: 1,
+    title: "Pendaftaran PKD I",
+    excerpt: "Pendaftaran PKD I PMII Rayon Inklusif Justicia UNESA.",
+    date: "03 April 2026",
+    uploadDate: "2026-06-03",
+    image: "/assets/img/foto/pamflet-pkd1.webp",
+    link: "/berita/pendaftaran-pkd-pertama-pmii-justicia.html",
+    featured: false
+  },
+  {
+    id: 2,
+    title: "Lawatan Silaturahmi Wakil Bupati Bojonegoro",
+    excerpt: "Lawatan Silaturahmi ke Wakil Bupati Bojonegoro.",
+    date: "10 Mei 2026",
+    uploadDate: "2026-05-10",
+    image: "/assets/img/foto/WABUP_BOJONEGORO.webp",
+    link: "/berita/pmii-justicia-lawatan-silaturahmi-wabup-bojonegoro.html",
+    featured: true
+  },
+  {
+    id: 3,
     title: "Safari Religi 2: Ziarah dan Refleksi Spiritual",
     excerpt: "KEGIATAN safari religi kedua untuk memperdalam spiritualitas dan memperkuat nilai keislaman kader PMII.",
     date: "22 April 2026",
@@ -10,7 +30,7 @@ const beritaData = [
     featured: true
   },
   {
-    id: 2,
+    id: 4,
     title: "Kopri PMII Justicia Rayakan Hari Kartini 2026 di Lagoon Mall",
     excerpt: "Peringatan Hari Kartini 2026 oleh Kopri PMII Justicia melalui workshop kerajinan tangan dan bedah buku.",
     date: "21 April 2026",
@@ -20,7 +40,7 @@ const beritaData = [
     featured: true
   },
   {
-    id: 3,
+    id: 5,
     title: "K3 Mart Kelas Kaderisasi Kopri Smart",
     excerpt: "KEGIATAN K3 Mart Kelas Kaderisasi Kopri Smart untuk penguatan kapasitas kader perempuan.",
     date: "20 April 2026",
@@ -30,7 +50,7 @@ const beritaData = [
     featured: true
   },
   {
-    id: 4,
+    id: 6,
     title: "Bagi Takjil Sahur On The Road",
     excerpt: "KEGIATAN berbagi takjil dan sahur on the road di bulan Ramadan.",
     date: "15 Maret 2026",
@@ -40,7 +60,7 @@ const beritaData = [
     featured: false
   },
   {
-    id: 5,
+    id: 7,
     title: "Harlah 66 & Halal Bihalal Rayon Justicia",
     excerpt: "Peringatan Harlah PMII ke-66 dan halal bihalal bersama seluruh kader.",
     date: "1 Maret 2026",
@@ -50,7 +70,7 @@ const beritaData = [
     featured: false
   },
   {
-    id: 6,
+    id: 8,
     title: "Kajian Intelektual: Menggali Ilmu dan Pemikiran",
     excerpt: "Kajian intelektual untuk mengembangkan kapasitas kader PMII.",
     date: "1 Februari 2026",
@@ -60,7 +80,7 @@ const beritaData = [
     featured: false
   },
   {
-    id: 7,
+    id: 9,
     title: "RTAR 1 Inklusif Justicia: Dari Evaluasi Menuju Aksi",
     excerpt: "Rapat Kerja dan Evaluasi Rayon (RTAR) I PMII Rayon Inklusif Justicia UNESA.",
     date: "30 Januari 2026",
@@ -70,7 +90,7 @@ const beritaData = [
     featured: false
   },
   {
-    id: 8,
+    id: 10,
     title: "Rapat Kerja Rayon Justicia UNESA 2026",
     excerpt: "Rapat kerja untuk perencanaan program dan evaluasi kinerja kepengurusan.",
     date: "1 Januari 2026",
@@ -80,7 +100,7 @@ const beritaData = [
     featured: false
   },
   {
-    id: 9,
+    id: 11,
     title: "MAPABA PMII Rayon Persiapan Justicia",
     excerpt: "Masa Penerimaan Anggota Baru dengan antusiasme tinggi dari peserta.",
     date: "16 November 2025",
@@ -90,7 +110,7 @@ const beritaData = [
     featured: false
   },
   {
-    id: 10,
+    id: 12,
     title: "Studi Banding Kolaborasi Rayon Hukum",
     excerpt: "Kolaborasi lintas rayon hukum untuk memperkuat jaringan pergerakan.",
     date: "31 Oktober 2025",
@@ -100,7 +120,7 @@ const beritaData = [
     featured: false
   },
   {
-    id: 11,
+    id: 13,
     title: "Harmoni Pergerakan: Menyatukan Suara",
     excerpt: "KEGIATAN seni dan pergerakan untuk memperkuat solidaritas kader.",
     date: "20 September 2025",
@@ -110,7 +130,7 @@ const beritaData = [
     featured: false
   },
   {
-    id: 12,
+    id: 14,
     title: "Simposium Sekolah Kaderisasi Nasional",
     excerpt: "Diskusi nasional tentang penguatan sistem kaderisasi PMII.",
     date: "17 Agustus 2025",
@@ -120,7 +140,7 @@ const beritaData = [
     featured: false
   },
   {
-    id: 13,
+    id: 15,
     title: "Sekolah Kaderisasi: Membentuk Kader Berdaya",
     excerpt: "Program pembentukan kader PMII yang unggul secara intelektual dan organisasi.",
     date: "7 Juli 2025",
@@ -130,7 +150,7 @@ const beritaData = [
     featured: false
   },
   {
-    id: 14,
+    id: 16,
     title: "Safari Religi Ziarah Sunan Ampel",
     excerpt: "Ziarah untuk memperkuat spiritualitas kader PMII.",
     date: "10 Mei 2025",
@@ -140,7 +160,7 @@ const beritaData = [
     featured: false
   },
   {
-    id: 15,
+    id: 17,
     title: "Jejak Kartini: Langkah Perempuan dalam Kepemimpinan",
     excerpt: "Kajian inspiratif tentang peran perempuan dalam kepemimpinan masa kini.",
     date: "30 April 2025",
@@ -150,7 +170,7 @@ const beritaData = [
     featured: false
   },
   {
-    id: 16,
+    id: 18,
     title: "Rapat Kerja dan Buka Bersama",
     excerpt: "Evaluasi program sekaligus mempererat silaturahmi antar pengurus.",
     date: "25 Maret 2025",
@@ -160,7 +180,7 @@ const beritaData = [
     featured: false
   },
   {
-    id: 17,
+    id: 19,
     title: "Pesantren Pergerakan Vol. 1",
     excerpt: "Penguatan nilai keislaman dan pergerakan kader PMII.",
     date: "15 Februari 2025",
@@ -170,7 +190,7 @@ const beritaData = [
     featured: false
   },
   {
-    id: 18,
+    id: 20,
     title: "Ngobrol Perkara Islam",
     excerpt: "Diskusi santai tentang dinamika Islam kontemporer.",
     date: "8 Januari 2025",
@@ -180,7 +200,7 @@ const beritaData = [
     featured: false
   },
   {
-    id: 19,
+    id: 21,
     title: "Kajian Cipayung FH UNESA",
     excerpt: "Kajian kritis tentang demokrasi dan Neo Orba.",
     date: "20 Desember 2024",
@@ -190,7 +210,7 @@ const beritaData = [
     featured: false
   },
   {
-    id: 20,
+    id: 22,
     title: "Akademi Pergerakan 1",
     excerpt: "Pelatihan public speaking untuk kader.",
     date: "5 November 2024",
@@ -200,7 +220,7 @@ const beritaData = [
     featured: false
   },
   {
-    id: 21,
+    id: 23,
     title: "Harlah PMII 65",
     excerpt: "Peringatan Harlah PMII ke-65.",
     date: "10 Oktober 2024",
@@ -210,7 +230,7 @@ const beritaData = [
     featured: false
   },
   {
-    id: 22,
+    id: 24,
     title: "Diskusi Panel Jejak Kartini",
     excerpt: "Diskusi panel tentang peran perempuan dalam pergerakan mahasiswa.",
     date: "21 April 2024",

@@ -1,5 +1,4 @@
 {
-  "version": 2,
   "builds": [
     {
       "src": "api/**/*.js",
@@ -15,10 +14,5 @@
       "src": "/api/(.*)",
       "dest": "/api/$1"
     }
-  ],
-  "env": {
-    "DATABASE_URL": "@database_url",
-    "SESSION_SECRET": "@session_secret"
-  }
+  ]
 }
-

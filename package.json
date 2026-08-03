@@ -2,17 +2,6 @@
   "name": "kader-panel-pmii-justicia",
   "version": "1.0.0",
   "description": "Kader Panel PMII Rayon Inklusif Justicia - Secure Web Application",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "dev": "node index.js"
-  },
-  "keywords": [
-    "pmii",
-    "justicia",
-    "kader",
-    "panel"
-  ],
   "license": "MIT",
   "dependencies": {
     "bcrypt": "^5.1.1",

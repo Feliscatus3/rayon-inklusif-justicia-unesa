@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pengumuman - Kader Panel PMII Justicia</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+.an-bar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px;background:#fff;padding:16px 20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.nr{display:flex;align-items:center;gap:10px}
+.bb{color:rgba(255,255,255,.9);text-decoration:none;font-size:.85rem;display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:6px}
+.bb:hover{background:rgba(255,255,255,.15);color:#fff}
+.an-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px}
+.an-card{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden;transition:.2s;border:1px solid #eee}
+.an-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.12);transform:translateY(-2px)}
+.an-card.pin{border-left:4px solid #1a237e;background:#f8f9ff}
+.an-h{padding:16px 20px 12px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.an-t{font-size:1.05rem;font-weight:700;margin:0;flex:1}
+.an-b{padding:12px 20px 16px}
+.an-c{font-size:.9rem;line-height:1.6;margin-bottom:12px;white-space:pre-line}
+.an-m{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.8rem;color:#999}
+.an-m .cat{background:#1a237e;color:#fff;padding:2px 10px;border-radius:12px;font-size:.7rem}
+.an-f{padding:12px 20px;border-top:1px solid #f0f0f0;display:flex;gap:8px;flex-wrap:wrap}
+.pin-b{background:#1a237e;color:#fff;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:.8rem}
+.pin-b:hover{opacity:.85}
+.btn-sm{background:#f0f0f0;border:1px solid #ddd;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:.8rem;display:inline-flex;align-items:center;gap:4px}
+.btn-sm:hover{background:#1a237e;color:#fff}
+.mod{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center}
+.mod.show{display:flex}
+.mc{background:#fff;border-radius:14px;padding:28px;max-width:620px;width:90%;max-height:85vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.mx{position:absolute;top:12px;right:16px;font-size:1.5rem;cursor:pointer;color:#999}
+.mc h3{margin:0 0 16px;color:#1a237e}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:.85rem;font-weight:600;margin-bottom:4px}
+.fg input,.fg select,.fg textarea{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:.9rem;box-sizing:border-box}
+.fa{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+.cp{background:#1a237e;color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer}
+.cc{background:#757575;color:#fff;border:none;border-radius:8px;padding:6px 14px;cursor:pointer}
+.sb{display:flex;gap:8px;align-items:center}
+.sb input{padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:.85rem;min-width:200px}
+.sb select{padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:.85rem}
+.toast{position:fixed;bottom:24px;right:24px;background:#2e7d32;color:#fff;padding:12px 20px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:2000;display:none}
+.toast.show{display:block}.toast.err{background:#c62828}
+.ne{text-align:center;padding:60px 20px;color:#999}
+.ne i{font-size:3rem;margin-bottom:12px;display:block}
+</style>
+</head>
+<body>
+<nav class="dashboard-nav"><div class="nav-container">
+<h2><i class="fas fa-bullhorn"></i> Pengumuman</h2>
+<div class="nr">
+<a href="dashboard.html" class="bb"><i class="fas fa-arrow-left"></i> Dashboard</a>
+<button id="lo" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+</div></nav>
+<main class="dashboard-container">
+<div class="an-bar"><div class="sb">
+<input type="text" id="srch" placeholder="Cari...">
+<select id="cf"><option value="">Semua</option><option>Umum</option><option>Kegiatan</option><option>Pendidikan</option><option>Organisasi</option><option>Kaderisasi</option><option>KOPRI</option><option>Lembaga</option><option>External</option></select>
+</div><button id="ab" class="cp" style="display:none"><i class="fas fa-plus"></i> Baru</button></div>
+<div id="ag" class="an-grid"></div>
+<div id="fm" class="mod"><div class="mc"><span class="mx">&times;</span><h3 id="ft">Pengumuman Baru</h3>
+<form id="ef"><input type="hidden" id="ei">
+<div class="fg"><label>Judul *</label><input type="text" id="et" required></div>
+<div class="fg"><label>Konten *</label><textarea id="ec" rows="6" required></textarea></div>
+<div class="fg"><label>Kategori</label><select id="ecc"><option>Umum</option><option>Kegiatan</option><option>Pendidikan</option><option>Organisasi</option><option>Kaderisasi</option><option>KOPRI</option><option>Lembaga</option><option>External</option></select></div>
+<div class="fg"><label><input type="checkbox" id="ep"> Pin pengumuman</label></div>
+<div class="fa"><button type="submit" class="cp" id="fsb">Simpan</button><button type="button" class="cc" id="fc">Batal</button></div>
+</form></div>
+<div id="toast" class="toast"></div>
+</main>
+<script>
+var ER=['super_admin','admin','ketua_rayon','sekretaris'];var an=[],cu=null;
+function $(i){return document.getElementById(i)}
+document.addEventListener('DOMContentLoaded',async function(){
+  try{var r=await fetch('/api/auth/me',{credentials:'include'});var d=await r.json();
+    if(!d.authenticated){window.location.href='../index.html';return;}
+    cu=d.user;if(ER.indexOf(cu.role)>=0)$('ab').style.display='inline-flex';
+  }catch(e){window.location.href='../index.html';return;}
+  await loadAnn();
+  $('lo').onclick=async function(){await fetch('/api/auth/logout',{method:'POST',credentials:'include'});window.location.href='../index.html';};
+  $('ab').onclick=openForm;$('fc').onclick=function(){$('fm').classList.remove('show');};
+  $('ef').onsubmit=handleSubmit;
+  $('srch').oninput=function(){debounce(render,300);};$('cf').onchange=render;
+  var mxs=document.querySelectorAll('.mx');for(var i=0;i<mxs.length;i++)mxs[i].onclick=function(){this.parentElement.parentElement.classList.remove('show');};
+  window.onclick=function(e){if(e.target.classList.contains('mod'))e.target.classList.remove('show');};
+});
+var dt=null;function debounce(fn,t){if(dt)clearTimeout(dt);dt=setTimeout(fn,t);}
+async function loadAnn(){
+  try{var r=await fetch('/api/announcements',{credentials:'include'});var d=await r.json();an=d.announcements||d||[];render();
+  }catch(e){$('ag').innerHTML='<div class="ne"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat</p></div>';}
+}
+function render(){
+  var q=$('srch').value.toLowerCase(),c=$('cf').value,f=an;
+  if(q)f=f.filter(function(a){return a.title.toLowerCase().indexOf(q)>=0||(a.content||'').toLowerCase().indexOf(q)>=0;});
+  if(c)f=f.filter(function(a){return a.category===c;});
+  var p=f.filter(function(a){return a.is_pinned;}),np=f.filter(function(a){return!a.is_pinned;});
+  p.sort(function(a,b){return new Date(b.created_at)-new Date(a.created_at);});
+  np.sort(function(a,b){return new Date(b.created_at)-new Date(a.created_at);});
+  f=p.concat(np);var ia=ER.indexOf(cu.role)>=0,h='';
+  if(f.length===0)h='<div class="ne"><i class="far fa-bullhorn"></i><p>Tidak ada pengumuman</p></div>';
+  else for(var i=0;i<f.length;i++){
+    var a=f[i],pi=a.is_pinned?' <i class="fas fa-thumbtack" style="color:#1a237e;font-size:.8rem"></i>':'';
+    var ct=a.content&&a.content.length>200?a.content.substring(0,200)+'...':(a.content||'');
+    var ds=new Date(a.created_at).toLocaleDateString('id-ID',{year:'numeric',month:'short',day:'numeric'});
+    h+='<div class="an-card'+(a.is_pinned?' pin':'')+'">';
+    h+='<div class="an-h"><h3 class="an-t">'+a.title+pi+'</h3><div class="an-m"><span class="cat">'+a.category+'</span></div>';
+    h+='<div class="an-b"><div class="an-c">'+ct+'</div>';
+    h+='<div class="an-m"><i class="far fa-user"></i> '+(a.created_by_name||'Admin')+' <i class="far fa-clock"></i> '+ds;
+    if(a.pdf_url)h+=' <a href="'+a.pdf_url+'" target="_blank" style="margin-left:auto;color:#1a237e;font-size:.8rem"><i class="fas fa-file-pdf"></i> '+(a.pdf_name||'PDF')+'</a>';
+    h+='</div>';
+    if(ia){
+      h+='<div class="an-f">';
+      h+='<button class="btn-sm" onclick="editAnn('+a.id+')"><i class="fas fa-edit"></i> Edit</button>';
+      h+='<button class="pin-b" onclick="toPin('+a.id+')"><i class="fas '+(a.is_pinned?'fa-thumbtack':'fa-thumbtack')+'"></i> '+(a.is_pinned?'Unpin':'Pin')+'</button>';
+      h+='<button class="btn-sm" onclick="delAnn('+a.id+')" style="color:#c62828"><i class="fas fa-trash"></i></button>';
+      h+='</div>';
+    }
+    h+='</div>';
+  }
+  $('ag').innerHTML=h;
+}
+function editAnn(id){
+  var a=null;for(var i=0;i<an.length;i++){if(an[i].id===id){a=an[i];break}}
+  if(!a)return;$('ei').value=a.id;$('et').value=a.title;$('ec').value=a.content;$('ecc').value=a.category;$('ep').checked=a.is_pinned;
+  $('ft').textContent='Edit Pengumuman';$('fsb').textContent='Perbarui';$('fm').classList.add('show');
+}
+function openForm(){$('ei').value='';$('et').value='';$('ec').value='';$('ecc').value='Umum';$('ep').checked=false;$('ft').textContent='Pengumuman Baru';$('fsb').textContent='Simpan';$('fm').classList.add('show');}
+async function handleSubmit(e){
+  e.preventDefault();var id=$('ei').value,data={title:$('et').value,content:$('ec').value,category:$('ecc').value,is_pinned:$('ep').checked};
+  try{var url='/api/announcements'+(id?'/'+id:''),method=id?'PUT':'POST';
+    var r=await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(data),credentials:'include'});
+    if(r.ok){$('fm').classList.remove('show');toast(id?'Diperbarui':'Dibuat');await loadAnn();}else{var e2=await r.json();toast(e2.error||'Gagal','err');}
+  }catch(e){toast('Error', 'err');}
+}
+async function toPin(id){
+  try{var r=await fetch('/api/announcements/'+id+'/pin',{method:'PATCH',credentials:'include'});var d=await r.json();
+    if(r.ok){toast(d.message);await loadAnn();}else{toast(d.error||'Gagal','err');}
+  }catch(e){toast('Error','err');}
+}
+async function delAnn(id){
+  if(!confirm('Hapus pengumuman ini?'))return;
+  try{var r=await fetch('/api/announcements/'+id,{method:'DELETE',credentials:'include'});
+    if(r.ok){toast('Dihapus');await loadAnn();}else{var d=await r.json();toast(d.error||'Gagal','err');}
+  }catch(e){toast('Error','err');}
+}
+function toast(m,t){var o=$('toast');o.textContent=m;o.className='toast'+(t==='err'?' err':'')+' show';setTimeout(function(){o.classList.remove('show');},3000);}
+</script>
+</body>
+</html>

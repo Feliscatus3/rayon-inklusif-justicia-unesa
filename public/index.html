@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kader Panel - PMII Rayon Inklusif Justicia</title>
+  <link rel="shortcut icon" id="favicon" href="./asse">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style id="dynamicTheme"></style>
+</head>
+<body class="login-page">
+  <div class="login-container">
+    <div class="login-card" id="loginCard">
+      <div class="login-header">
+        <img src="/assets/img/logo/RAYON.png" alt="Logo Rayon Justicia" class="login-logo" id="loginLogo">
+        <h1 id="loginTitle">Kader Panel</h1>
+        <p id="loginOrg">PMII Rayon Inklusif Justicia</p>
+      </div>
+      <form id="loginForm" class="login-form">
+        <div class="form-group">
+          <label for="username">
+            <i class="fas fa-user"></i> Username
+          </label>
+          <input type="text" id="username" name="username" placeholder="Masukkan username" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="password">
+            <i class="fas fa-lock"></i> Password
+          </label>
+          <input type="password" id="password" name="password" placeholder="Masukkan password" required autocomplete="current-password">
+        </div>
+        <div id="errorMessage" class="error-message" style="display:none;"></div>
+        <button type="submit" class="btn-login">
+          <i class="fas fa-sign-in-alt"></i> Masuk
+        </button>
+      </form>
+      <div class="login-footer">
+        <p>Hanya untuk kader terdaftar. Hubungi administrator jika belum memiliki akun.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Apply website settings (branding, login background, default dark mode)
+    (async function applySettings() {
+      try {
+        const r = await fetch('/api/settings');
+        if (!r.ok) return;
+        const d = await r.json();
+        const s = d.settings || {};
+
+        // Dark mode default
+        if (s.default_dark_mode && !localStorage.getItem('theme')) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          var el = document.getElementById('dynamicTheme');
+          el.textContent = '.login-page{background:linear-gradient(135deg,#0b0e17 0%,#141926 100%)}.login-card{background:#141926}.login-header h1{color:#e8ecf4}.login-header p{color:#94a3b8}.login-form label{color:#e8ecf4}.login-form input{background:#0b0e17;border-color:#242c42;color:#e8ecf4}.login-footer p{color:#64748b}';
+        }
+
+        // Title
+        if (s.site_name) {
+          document.title = s.site_name + ' - ' + (s.org_name || 'PMII Rayon Inklusif Justicia');
+        }
+
+        // Heading / org name
+        if (s.site_name) document.getElementById('loginTitle').textContent = s.site_name;
+        if (s.org_name) document.getElementById('loginOrg').textContent = s.org_name;
+
+        // Logo
+        if (s.site_logo) {
+          var img = document.getElementById('loginLogo');
+          img.onerror = function() { img.src = '/assets/img/logo/RAYON.png'; };
+          img.src = s.site_logo;
+        }
+
+        // Favicon
+        if (s.site_favicon) {
+          var f = document.getElementById('favicon');
+          f.href = s.site_favicon;
+        }
+
+        // Login background
+        if (s.login_background) {
+          document.body.style.background = 'linear-gradient(rgba(10,12,30,.78),rgba(10,12,30,.82)), url("' + s.login_background + '") center/cover no-repeat fixed';
+          document.body.style.backgroundBlendMode = 'multiply';
+        } else if (s.default_dark_mode) {
+          // keep dark gradient
+        } else {
+          document.body.style.background = '';
+        }
+      } catch (e) {
+        // ignore - fall back to defaults
+      }
+    })();
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorEl = document.getElementById('errorMessage');
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const btn = e.target.querySelector('button');
+      
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+      errorEl.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          window.location.href = 'pages/dashboard.html';
+        } else {
+          errorEl.textContent = data.error || 'Login gagal';
+          errorEl.style.display = 'block';
+        }
+      } catch (err) {
+        errorEl.textContent = 'Terjadi kesalahan. Silakan coba lagi.';
+        errorEl.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
+      }
+    });
+  </script>
+</body>
+</html>
+

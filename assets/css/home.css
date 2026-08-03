@@ -1,5 +1,9 @@
-html,
-body {
+/* ===================================================
+   HOME PAGE STYLES - PMII Rayon Inklusif Justicia UNESA
+   Merged from home.css + home-updated.css (deduplicated)
+   =================================================== */
+
+html, body {
   scroll-behavior: smooth;
 }
 
@@ -7,11 +11,11 @@ body {
   font-family: "Montserrat", sans-serif;
 }
 
+/* ---------- HERO SECTION ---------- */
 .hero-section {
   position: relative;
   height: 100vh;
-  background: url(/assets/img/foto/RTAR\ I_20260225_180804_0020.webp)
-    no-repeat center;
+  background: url(/assets/img/foto/RTAR\ I_20260225_180804_0020.webp) no-repeat center;
   background-size: cover;
   width: 100%;
   overflow: hidden;
@@ -31,6 +35,7 @@ body {
   height: 100%;
 }
 
+/* ---------- CARDS ---------- */
 .card-text {
   text-align: justify;
 }
@@ -40,42 +45,22 @@ body {
   object-fit: cover;
 }
 
-.bi-lightbulb:hover {
-  color: #ffd700;
-  transition: color 0.3s ease;
-}
-
-.bi-people:hover {
-  color: #00bfff;
-  transition: color 0.3s ease;
-}
-
-.bi-bullseye:hover {
-  color: #32cd32;
-  transition: color 0.3s ease;
-}
-
-.bi-award:hover {
-  color: #e4a11b;
-  transition: color 0.3s ease;
-}
-
-.bi-buildings:hover {
-  color: #3071a9;
-  transition: color 0.3s ease;
-}
-
-.bi-people-alumni:hover {
-  color: #146c43;
-  transition: color 0.3s ease;
-}
-
 @media (max-width: 1199px) {
   .card-text {
     text-align: start;
   }
 }
 
+@media (min-width: 1024px) {
+  .card:hover {
+    transform: scale(1.05);
+  }
+  .card {
+    transition: transform 0.3s;
+  }
+}
+
+/* ---------- IMAGE OVERLAYS ---------- */
 .img-bg-shadow {
   background: linear-gradient(
     to top,
@@ -88,16 +73,15 @@ body {
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-@media (min-width: 1024px) {
-  .card:hover {
-    transform: scale(1.05);
-  }
+/* ---------- ICON HOVER EFFECTS ---------- */
+.bi-lightbulb:hover { color: #ffd700; transition: color 0.3s ease; }
+.bi-people:hover { color: #00bfff; transition: color 0.3s ease; }
+.bi-bullseye:hover { color: #32cd32; transition: color 0.3s ease; }
+.bi-award:hover { color: #e4a11b; transition: color 0.3s ease; }
+.bi-buildings:hover { color: #3071a9; transition: color 0.3s ease; }
+.bi-people-alumni:hover { color: #146c43; transition: color 0.3s ease; }
 
-  .card {
-    transition: transform 0.3s;
-  }
-}
-
+/* ---------- CAROUSEL ---------- */
 .carousel-control-prev-icon {
   background-color: #0055A4;
   border-radius: 50%;
@@ -109,23 +93,7 @@ body {
   color: #0055A4;
 }
 
-footer {
-  background-color: #343a40;
-  color: #fff;
-  padding: 3rem 0;
-}
-
-.social-icons a {
-  font-size: 1.25rem;
-}
-
-.rounded-circle {
-  object-fit: cover;
-  height: 60px;
-  width: 60px;
-}
-
-/* Testimonial Carousel Indicators */
+/* Carousel Indicators */
 .carousel-indicators button {
   width: 12px;
   height: 12px;
@@ -134,21 +102,29 @@ footer {
   opacity: 0.5;
   margin: 0 4px;
   border: none;
+  transition: all 0.3s ease;
 }
 
 .carousel-indicators button.active {
   background-color: #0055A4;
   opacity: 1;
+  transform: scale(1.2);
 }
 
 .carousel-indicators button:hover {
   opacity: 0.8;
 }
 
-/* Testimonial Card Styling */
+/* ---------- TESTIMONIAL CARDS ---------- */
 .carousel-item .card {
+  border: none;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.carousel-item .card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .carousel-item .card-body {
@@ -159,4 +135,22 @@ footer {
   font-size: 1.1rem;
   line-height: 1.8;
   color: #333;
+}
+
+/* ---------- FOOTER ---------- */
+footer {
+  background-color: #343a40;
+  color: #fff;
+  padding: 3rem 0;
+}
+
+.social-icons a {
+  font-size: 1.25rem;
+}
+
+/* ---------- UTILITY ---------- */
+.rounded-circle {
+  object-fit: cover;
+  height: 60px;
+  width: 60px;
 }

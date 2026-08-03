@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalender - Kader Panel PMII Justicia</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+.toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px;background:#fff;padding:16px 20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.t-left{display:flex;align-items:center;gap:8px}
+.t-left h2{font-size:1.3rem;color:var(--primary);min-width:200px;text-align:center}
+.btn-ico{background:#f0f0f0;border:1px solid #ddd;border-radius:8px;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.btn-ico:hover{background:var(--primary);color:#fff}
+.btn-tdy{background:var(--primary);color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:.85rem}
+.btn-tdy:hover{background:var(--primary-light)}
+.t-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.vsw{display:flex;gap:2px;background:#e0e0e0;border-radius:8px;padding:3px}
+.vsw button{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:.8rem;background:transparent}
+.vsw button.active{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15);font-weight:600;color:var(--primary)}
+.btn-pri{background:var(--primary);color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:.85rem}
+.btn-pri:hover{background:var(--primary-light)}
+.btn-dgr{background:var(--danger);color:#fff;border:none;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:.85rem}
+.btn-cancel{background:#757575;color:#fff;border:none;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:.85rem}
+select.cf{padding:6px 12px;border:1px solid #ddd;border-radius:8px;font-size:.85rem;background:#fff}
+.mgrid{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.mhdr{display:grid;grid-template-columns:repeat(7,1fr);background:var(--primary);color:#fff}
+.mhdr div{padding:12px;text-align:center;font-weight:600;font-size:.85rem}
+.mdays{display:grid;grid-template-columns:repeat(7,1fr)}
+.cell{background:#fff;min-height:100px;padding:6px 8px;border-bottom:1px solid #eee;border-right:1px solid #eee;transition:.15s;cursor:pointer;position:relative}
+.cell:nth-child(7n){border-right:none}
+.cell:hover{background:#f0f4ff}
+.cell.om{background:#f9f9f9}
+.cell.om .num{color:#bbb}
+.cell.today{background:#e8f0fe}
+.cell.today .num{background:var(--primary);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center}
+.num{font-size:.85rem;font-weight:600;margin-bottom:4px;color:var(--text-primary)}
+.chip{font-size:.7rem;padding:2px 6px;border-radius:4px;margin-top:2px;color:#fff;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.chip:hover{opacity:.85}
+.wgrid{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.wg{display:grid;grid-template-columns:repeat(7,1fr)}
+.wc{min-height:250px;padding:8px;border-right:1px solid #eee;background:#fff}
+.wc:last-child{border-right:none}
+.wc .wl{font-size:.8rem;font-weight:600;color:var(--primary);margin-bottom:6px;text-align:center;padding:4px;border-radius:6px}
+.wc .wl.td{background:var(--primary);color:#fff}
+.we{padding:4px 8px;border-radius:4px;margin-bottom:4px;color:#fff;font-size:.75rem;cursor:pointer}
+.we:hover{opacity:.85}
+.dv{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:20px}
+.dv h3{color:var(--primary);margin-bottom:16px;font-size:1.1rem}
+.de{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #eee;cursor:pointer}
+.de:last-child{border-bottom:none}
+.de:hover{background:#f8f9ff;margin:0 -12px;padding:12px;border-radius:8px}
+.de-t{min-width:60px;font-weight:600;color:var(--primary);font-size:.9rem}
+.de-b{flex:1}
+.de-b h4{margin-bottom:2px;font-size:.95rem}
+.de-b p{font-size:.85rem;color:var(--text-secondary);margin-bottom:2px}
+.ec{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.7rem;color:#fff;margin-top:4px}
+.noe{text-align:center;padding:60px 20px;color:#999}
+.noe i{font-size:3rem;margin-bottom:12px}
+.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center}
+.modal.show{display:flex}
+.mc{background:#fff;border-radius:14px;padding:28px;max-width:520px;width:90%;max-height:85vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.mx{position:absolute;top:12px;right:16px;font-size:1.5rem;cursor:pointer;color:#999;line-height:1}
+.mx:hover{color:#333}
+.mc h3{margin-bottom:16px;color:var(--primary);font-size:1.1rem}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:.85rem;font-weight:600;margin-bottom:4px;color:var(--text-primary)}
+.fg input,.fg select,.fg textarea{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:.9rem;transition:border .2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,35,126,.1)}
+.fr{display:flex;gap:12px}
+.fr .fg{flex:1}
+.fa{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+.dh{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.dh .dc{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.dh h3{font-size:1.3rem;margin:0}
+.db p{margin-bottom:8px;color:var(--text-secondary);font-size:.9rem;display:flex;align-items:center;gap:8px}
+.db p i{width:18px;color:var(--primary)}
+.dd{background:#f5f5f5;padding:12px;border-radius:8px;margin:12px 0;font-size:.9rem}
+.da{margin-top:18px;padding-top:14px;border-top:1px solid #eee;display:flex;gap:8px}
+.nr{display:flex;align-items:center;gap:10px}
+.bb{color:rgba(255,255,255,.9);text-decoration:none;font-size:.85rem;display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:6px}
+.bb:hover{background:rgba(255,255,255,.15);color:#fff}
+@media(max-width:768px){.toolbar{flex-direction:column;align-items:stretch}.t-left,.t-right{justify-content:center}.cell{min-height:60px;padding:4px}.chip{font-size:.6rem;padding:1px 3px}}
+</style>
+</head>
+<body>
+<nav class="dashboard-nav">
+<div class="nav-container">
+<h2><i class="fas fa-calendar-alt"></i> Kalender Event</h2>
+<div class="nr">
+<a href="dashboard.html" class="bb"><i class="fas fa-arrow-left"></i> Dashboard</a>
+<button id="logoutBtn" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+</div>
+</nav>
+<main class="dashboard-container">
+<div class="toolbar">
+<div class="t-left">
+<button id="prevBtn" class="btn-ico"><i class="fas fa-chevron-left"></i></button>
+<h2 id="titleLabel">Januari 2025</h2>
+<button id="nextBtn" class="btn-ico"><i class="fas fa-chevron-right"></i></button>
+<button id="todayBtn" class="btn-tdy">Hari Ini</button>
+</div>
+<div class="t-right">
+<div class="vsw">
+<button class="active" data-view="month"><i class="fas fa-calendar"></i> Bulan</button>
+<button data-view="week"><i class="fas fa-calendar-week"></i> Minggu</button>
+<button data-view="day"><i class="fas fa-calendar-day"></i> Hari</button>
+</div>
+<select id="catFilter" class="cf">
+<option value="">Semua Kategori</option>
+<option value="PMII">PMII</option>
+<option value="Rayon">Rayon</option>
+<option value="Komisariat">Komisariat</option>
+<option value="BEM">BEM</option>
+<option value="DPM">DPM</option>
+<option value="Faculty">Faculty</option>
+<option value="University">University</option>
+<option value="External">External</option>
+</select>
+<button id="addBtn" class="btn-pri" style="display:none"><i class="fas fa-plus"></i> Tambah</button>
+</div>
+
+<div id="monthView"><div class="mgrid"><div class="mhdr"><div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div><div id="monthDays" class="mdays"></div></div>
+<div id="weekView" style="display:none"><div class="wgrid"><div id="weekBody" class="wg"></div></div>
+<div id="dayView" class="dv" style="display:none"><h3 id="dayTitle">Agenda Hari Ini</h3><div id="dayList"></div>
+
+<div id="detailModal" class="modal"><div class="mc"><span class="mx">&times;</span><div id="detailContent"></div></div>
+<div id="formModal" class="modal"><div class="mc"><span class="mx">&times;</span><h3 id="formTitle">Tambah Event Baru</h3>
+<form id="eventForm"><input type="hidden" id="eventId">
+<div class="fg"><label>Judul *</label><input type="text" id="evTitle" required></div>
+<div class="fg"><label>Deskripsi</label><textarea id="evDesc" rows="3"></textarea></div>
+<div class="fr"><div class="fg"><label>Kategori</label><select id="evCategory"><option value="Rayon">Rayon</option><option value="PMII">PMII</option><option value="Komisariat">Komisariat</option><option value="BEM">BEM</option><option value="DPM">DPM</option><option value="Faculty">Faculty</option><option value="University">University</option><option value="External">External</option></select></div><div class="fg"><label>Warna</label><input type="color" id="evColor" value="#1a237e"></div>
+<div class="fg"><label>Lokasi</label><input type="text" id="evLocation"></div>
+<div class="fr"><div class="fg"><label>Tanggal *</label><input type="date" id="evDate" required></div><div class="fg"><label>Waktu</label><input type="time" id="evTime"></div>
+<div class="fa"><button type="submit" class="btn-pri" id="formSubmit">Simpan</button><button type="button" class="btn-cancel" id="formCancel">Batal</button></div></form></div>
+</main>
+
+<script>
+var MONTHS = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+var CAT_COLORS = {PMII:'#d32f2f',Rayon:'#1a237e',Komisariat:'#2e7d32',BEM:'#e65100',DPM:'#6a1b9a',Faculty:'#00695c',University:'#37474f',External:'#c62828'};
+var EDITOR_ROLES = ['super_admin','admin','ketua_rayon','sekretaris'];
+var today = new Date(), curView = 'month', events = [], curUser = null;
+
+document.addEventListener('DOMContentLoaded', async function(){
+  try {
+    var r = await fetch('/api/auth/me', {credentials:'include'});
+    var d = await r.json();
+    if (!d.authenticated) { window.location.href='../index.html'; return; }
+    curUser = d.user;
+    if (EDITOR_ROLES.indexOf(curUser.role) >= 0) document.getElementById('addBtn').style.display = 'inline-flex';
+    await loadEvents();
+  } catch(e) { window.location.href='../index.html'; return; }
+
+  document.getElementById('logoutBtn').onclick = async function(){ await fetch('/api/auth/logout',{method:'POST',credentials:'include'}); window.location.href='../index.html'; };
+  document.getElementById('prevBtn').onclick = function(){ changeDate(-1); };
+  document.getElementById('nextBtn').onclick = function(){ changeDate(1); };
+  document.getElementById('todayBtn').onclick = function(){ today = new Date(); render(); };
+  document.getElementById('catFilter').onchange = function(){ render(); };
+  document.getElementById('addBtn').onclick = function(){ openForm(); };
+  document.getElementById('formCancel').onclick = function(){ closeModal('formModal'); };
+  document.getElementById('eventForm').onsubmit = handleSubmit;
+
+  var q = document.querySelectorAll('.mx');
+  for (var i=0; i<q.length; i++) q[i].onclick = function(){ this.parentElement.parentElement.classList.remove('show'); };
+
+  var vBtns = document.querySelectorAll('[data-view]');
+  for (var i=0; i<vBtns.length; i++) vBtns[i].onclick = function(){
+    var all = document.querySelectorAll('[data-view]');
+    for (var j=0; j<all.length; j++) all[j].classList.remove('active');
+    this.classList.add('active');
+    curView = this.dataset.view;
+    render();
+  };
+
+  window.onclick = function(e){ if (e.target.classList.contains('modal')) e.target.classList.remove('show'); };
+});
+
+function changeDate(delta) {
+  if (curView === 'month') today.setMonth(today.getMonth() + delta);
+  else if (curView === 'week') today.setDate(today.getDate() + (7 * delta));
+  else today.setDate(today.getDate() + delta);
+  render();
+}
+
+function getDateStr(d) {
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+function filteredEvents() {
+  var cat = document.getElementById('catFilter').value;
+  return cat ? events.filter(function(e){ return e.category === cat; }) : events;
+}
+
+function getColor(e) {
+  return e.color || CAT_COLORS[e.category] || '#1a237e';
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+
+function render() {
+  document.getElementById('monthView').parentElement.style.display = (curView === 'month') ? 'block' : 'none';
+  document.getElementById('weekView').parentElement.style.display = (curView === 'week') ? 'block' : 'none';
+  document.getElementById('dayView').parentElement.style.display = (curView === 'day') ? 'block' : 'none';
+  if (curView === 'month') renderMonth();
+  else if (curView === 'week') renderWeek();
+  else renderDay();
+}
+
+function renderMonth() {
+  var f = filteredEvents();
+  var y = today.getFullYear(), m = today.getMonth();
+  document.getElementById('titleLabel').textContent = MONTHS[m] + ' ' + y;
+  var fd = new Date(y, m, 1).getDay();
+  var dim = new Date(y, m + 1, 0).getDate();
+  var dip = new Date(y, m, 0).getDate();
+  var ts = getDateStr(new Date());
+  var h = '';
+  for (var i = fd - 1; i >= 0; i--) {
+    h += '<div class="cell om"><div class="num">' + (dip - i) + '</div>';
+  }
+  for (var d = 1; d <= dim; d++) {
+    var ds = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    var it = (ds === ts);
+    var de = f.filter(function(e) { return e.event_date === ds; });
+    h += '<div class="cell' + (it ? ' today' : '') + '" onclick="goToDay(\'' + ds + '\')"><div class="num">' + d + '</div>';
+    for (var j = 0; j < Math.min(de.length, 3); j++) {
+      h += '<div class="chip" style="background:' + getColor(de[j]) + '" onclick="event.stopPropagation();showDetail(' + de[j].id + ')">' + de[j].title + '</div>';
+    }
+    if (de.length > 3) h += '<div style="font-size:.7rem;color:#999">+' + (de.length - 3) + '</div>';
+    h += '</div>';
+  }
+  var tc = fd + dim;
+  var rem = (7 - (tc % 7)) % 7;
+  for (var i = 1; i <= rem; i++) {
+    h += '<div class="cell om"><div class="num">' + i + '</div>';
+  }
+  document.getElementById('monthDays').innerHTML = h;
+}
+
+function renderWeek() {
+  var f = filteredEvents();
+  var ts = getDateStr(new Date());
+  var mon = new Date(today);
+  mon.setDate(mon.getDate() - ((mon.getDay() + 6) % 7));
+  document.getElementById('titleLabel').textContent = 'Minggu ' + MONTHS[mon.getMonth()];
+  var dy = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+  var h = '';
+  for (var i = 0; i < 7; i++) {
+    var dt = new Date(mon);
+    dt.setDate(mon.getDate() + i);
+    var ds = getDateStr(dt);
+    var it = (ds === ts);
+    var de = f.filter(function(e) { return e.event_date === ds; });
+    h += '<div class="wc"><div class="wl' + (it ? ' td' : '') + '">' + dy[i] + ' ' + dt.getDate() + '</div>';
+    for (var j = 0; j < de.length; j++) {
+      h += '<div class="we" style="background:' + getColor(de[j]) + '" onclick="showDetail(' + de[j].id + ')">' + (de[j].event_time ? de[j].event_time.substring(0, 5) : '') + ' ' + de[j].title + '</div>';
+    }
+    h += '</div>';
+  }
+  document.getElementById('weekBody').innerHTML = h;
+}
+
+function renderDay() {
+  var f = filteredEvents();
+  var ds = getDateStr(today);
+  document.getElementById('titleLabel').textContent = today.getDate() + ' ' + MONTHS[today.getMonth()] + ' ' + today.getFullYear();
+  document.getElementById('dayTitle').textContent = 'Agenda ' + today.getDate() + ' ' + MONTHS[today.getMonth()] + ' ' + today.getFullYear();
+  var de = f.filter(function(e) { return e.event_date === ds; });
+  var h = '';
+  if (de.length === 0) {
+    h = '<div class="noe"><i class="far fa-calendar"></i><p>Tidak ada event</p></div>';
+  } else {
+    de.sort(function(a, b) { return (a.event_time || '00:00') > (b.event_time || '00:00') ? 1 : -1; });
+    for (var j = 0; j < de.length; j++) {
+      var e = de[j];
+      var t = e.event_time ? e.event_time.substring(0, 5) : '--:--';
+      h += '<div class="de" onclick="showDetail(' + e.id + ')"><div class="de-t">' + t + '</div><div class="de-b"><h4>' + e.title + '</h4><span class="ec" style="background:' + getColor(e) + '">' + e.category + '</span>' + (e.location ? '<p><i class="fas fa-map-marker-alt"></i> ' + e.location + '</p>' : '') + '</div>';
+    }
+  }
+  document.getElementById('dayList').innerHTML = h;
+}
+
+function goToDay(ds) {
+  today = new Date(ds + 'T00:00:00');
+  var btns = document.querySelectorAll('[data-view]');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+  document.querySelector('[data-view="day"]').classList.add('active');
+  curView = 'day';
+  render();
+}
+
+async function loadEvents() {
+  try { var r = await fetch('/api/events', { credentials: 'include' }); events = await r.json(); } catch (e) { events = []; }
+  render();
+}
+
+function openForm() {
+  document.getElementById('eventId').value = '';
+  document.getElementById('evTitle').value = '';
+  document.getElementById('evDesc').value = '';
+  document.getElementById('evCategory').value = 'Rayon';
+  document.getElementById('evColor').value = '#1a237e';
+  document.getElementById('evLocation').value = '';
+  document.getElementById('evDate').value = getDateStr(today);
+  document.getElementById('evTime').value = '';
+  document.getElementById('formTitle').textContent = 'Tambah Event Baru';
+  document.getElementById('formModal').classList.add('show');
+}
+
+function editEvent(id) {
+  var e = null;
+  for (var i = 0; i < events.length; i++) { if (events[i].id === id) { e = events[i]; break; } }
+  if (!e) return;
+  document.getElementById('eventId').value = e.id;
+  document.getElementById('evTitle').value = e.title;
+  document.getElementById('evDesc').value = e.description || '';
+  document.getElementById('evCategory').value = e.category || 'Rayon';
+  document.getElementById('evColor').value = getColor(e);
+  document.getElementById('evLocation').value = e.location || '';
+  document.getElementById('evDate').value = e.event_date;
+  document.getElementById('evTime').value = e.event_time || '';
+  document.getElementById('formTitle').textContent = 'Edit Event';
+  document.getElementById('detailModal').classList.remove('show');
+  document.getElementById('formModal').classList.add('show');
+}
+
+async function handleSubmit(e) {
+  e.preventDefault();
+  var id = document.getElementById('eventId').value;
+  var data = {title: document.getElementById('evTitle').value, description: document.getElementById('evDesc').value, category: document.getElementById('evCategory').value, color: document.getElementById('evColor').value, location: document.getElementById('evLocation').value, event_date: document.getElementById('evDate').value, event_time: document.getElementById('evTime').value};
+  try {
+    var url = '/api/events' + (id ? '/' + id : '');
+    var method = id ? 'PUT' : 'POST';
+    var resp = await fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), credentials: 'include' });
+    if (resp.ok) { document.getElementById('formModal').classList.remove('show'); await loadEvents(); }
+    else { alert('Gagal menyimpan event'); }
+  } catch (err) { alert('Error: ' + err.message); }
+}
+
+async function deleteEvent(id) {
+  if (!confirm('Hapus event ini?')) return;
+  try {
+    var resp = await fetch('/api/events/' + id, { method: 'DELETE', credentials: 'include' });
+    if (resp.ok) { document.getElementById('detailModal').classList.remove('show'); await loadEvents(); }
+    else { alert('Gagal menghapus event'); }
+  } catch (err) { alert('Error: ' + err.message); }
+}
+
+function showDetail(id) {
+  var e = null;
+  for (var i = 0; i < events.length; i++) { if (events[i].id === id) { e = events[i]; break; } }
+  if (!e) return;
+  var c = getColor(e);
+  var dt = new Date(e.event_date + 'T00:00:00');
+  var ds = dt.getDate() + ' ' + MONTHS[dt.getMonth()] + ' ' + dt.getFullYear();
+  var t = e.event_time ? e.event_time.substring(0, 5) : '--:--';
+  var h = '<div class="dh"><div class="dc" style="background:' + c + '"></div><h3>' + e.title + '</h3></div>';
+  h += '<div class="db">';
+  h += '<p><i class="fas fa-calendar-alt"></i> ' + ds + '</p>';
+  h += '<p><i class="fas fa-clock"></i> ' + t + '</p>';
+  h += '<p><i class="fas fa-tag"></i> <span style="background:' + c + ';padding:2px 12px;border-radius:12px;color:#fff;font-size:.8rem">' + e.category + '</span></p>';
+  if (e.location) h += '<p><i class="fas fa-map-marker-alt"></i> ' + e.location + '</p>';
+  if (e.description) h += '<div class="dd">' + e.description + '</div>';
+  if (e.created_by_name) h += '<p><i class="fas fa-user"></i> ' + e.created_by_name + '</p>';
+  h += '</div>';
+  if (EDITOR_ROLES.indexOf(curUser.role) >= 0) {
+    h += '<div class="da"><button class="btn-pri" onclick="editEvent(' + e.id + ')"><i class="fas fa-edit"></i> Edit</button><button class="btn-dgr" onclick="deleteEvent(' + e.id + ')"><i class="fas fa-trash"></i> Hapus</button></div>';
+  }
+  document.getElementById('detailContent').innerHTML = h;
+  document.getElementById('detailModal').classList.add('show');
+}
+</script>
+</body>
+</html>

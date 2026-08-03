@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pengaturan - Kader Panel PMII Justicia</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================
+   Kader Panel — Settings (Admin)
+   PMII Rayon Inklusif Justicia
+   ============================================ */
+:root{
+  --sidebar-w:264px;
+  --header-h:66px;
+  --primary:#1a237e;
+  --primary-light:#3949ab;
+  --primary-dark:#000051;
+  --accent:#ffd600;
+  --success:#2e7d32;
+  --warning:#f57f17;
+  --danger:#c62828;
+  --info:#1565c0;
+  --bg:#f1f3f7;
+  --bg-card:#ffffff;
+  --bg-hover:#f5f6fa;
+  --text:#1c2333;
+  --text2:#64748b;
+  --text3:#94a3b8;
+  --border:#e4e8ef;
+  --shadow:0 1px 3px rgba(16,24,40,.06),0 1px 2px rgba(16,24,40,.04);
+  --shadow-lg:0 12px 32px rgba(16,24,40,.12);
+  --radius:14px;
+  --radius-sm:9px;
+  --transition:.28s ease;
+  --sidebar-bg:linear-gradient(180deg,#141a4d 0%,#0d1238 55%,#090d2b 100%);
+}
+[data-theme="dark"]{
+  --primary:#7f8ff4;
+  --primary-light:#a5b4fc;
+  --primary-dark:#5c6bc0;
+  --accent:#ffd600;
+  --bg:#0b0e17;
+  --bg-card:#141926;
+  --bg-hover:#1b2233;
+  --text:#e8ecf4;
+  --text2:#94a3b8;
+  --text3:#64748b;
+  --border:#242c42;
+  --shadow:0 1px 3px rgba(0,0,0,.4),0 1px 2px rgba(0,0,0,.3);
+  --shadow-lg:0 12px 32px rgba(0,0,0,.5);
+  --sidebar-bg:linear-gradient(180deg,#0d1130 0%,#090d26 55%,#060918 100%);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased}
+body{
+  font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--bg);color:var(--text);font-size:14px;line-height:1.55;
+  overflow-x:hidden;min-height:100vh;transition:background var(--transition),color var(--transition);
+}
+a{text-decoration:none;color:inherit}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:20px}
+::-webkit-scrollbar-thumb:hover{background:var(--text3)}
+
+.dash-layout{display:flex;min-height:100vh}
+
+/* Sidebar */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:var(--sidebar-bg);color:#fff;z-index:1000;overflow-y:auto;overflow-x:hidden;transition:transform var(--transition);display:flex;flex-direction:column}
+.sidebar::-webkit-scrollbar{width:5px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15)}
+.sidebar-brand{padding:20px 20px 18px;display:flex;align-items:center;gap:13px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.brand-logo{width:42px;height:42px;border-radius:12px;flex-shrink:0;background:linear-gradient(135deg,#ffd600,#ffab00);display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:#1a237e;font-weight:800;box-shadow:0 4px 14px rgba(255,214,0,.35);overflow:hidden}
+.brand-logo img{width:100%;height:100%;object-fit:cover}
+.brand-text h2{font-size:.98rem;font-weight:700;letter-spacing:.2px;line-height:1.25;white-space:nowrap}
+.brand-text small{font-size:.68rem;opacity:.62;display:block;margin-top:2px;letter-spacing:.4px;white-space:nowrap}
+.sidebar-nav{padding:14px 0 10px;flex:1}
+.sidebar-label{padding:14px 22px 6px;font-size:.64rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.4)}
+.sidebar-link{display:flex;align-items:center;gap:13px;padding:10.5px 20px;color:rgba(255,255,255,.68);text-decoration:none;font-size:.85rem;font-weight:500;transition:all var(--transition);border-left:3px solid transparent;margin:2px 10px;border-radius:10px}
+.sidebar-link i{width:20px;text-align:center;font-size:1rem;flex-shrink:0}
+.sidebar-link:hover{background:rgba(255,255,255,.07);color:#fff;transform:translateX(2px)}
+.sidebar-link.active{background:linear-gradient(90deg,rgba(255,214,0,.16),rgba(255,214,0,.04));color:#ffd600;border-left-color:#ffd600;font-weight:600}
+.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.08);font-size:.7rem;color:rgba(255,255,255,.4);text-align:center;flex-shrink:0}
+
+/* Main */
+.main-area{margin-left:var(--sidebar-w);flex:1;min-height:100vh;display:flex;flex-direction:column;width:calc(100% - var(--sidebar-w))}
+
+/* Topbar */
+.topbar{background:var(--bg-card);height:var(--header-h);display:flex;align-items:center;padding:0 26px;gap:14px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:900;transition:background var(--transition),border var(--transition)}
+[data-theme="dark"] .topbar{background:rgba(20,25,38,.95)}
+.topbar-left{display:flex;align-items:center;gap:14px;min-width:0}
+.hamburger{display:none;background:var(--bg);border:1px solid var(--border);color:var(--text);font-size:1.1rem;cursor:pointer;padding:8px 10px;border-radius:var(--radius-sm);transition:all var(--transition);line-height:1}
+.hamburger:hover{color:var(--primary);border-color:var(--primary)}
+.topbar-title{display:flex;align-items:center;gap:10px;font-size:.98rem;font-weight:700;color:var(--text)}
+.topbar-title i{color:var(--primary)}
+.topbar-right{display:flex;align-items:center;gap:12px;margin-left:auto}
+.icon-btn{position:relative;width:38px;height:38px;border-radius:11px;background:var(--bg);border:1px solid var(--border);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.95rem;transition:all var(--transition)}
+.icon-btn:hover{color:var(--primary);border-color:var(--primary);transform:translateY(-1px)}
+.theme-toggle .fa-sun{display:none}
+[data-theme="dark"] .theme-toggle .fa-moon{display:none}
+[data-theme="dark"] .theme-toggle .fa-sun{display:inline-block;color:var(--accent)}
+.topbar-user{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:12px;transition:all var(--transition);cursor:pointer}
+.topbar-user:hover{background:var(--bg)}
+.u-avatar{width:36px;height:36px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;letter-spacing:.5px;box-shadow:0 3px 10px rgba(26,35,126,.28)}
+.u-info{line-height:1.2;min-width:0}
+.u-name{font-size:.83rem;font-weight:600;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.u-role{font-size:.68rem;color:var(--text2);text-transform:capitalize}
+
+/* Content */
+.dash-content{padding:26px;flex:1;width:100%;max-width:900px;margin:0 auto}
+.page-head{margin-bottom:24px}
+.page-title{font-size:1.5rem;font-weight:800;letter-spacing:-.3px;display:flex;align-items:center;gap:12px}
+.page-subtitle{font-size:.84rem;color:var(--text2);margin-top:5px}
+
+/* Cards */
+.card{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;transition:background var(--transition),border var(--transition);box-shadow:var(--shadow);margin-bottom:22px}
+.card-hd{padding:17px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.card-hd h3{font-size:.92rem;font-weight:700;display:flex;align-items:center;gap:10px}
+.card-hd h3 i{color:var(--primary);font-size:.98rem}
+.card-hd .hint{font-size:.72rem;color:var(--text3)}
+.card-bd{padding:20px}
+
+/* Form */
+.fg{margin-bottom:18px}
+.fg label{display:block;font-size:.8rem;font-weight:600;margin-bottom:6px;color:var(--text)}
+.fg label .req{color:var(--danger)}
+.fg input[type=text],.fg input[type=email],.fg input[type=tel],.fg textarea,.fg input[type=url]{
+  width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:10px;font-size:.87rem;
+  background:var(--bg);color:var(--text);outline:none;transition:all var(--transition);font-family:inherit;
+}
+.fg input:focus,.fg textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,35,126,.12)}
+[data-theme="dark"] .fg input:focus,[data-theme="dark"] .fg textarea:focus{box-shadow:0 0 0 3px rgba(127,143,244,.16)}
+.fg textarea{resize:vertical;min-height:70px}
+.fg .sub-txt{font-size:.7rem;color:var(--text3);margin-top:4px;display:block}
+
+/* Toggle switch */
+.switch{position:relative;display:inline-block;width:46px;height:25px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;inset:0;background:var(--border);transition:.3s;border-radius:30px}
+.slider:before{content:'';position:absolute;height:19px;width:19px;left:3px;bottom:3px;background:#fff;transition:.3s;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch input:checked+.slider{background:var(--primary)}
+.switch input:checked+.slider:before{transform:translateX(21px)}
+.toggle-row{display:flex;align-items:center;gap:14px;padding:12px 0;justify-content:space-between}
+.toggle-row .t-info{flex:1}
+.toggle-row .t-info .t-title{font-size:.85rem;font-weight:600}
+.toggle-row .t-info .t-desc{font-size:.72rem;color:var(--text3);margin-top:2px}
+
+/* Media upload */
+.media-row{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.media-preview{width:96px;height:96px;border-radius:12px;border:1.5px dashed var(--border);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--text3);font-size:.68rem;text-align:center;padding:4px}
+.media-preview img{width:100%;height:100%;object-fit:cover}
+.media-preview .ph{display:flex;flex-direction:column;align-items:center;gap:4px}
+.media-preview .ph i{font-size:1.4rem}
+.media-controls{flex:1;min-width:200px;display:flex;flex-direction:column;gap:8px}
+.file-btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:9px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.78rem;font-weight:600;cursor:pointer;transition:all var(--transition);align-self:flex-start}
+.file-btn:hover{border-color:var(--primary);color:var(--primary)}
+.file-btn input[type=file]{position:absolute;left:0;top:0;opacity:0;width:100%;height:100%;cursor:pointer}
+.media-url input{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:9px;background:var(--bg);color:var(--text);font-size:.78rem;outline:none;transition:all var(--transition)}
+.media-url input:focus{border-color:var(--primary)}
+.media-actions{display:flex;gap:8px;align-items:center}
+
+/* Save bar */
+.save-bar{display:flex;align-items:center;gap:14px;padding:16px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);position:sticky;bottom:18px;z-index:500;flex-wrap:wrap}
+.save-bar .sb-info{flex:1;min-width:180px;font-size:.78rem;color:var(--text3)}
+.save-bar .sb-info b{color:var(--primary)}
+.btn{padding:10px 20px;border-radius:10px;font-size:.85rem;font-weight:600;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all var(--transition)}
+.btn-primary{background:linear-gradient(120deg,var(--primary),var(--primary-light));color:#fff;box-shadow:0 4px 12px rgba(26,35,126,.28)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(26,35,126,.36)}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn-ghost{background:var(--bg);border:1px solid var(--border);color:var(--text2)}
+.btn-ghost:hover{color:var(--primary);border-color:var(--primary)}
+
+/* Toast */
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:2000}
+.toast{padding:13px 18px;border-radius:11px;color:#fff;font-size:.84rem;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.18);display:flex;align-items:center;gap:10px;margin-top:8px;animation:slideIn .3s ease}
+.toast.succ{background:#2e7d32}
+.toast.err{background:#c62828}
+.toast i{font-size:1rem}
+@keyframes slideIn{from{opacity:0;transform:translateX(80px)}to{opacity:1;transform:translateX(0)}}
+
+/* Loading / error */
+.state{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:200px;color:var(--text2);gap:10px;text-align:center;padding:24px}
+.state i{font-size:1.8rem;opacity:.5}
+.state.spin i{animation:spin 1s linear infinite}
+.state p{font-size:.82rem}
+@keyframes spin{100%{transform:rotate(360deg)}}
+.hidden{display:none!important}
+
+/* Responsive */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);box-shadow:none}
+  .sidebar.open{transform:translateX(0);box-shadow:0 0 60px rgba(0,0,0,.5)}
+  .main-area{margin-left:0;width:100%}
+  .hamburger{display:inline-flex}
+  .topbar{padding:0 16px}
+  .dash-content{padding:18px 16px}
+  .u-info{display:none}
+}
+</style>
+</head>
+<body>
+<div class="dash-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo" id="sbLogo"><i class="fas fa-people-arrows"></i></div>
+      <div class="brand-text">
+        <h2 id="sbName">Kader Panel</h2>
+        <small id="sbOrg">PMII Justicia UNESA</small>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-label">Menu</div>
+      <a class="sidebar-link" href="dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a class="sidebar-link" href="users.html"><i class="fas fa-users"></i> Pengguna</a>
+      <a class="sidebar-link" href="organization.html"><i class="fas fa-sitemap"></i> Struktur</a>
+      <a class="sidebar-link" href="calendar.html"><i class="fas fa-calendar-days"></i> Event</a>
+      <a class="sidebar-link" href="announcements.html"><i class="fas fa-bullhorn"></i> Pengumuman</a>
+      <div class="sidebar-label">Lainnya</div>
+      <a class="sidebar-link active" href="settings.html"><i class="fas fa-cog"></i> Pengaturan</a>
+      <a class="sidebar-link" id="logoutBtn" href="#"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+    </nav>
+    <div class="sidebar-footer">PMII Rayon Justicia &copy; 2025</div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-area">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+        <div class="topbar-title"><i class="fas fa-cog"></i> Pengaturan</div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn theme-toggle" id="themeToggle" title="Ganti tema"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
+        <div class="topbar-user" id="userChip">
+          <div class="u-avatar" id="userAvatar">K</div>
+          <div class="u-info">
+            <div class="u-name" id="userName">Kader</div>
+            <div class="u-role" id="userRole">-</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="dash-content">
+      <div class="page-head">
+        <h1 class="page-title"><i class="fas fa-cog"></i> Pengaturan Website</h1>
+        <p class="page-subtitle">Kelola identitas, kontak, dan tampilan situs. Perubahan tersimpan di database dan berlaku secara global.</p>
+      </div>
+
+      <!-- Loading state -->
+      <div class="state spin" id="loadingState"><i class="fas fa-spinner"></i><p>Memuat pengaturan...</p></div>
+      <div class="state" id="errorState"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat pengaturan.</p></div>
+
+      <form id="settingsForm" class="hidden">
+        <!-- Branding -->
+        <div class="card">
+          <div class="card-hd"><h3><i class="fas fa-palette"></i> Branding</h3></div>
+          <div class="card-bd">
+            <div class="fg">
+              <label>Nama Website <span class="req">*</span></label>
+              <input type="text" id="inSiteName" placeholder="Kader Panel" maxlength="100" required>
+              <span class="sub-txt">Ditampilkan pada judul halaman dan sidebar.</span>
+            </div>
+            <div class="fg">
+              <label>Logo</label>
+              <div class="media-row">
+                <div class="media-preview" id="logoPrev"><div class="ph"><i class="fas fa-image"></i>Preview</div></div>
+                <div class="media-controls">
+                  <label class="file-btn"><i class="fas fa-upload"></i> Upload Logo<input type="file" id="inLogoFile" accept="image/*"></label>
+                  <div class="media-url"><input type="text" id="inLogoUrl" placeholder="...atau URL gambar logo"><span class="sub-txt">Mendukung file gambar atau URL eksternal.</span></div>
+                  <div class="media-actions">
+                    <button type="button" class="btn btn-ghost" id="logoClear" style="padding:6px 12px;font-size:.74rem"><i class="fas fa-eraser"></i> Hapus</button>
+                    <span id="logoInfo" style="font-size:.7rem;color:var(--text3)"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="fg">
+              <label>Favicon</label>
+              <div class="media-row">
+                <div class="media-preview" id="favPrev" style="width:44px;height:44px;border-radius:10px"><div class="ph"><i class="fas fa-image"></i></div></div>
+                <div class="media-controls">
+                  <label class="file-btn"><i class="fas fa-upload"></i> Upload Favicon<input type="file" id="inFavFile" accept="image/*"></label>
+                  <div class="media-url"><input type="text" id="inFavUrl" placeholder="...atau URL favicon"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Organization -->
+        <div class="card">
+          <div class="card-hd"><h3><i class="fas fa-building"></i> Organisasi</h3></div>
+          <div class="card-bd">
+            <div class="fg">
+              <label>Nama Organisasi <span class="req">*</span></label>
+              <input type="text" id="inOrgName" placeholder="PMII Rayon Inklusif Justicia" maxlength="150" required>
+            </div>
+            <div class="fg">
+              <label>Alamat</label>
+              <textarea id="inAddress" rows="2" placeholder="Alamat sekretariat organisasi..."></textarea>
+            </div>
+            <div class="fg">
+              <label>Email</label>
+              <input type="email" id="inEmail" placeholder="organisasi@example.com">
+            </div>
+            <div class="fg">
+              <label>Instagram</label>
+              <input type="text" id="inInstagram" placeholder="@pmii.justicia" maxlength="100">
+            </div>
+            <div class="fg">
+              <label>WhatsApp</label>
+              <input type="tel" id="inWhatsapp" placeholder="+6281234567890" maxlength="30">
+            </div>
+          </div>
+        </div>
+
+        <!-- Appearance -->
+        <div class="card">
+          <div class="card-hd"><h3><i class="fas fa-laptop"></i> Tampilan &amp; Login</h3></div>
+          <div class="card-bd">
+            <div class="toggle-row" style="border-bottom:1px solid var(--border)">
+              <div class="t-info">
+                <div class="t-title"><i class="fas fa-moon" style="color:var(--primary);width:20px"></i> Dark Mode Bawaan</div>
+                <div class="t-desc">Jika aktif, pengunjung baru akan melihat situs dalam mode gelap secara default (dapat diubah pengguna).</div>
+              </div>
+              <label class="switch"><input type="checkbox" id="inDarkMode"><span class="slider"></span></label>
+            </div>
+            <div class="fg" style="margin-top:16px">
+              <label>Background Halaman Login</label>
+              <div class="media-row">
+                <div class="media-preview" id="bgPrev"><div class="ph"><i class="fas fa-image"></i>Preview</div></div>
+                <div class="media-controls">
+                  <label class="file-btn"><i class="fas fa-upload"></i> Upload Background<input type="file" id="inBgFile" accept="image/*"></label>
+                  <div class="media-url"><input type="text" id="inBgUrl" placeholder="...atau URL gambar background"></div>
+                  <div class="media-actions">
+                    <button type="button" class="btn btn-ghost" id="bgClear" style="padding:6px 12px;font-size:.74rem"><i class="fas fa-eraser"></i> Hapus</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Save bar -->
+        <div class="save-bar">
+          <div class="sb-info">Perubahan otomatis berlaku di seluruh situs setelah <b>disimpan</b>.</div>
+          <button type="submit" class="btn btn-primary" id="saveBtn"><i class="fas fa-save"></i> Simpan Pengaturan</button>
+        </div>
+      </form>
+    </main>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+/* ===== Helpers ===== */
+function $(id){return document.getElementById(id)}
+function escapeHtml(s){
+  if(s===null||s===undefined) return '';
+  return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'<','>':'>','"':'"',"'":'&#39;'}[c];});
+}
+function initials(n){if(!n)return '?';return n.trim().split(/\s+/).map(function(w){return w[0]}).join('').substring(0,2).toUpperCase();}
+function capRole(r){if(!r)return '-';return r.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()});}
+function toast(msg,type){
+  var wrap=$('toastWrap');
+  var el=document.createElement('div');
+  el.className='toast '+(type==='err'?'err':'succ');
+  el.innerHTML='<i class="fas '+(type==='err'?'fa-exclamation-circle':'fa-check-circle')+'"></i>'+escapeHtml(msg);
+  wrap.appendChild(el);
+  setTimeout(function(){el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(function(){el.remove();},320);},3200);
+}
+
+/* ===== Theme ===== */
+(function initTheme(){
+  var saved=localStorage.getItem('theme');
+  if(saved==='dark'||(!saved&&window.matchMedia('(prefers-color-scheme: dark)').matches)){
+    document.documentElement.setAttribute('data-theme','dark');
+  }
+})();
+$('themeToggle').addEventListener('click',function(){
+  var dark=document.documentElement.getAttribute('data-theme')==='dark';
+  if(dark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme','light');}
+  else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('theme','dark');}
+});
+
+/* ===== Hamburger ===== */
+$('hamburger').addEventListener('click',function(){$('sidebar').classList.toggle('open');});
+document.addEventListener('click',function(e){
+  if(window.innerWidth<=768&&!e.target.closest('.sidebar')&&!e.target.closest('.hamburger'))$('sidebar').classList.remove('open');
+});
+
+/* ===== Media helpers ===== */
+function fileToDataUrl(file, cb){
+  var reader=new FileReader();
+  reader.onload=function(){ cb(reader.result); };
+  reader.readAsDataURL(file);
+}
+function setPreview(el, val){
+  if(!val){ el.innerHTML='<div class="ph"><i class="fas fa-image"></i>Preview</div>'; return; }
+  el.innerHTML='<img src="'+escapeHtml(val)+'" alt="preview">';
+}
+function bindFileInput(fileInput,urlInput,previewEl,infoEl){
+  fileInput.addEventListener('change',function(){
+    var f=fileInput.files&&fileInput.files[0];
+    if(!f){return;}
+    if(f.size>2*1024*1024){toast('Ukuran maksimal 2MB','err');fileInput.value='';return;}
+    fileToDataUrl(f,function(dataUrl){
+      urlInput.value=dataUrl;
+      setPreview(previewEl,dataUrl);
+      if(infoEl)infoEl.textContent=f.name+' · '+Math.round(f.size/1024)+' KB';
+    });
+  });
+}
+$('inLogoUrl').addEventListener('input',function(){setPreview($('logoPrev'),this.value);});
+$('inFavUrl').addEventListener('input',function(){if(this.value){$('favPrev').innerHTML='<img src="'+escapeHtml(this.value)+'">';}else{$('favPrev').innerHTML='<div class="ph"><i class="fas fa-image"></i></div>';}});
+$('inBgUrl').addEventListener('input',function(){setPreview($('bgPrev'),this.value);});
+bindFileInput($('inLogoFile'),$('inLogoUrl'),$('logoPrev'),$('logoInfo'));
+bindFileInput($('inFavFile'),$('inFavUrl'),$('favPrev'),null);
+bindFileInput($('inBgFile'),$('inBgUrl'),$('bgPrev'),null);
+$('logoClear').addEventListener('click',function(){$('inLogoUrl').value='';$('inLogoFile').value='';setPreview($('logoPrev'),'');$('logoInfo').textContent='';});
+$('bgClear').addEventListener('click',function(){$('inBgUrl').value='';$('inBgFile').value='';setPreview($('bgPrev'),'');});
+
+/* ===== Load & render settings ===== */
+var CURRENT={};
+async function loadSettings(){
+  try{
+    var r=await fetch('/api/settings',{credentials:'include'});
+    var d=await r.json();
+    CURRENT=d.settings||{};
+    renderForm(CURRENT);
+    renderBrand(CURRENT);
+    $('loadingState').classList.add('hidden');
+    $('settingsForm').classList.remove('hidden');
+  }catch(e){
+    $('loadingState').classList.add('hidden');
+    $('errorState').classList.remove('hidden');
+  }
+}
+function renderForm(s){
+  $('inSiteName').value=s.site_name||'';
+  $('inOrgName').value=s.org_name||'';
+  $('inAddress').value=s.org_address||'';
+  $('inEmail').value=s.org_email||'';
+  $('inInstagram').value=s.org_instagram||'';
+  $('inWhatsapp').value=s.org_whatsapp||'';
+  $('inDarkMode').checked=!!s.default_dark_mode;
+  $('inLogoUrl').value=s.site_logo||'';
+  setPreview($('logoPrev'),s.site_logo);
+  $('inFavUrl').value=s.site_favicon||'';
+  if(s.site_favicon){$('favPrev').innerHTML='<img src="'+escapeHtml(s.site_favicon)+'">';}else{$('favPrev').innerHTML='<div class="ph"><i class="fas fa-image"></i></div>';}
+  $('inBgUrl').value=s.login_background||'';
+  setPreview($('bgPrev'),s.login_background);
+}
+function renderBrand(s){
+  var name=s.site_name||'Kader Panel';
+  var org=s.org_name||'PMII Justicia UNESA';
+  $('sbName').textContent=name;
+  $('sbOrg').textContent=org;
+  if(s.site_logo){
+    $('sbLogo').innerHTML='<img src="'+escapeHtml(s.site_logo)+'">';
+  }
+  if(s.site_favicon){
+    var link=document.querySelector('link[rel="icon"]')||document.createElement('link');
+    link.rel='icon';link.href=s.site_favicon;
+    document.head.appendChild(link);
+  }
+}
+
+/* ===== Save ===== */
+$('settingsForm').addEventListener('submit',async function(e){
+  e.preventDefault();
+  var btn=$('saveBtn');
+  btn.disabled=true;
+  btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+  var payload={
+    site_name:$('inSiteName').value.trim(),
+    site_logo:$('inLogoUrl').value||null,
+    site_favicon:$('inFavUrl').value||null,
+    org_name:$('inOrgName').value.trim(),
+    org_address:$('inAddress').value||null,
+    org_instagram:$('inInstagram').value||null,
+    org_whatsapp:$('inWhatsapp').value||null,
+    org_email:$('inEmail').value||null,
+    default_dark_mode:$('inDarkMode').checked,
+    login_background:$('inBgUrl').value||null
+  };
+  try{
+    var r=await fetch('/api/settings',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),credentials:'include'});
+    var d=await r.json();
+    if(r.ok){
+      toast(d.message||'Pengaturan berhasil disimpan');
+      CURRENT=payload;
+      renderBrand(payload);
+      if(payload.default_dark_mode&&!localStorage.getItem('theme')){
+        document.documentElement.setAttribute('data-theme','dark');
+      }
+    }else{
+      toast(d.error||'Gagal menyimpan','err');
+    }
+  }catch(err){
+    toast('Terjadi kesalahan koneksi','err');
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML='<i class="fas fa-save"></i> Simpan Pengaturan';
+  }
+});
+
+/* ===== Auth / logout ===== */
+$('logoutBtn').addEventListener('click',async function(ev){
+  ev.preventDefault();
+  try{await fetch('/api/auth/logout',{method:'POST',credentials:'include'});}catch(e){}
+  window.location.href='../index.html';
+});
+async function init(){
+  // Auth check (admin only page)
+  try{
+    var r=await fetch('/api/auth/me',{credentials:'include'});
+    var d=await r.json();
+    if(!d.authenticated){window.location.href='../index.html';return;}
+    if(['super_admin','admin'].indexOf(d.user.role)<0){
+      window.location.href='dashboard.html';return;
+    }
+    var u=d.user;
+    var name=u.full_name||u.username||'Kader';
+    $('userName').textContent=name;
+    $('userRole').textContent=capRole(u.role);
+    $('userAvatar').textContent=initials(name);
+    await loadSettings();
+  }catch(e){window.location.href='../index.html';}
+}
+init();
+</script>
+</body>
+</html>
+

@@ -35,8 +35,8 @@
       "dest": "/public/uploads/$1"
     },
     {
-      "src": "/page/(.*)",
-      "dest": "/page/$1"
+      "src": "./pages/(.*)",
+      "dest": "./pages/$1"
     },
     {
       "src": "/berita/(.*)",

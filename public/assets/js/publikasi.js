@@ -68,7 +68,7 @@ function renderPublikasi(data = publikasiData) {
               <span>${item.size}</span>
               <span>${new Date(item.uploadDate).toLocaleDateString('id-ID')}</span>
             </div>
-            <a href="/assets/file/${item.file}" class="btn btn-primary w-100" download>
+            <a href="./assets/file/${item.file}" class="btn btn-primary w-100" download>
               <i class="bi bi-download me-1"></i>Download PDF
             </a>
           </div>

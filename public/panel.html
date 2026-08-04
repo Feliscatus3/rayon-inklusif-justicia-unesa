@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kader Panel - PMII Rayon Inklusif Justicia</title>
-<link rel="shortcut icon" id="favicon" href="/assets/img/logo/RAYON.png">
+<link rel="shortcut icon" id="favicon" href="./assets/img/logo/RAYON.png">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style id="dynamicTheme"></style>
@@ -13,7 +13,7 @@
   <div class="login-container">
     <div class="login-card" id="loginCard">
       <div class="login-header">
-        <img src="/assets/img/logo/RAYON.png" alt="Logo Rayon Justicia" class="login-logo" id="loginLogo">
+        <img src="./assets/img/logo/RAYON.png" alt="Logo Rayon Justicia" class="login-logo" id="loginLogo">
         <h1 id="loginTitle">Kader Panel</h1>
         <p id="loginOrg">PMII Rayon Inklusif Justicia</p>
       </div>
@@ -69,7 +69,7 @@
         // Logo
         if (s.site_logo) {
           var img = document.getElementById('loginLogo');
-          img.onerror = function() { img.src = '/assets/img/logo/RAYON.png'; };
+          img.onerror = function() { img.src = './assets/img/logo/RAYON.png'; };
           img.src = s.site_logo;
         }
 

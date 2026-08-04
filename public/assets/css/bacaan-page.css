@@ -1,27 +1,16 @@
-/* Publikasi Page Styles - Extends profil-page.css & berita-kegiatan.css */
+/* Bacaan Page Styles - Extends profil-page.css & berita-kegiatan.css */
 
 /* Hero section fix - full height, ensure content visible over navbar */
 .hero-section {
-  position: relative;
-  height: 100vh;
-  background: url(/assets/img/foto/RAKER1.webp) no-repeat center;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(./assets/img/foto/RAKER1.webp);
   background-size: cover;
-  width: 100%;
-  overflow: hidden;
-}
-
-.hero-section::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  z-index: 0;
-}
-
-.hero-section .container {
-  position: relative;
-  z-index: 1;
-  height: 100%;
+  background-position: center;
+  background-attachment: fixed;
+  padding-top: 76px; /* Navbar height + margin */
+  padding-bottom: 100px;
 }
 
 @media (max-width: 991px) {
@@ -62,23 +51,23 @@
 }
 
 /* Form styling */
-#publikasi-form label {
+#bacaan-form label {
   font-weight: 600;
   color: #495057;
 }
 
 /* List Grid - like berita cards */
-.publikasi-card {
+.bacaan-card {
   transition: transform 0.3s, box-shadow 0.3s;
   height: 100%;
 }
 
-.publikasi-card:hover {
+.bacaan-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 15px 35px rgba(0,0,0,0.15) !important;
 }
 
-.publikasi-icon {
+.bacaan-icon {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   width: 80px;
@@ -107,12 +96,12 @@
 }
 
 /* Pagination - match kegiatan */
-#publikasi-pagination .pagination .page-link {
+#bacaan-pagination .pagination .page-link {
   border-radius: 8px;
   margin: 0 2px;
 }
 
-#publikasi-pagination .pagination .page-item.active .page-link {
+#bacaan-pagination .pagination .page-item.active .page-link {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-color: transparent;
 }
@@ -123,7 +112,7 @@
     padding: 2rem 1rem !important;
   }
   
-  .publikasi-icon {
+  .bacaan-icon {
     width: 60px;
     height: 60px;
     font-size: 1.5rem;

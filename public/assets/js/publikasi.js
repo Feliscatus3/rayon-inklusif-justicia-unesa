@@ -7,7 +7,7 @@ const publikasiData = [
     title: 'MODUL MAPABA 1 Rayon Justicia',
     category: 'modul',
     description: 'Modul Mapaba 1 untuk pengenalan organisasi PMII.',
-    file: 'MODUL_MAPABA_1_RAYON_JUSTICIA.pdf',
+    file: '/public/assets/file/MODUL_MAPABA_1_RAYON_JUSTICIA.pdf',
     uploadDate: '2025-11-15',
     size: '2.4 MB'
   },

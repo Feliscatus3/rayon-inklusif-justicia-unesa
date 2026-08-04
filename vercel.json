@@ -12,39 +12,35 @@
     },
     {
       "src": "/panel",
-      "dest": "/public/panel.html"
+      "dest": "/panel.html"
     },
     {
       "src": "/panel.html",
-      "dest": "/public/panel.html"
+      "dest": "/panel.html"
     },
     {
       "src": "/pages/(.*)",
-      "dest": "/public/pages/$1"
-    },
-    {
-      "src": "/css/(.*)",
-      "dest": "/public/css/$1"
-    },
-    {
-      "src": "/js/(.*)",
-      "dest": "/public/js/$1"
-    },
-    {
-      "src": "/uploads/(.*)",
-      "dest": "/public/uploads/$1"
-    },
-    {
-      "src": "./pages/(.*)",
-      "dest": "./pages/$1"
+      "dest": "/pages/$1"
     },
     {
       "src": "/berita/(.*)",
       "dest": "/berita/$1"
     },
     {
-      "src": "./assets/(.*)",
-      "dest": "./assets/$1"
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/css/(.*)",
+      "dest": "/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/js/$1"
+    },
+    {
+      "src": "/uploads/(.*)",
+      "dest": "/uploads/$1"
     },
     {
       "src": "/api/(.*)",

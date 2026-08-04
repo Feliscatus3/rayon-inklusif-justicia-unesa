@@ -145,13 +145,13 @@ document.addEventListener('DOMContentLoaded', async function(){
   try {
     var r = await fetch('/api/auth/me', {credentials:'include'});
     var d = await r.json();
-    if (!d.authenticated) { window.location.href='../index.html'; return; }
+if (!d.authenticated) { window.location.href='../panel.html'; return; }
     curUser = d.user;
     if (EDITOR_ROLES.indexOf(curUser.role) >= 0) document.getElementById('addBtn').style.display = 'inline-flex';
     await loadEvents();
-  } catch(e) { window.location.href='../index.html'; return; }
+  } catch(e) { window.location.href='../panel.html'; return; }
 
-  document.getElementById('logoutBtn').onclick = async function(){ await fetch('/api/auth/logout',{method:'POST',credentials:'include'}); window.location.href='../index.html'; };
+  document.getElementById('logoutBtn').onclick = async function(){ await fetch('/api/auth/logout',{method:'POST',credentials:'include'}); window.location.href='../panel.html'; };
   document.getElementById('prevBtn').onclick = function(){ changeDate(-1); };
   document.getElementById('nextBtn').onclick = function(){ changeDate(1); };
   document.getElementById('todayBtn').onclick = function(){ today = new Date(); render(); };

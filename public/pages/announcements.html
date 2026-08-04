@@ -74,11 +74,11 @@ var ER=['super_admin','admin','ketua_rayon','sekretaris'];var an=[],cu=null;
 function $(i){return document.getElementById(i)}
 document.addEventListener('DOMContentLoaded',async function(){
   try{var r=await fetch('/api/auth/me',{credentials:'include'});var d=await r.json();
-    if(!d.authenticated){window.location.href='../index.html';return;}
+    if(!d.authenticated){window.location.href='../panel.html';return;}
     cu=d.user;if(ER.indexOf(cu.role)>=0)$('ab').style.display='inline-flex';
-  }catch(e){window.location.href='../index.html';return;}
+  }catch(e){window.location.href='../panel.html';return;}
   await loadAnn();
-  $('lo').onclick=async function(){await fetch('/api/auth/logout',{method:'POST',credentials:'include'});window.location.href='../index.html';};
+  $('lo').onclick=async function(){await fetch('/api/auth/logout',{method:'POST',credentials:'include'});window.location.href='../panel.html';};
   $('ab').onclick=openForm;$('fc').onclick=function(){$('fm').classList.remove('show');};
   $('ef').onsubmit=handleSubmit;
   $('srch').oninput=function(){debounce(render,300);};$('cf').onchange=render;

@@ -91,6 +91,15 @@
       } catch (e) {
         // ignore - fall back to defaults
       }
+})();
+
+    // If already logged in, go straight to the dashboard (Kader Panel)
+    (async function checkSession() {
+      try {
+        const r = await fetch('/api/auth/me', { credentials: 'include' });
+        const d = await r.json();
+        if (d.authenticated) { window.location.href = 'pages/dashboard.html'; }
+      } catch (e) { /* stay on the login page */ }
     })();
 
     document.getElementById('loginForm').addEventListener('submit', async (e) => {

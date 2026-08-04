@@ -1,22 +1,28 @@
-# TODO — Modern Admin Dashboard + Website Settings
+# TODO — Fix Routing, Navigation, Authentication & Deployment
 
-## Part 1: Modern Admin Dashboard
-- [x] 1. Rewrite `public/pages/dashboard.html` with complete modern admin dashboard layout
-  - [x] 1a. Sidebar (brand, nav menu, logout) — responsive off-canvas on mobile
-  - [x] 1b. Top navbar (hamburger, page title, live clock/date, theme toggle, user chip)
-  - [x] 1c. Stat cards: Total Members, Total Active Members, Today's Events, This Week Events
-  - [x] 1d. Latest Announcements list (from `/api/announcements`)
-  - [x] 1e. User info card (from `/api/auth/me`)
-  - [x] 1f. Upcoming Events list (from `/api/events`)
-  - [x] 1g. Dark mode toggle (localStorage + system preference)
-  - [x] 1h. Loading / empty / error states for all API-driven sections
-- [x] 2. Verify dashboard is served correctly by the app
+## Goal
+Make the website domain `/` always open `index.html` (public landing page), and
+`panel.html` only reachable via explicit navigation (never the default homepage).
 
-## Part 2: Website Settings (Admin)
-- [ ] 1. Create `sql/migration-settings.sql` — singleton `settings` table + seed row
-- [ ] 2. Create `api/settings/index.js` — public GET + admin-only PUT (multipart uploads)
-- [ ] 3. Create `public/pages/settings.html` — modern admin settings page
-- [ ] 4. Edit `public/index.html` — apply settings dynamically (name, logo, favicon, bg, dark mode)
-- [ ] 5. Edit `public/pages/dashboard.html` — apply site branding + add "Pengaturan" nav link
-- [ ] 6. Verify settings save/load end-to-end
+## Root Cause
+- `vercel.json` had no explicit `/` route -> Vercel resolved the root to the panel
+  (because `public/` holds the panel and was treated as the site root).
+- `public/pages/organization.html` and `public/pages/settings.html` redirected
+  unauthenticated users to `../index.html` (public homepage) instead of the login page.
+
+## Steps
+- [x] 1. Update `vercel.json` — explicit `/` -> `/index.html`, service public site
+      folders (`page/`, `berita/`, `assets/`), keep panel + API routes.
+- [x] 2. Fix `public/pages/organization.html` — unauth/logout redirect -> `../panel.html`.
+- [x] 3. Fix `public/pages/settings.html` — unauth/logout redirect -> `../panel.html`.
+- [x] 4. Verify `index.html` navbar (Home -> `/`, Kader Panel -> `/panel.html`).
+- [x] 5. Verify `public/panel.html` login behavior (redirect to dashboard only after auth).
+- [x] 6. Verify no other automatic redirects to panel.html exist.
+- [x] 7. Final verification of application flow.
+
+## Files Modified
+1. `vercel.json` — added explicit `/` -> `/index.html` route + public site folder routes.
+2. `public/pages/organization.html` — unauth/logout redirect now -> `../panel.html`.
+3. `public/pages/settings.html` — unauth/logout redirect now -> `../panel.html`.
+4. `index.html` — footer "Beranda" link -> `/` (navbar already correct).
 

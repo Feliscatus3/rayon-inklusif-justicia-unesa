@@ -515,14 +515,14 @@ $('settingsForm').addEventListener('submit',async function(e){
 $('logoutBtn').addEventListener('click',async function(ev){
   ev.preventDefault();
   try{await fetch('/api/auth/logout',{method:'POST',credentials:'include'});}catch(e){}
-  window.location.href='../index.html';
+window.location.href='../panel.html';
 });
 async function init(){
   // Auth check (admin only page)
   try{
     var r=await fetch('/api/auth/me',{credentials:'include'});
     var d=await r.json();
-    if(!d.authenticated){window.location.href='../index.html';return;}
+    if(!d.authenticated){window.location.href='../panel.html';return;}
     if(['super_admin','admin'].indexOf(d.user.role)<0){
       window.location.href='dashboard.html';return;
     }
@@ -532,7 +532,7 @@ async function init(){
     $('userRole').textContent=capRole(u.role);
     $('userAvatar').textContent=initials(name);
     await loadSettings();
-  }catch(e){window.location.href='../index.html';}
+  }catch(e){window.location.href='../panel.html';}
 }
 init();
 </script>

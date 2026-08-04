@@ -645,10 +645,10 @@ async function loadUser(){
   try{
     var r=await fetch('/api/auth/me',{credentials:'include'});
     var d=await r.json();
-    if(!d.authenticated){ window.location.href='../index.html'; return null; }
+    if(!d.authenticated){ window.location.href='../panel.html'; return null; }
     return d.user;
-  }catch(e){
-    window.location.href='../index.html';
+    }catch(e){
+    window.location.href='../panel.html';
     return null;
   }
 }
@@ -821,8 +821,8 @@ async function loadQuickInfo(){
 /* ============ Logout ============ */
 $('logoutBtn').addEventListener('click',async function(ev){
   ev.preventDefault();
-  try{ await fetch('/api/auth/logout',{method:'POST',credentials:'include'}); }catch(e){}
-  window.location.href='../index.html';
+try{ await fetch('/api/auth/logout',{method:'POST',credentials:'include'}); }catch(e){}
+  window.location.href='../panel.html';
 });
 
 /* ============ Init ============ */

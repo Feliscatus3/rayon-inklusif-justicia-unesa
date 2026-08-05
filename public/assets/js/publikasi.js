@@ -7,7 +7,7 @@ const publikasiData = [
     title: 'MODUL MAPABA 1 Rayon Justicia',
     category: 'modul',
     description: 'Modul Mapaba 1 untuk pengenalan organisasi PMII.',
-    file: '/public/assets/file/MODUL_MAPABA_1_RAYON_JUSTICIA.pdf',
+    file: '/assets/file/MODUL_MAPABA_1_RAYON_JUSTICIA.pdf',
     uploadDate: '2025-11-15',
     size: '2.4 MB'
   },
@@ -68,7 +68,7 @@ function renderPublikasi(data = publikasiData) {
               <span>${item.size}</span>
               <span>${new Date(item.uploadDate).toLocaleDateString('id-ID')}</span>
             </div>
-            <a href="./assets/file/${item.file}" class="btn btn-primary w-100" download>
+            <a href="${item.file}" class="btn btn-primary w-100" download>
               <i class="bi bi-download me-1"></i>Download PDF
             </a>
           </div>

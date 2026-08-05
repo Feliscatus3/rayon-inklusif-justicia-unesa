@@ -5,7 +5,7 @@ const beritaData = [
     excerpt: "Semakin Marak Kekerasan Seksual di Lingkungan Perguruan Tinggi Melalui Group Chat.",
     date: "19 Juli 2026",
     uploadDate: "2026-07-19",
-    image: "/public/assets/img/foto/kekerasanchat.webp",
+    image: "/assets/img/foto/kekerasanchat.webp",
     link: "/berita/semakin-marak-kekerasan-seksual-dilingkungan-perguruan-tinggi-di-group-chat.html",
     featured: false
   },
@@ -15,7 +15,7 @@ const beritaData = [
     excerpt: "Pendaftaran PKD I PMII Rayon Inklusif Justicia UNESA.",
     date: "03 April 2026",
     uploadDate: "2026-06-03",
-    image: "/public/assets/img/foto/pamflet-pkd1.webp",
+    image: "/assets/img/foto/pamflet-pkd1.webp",
     link: "/berita/pendaftaran-pkd-pertama-pmii-justicia.html",
     featured: false
   },
@@ -25,7 +25,7 @@ const beritaData = [
     excerpt: "Lawatan Silaturahmi ke Wakil Bupati Bojonegoro.",
     date: "10 Mei 2026",
     uploadDate: "2026-05-10",
-    image: "/public/assets/img/foto/WABUP_BOJONEGORO.webp",
+    image: "/assets/img/foto/WABUP_BOJONEGORO.webp",
     link: "/berita/pmii-justicia-lawatan-silaturahmi-wabup-bojonegoro.html",
     featured: true
   },
@@ -35,7 +35,7 @@ const beritaData = [
     excerpt: "KEGIATAN safari religi kedua untuk memperdalam spiritualitas dan memperkuat nilai keislaman kader PMII.",
     date: "22 April 2026",
     uploadDate: "2026-04-22",
-    image: "/public/assets/img/foto/SAFARI_RELIGI_2_20260422_175157_0005.webp",
+    image: "/assets/img/foto/SAFARI_RELIGI_2_20260422_175157_0005.webp",
     link: "/berita/safari-religi-2.html",
     featured: true
   },
@@ -45,7 +45,7 @@ const beritaData = [
     excerpt: "Peringatan Hari Kartini 2026 oleh Kopri PMII Justicia melalui workshop kerajinan tangan dan bedah buku.",
     date: "21 April 2026",
     uploadDate: "2026-04-21",
-    image: "/public/assets/img/foto/KARTINI.webp",
+    image: "/assets/img/foto/KARTINI.webp",
     link: "/berita/kopri-justicia-teladan-kartini.html",
     featured: true
   },
@@ -55,7 +55,7 @@ const beritaData = [
     excerpt: "KEGIATAN K3 Mart Kelas Kaderisasi Kopri Smart untuk penguatan kapasitas kader perempuan.",
     date: "20 April 2026",
     uploadDate: "2026-04-20",
-    image: "/public/assets/img/foto/KOPRIKADER.webp",
+    image: "/assets/img/foto/KOPRIKADER.webp",
     link: "/berita/kaderisasi-kopri-k3-mart.html",
     featured: true
   },
@@ -65,7 +65,7 @@ const beritaData = [
     excerpt: "KEGIATAN berbagi takjil dan sahur on the road di bulan Ramadan.",
     date: "15 Maret 2026",
     uploadDate: "2026-03-15",
-    image: "/public/assets/img/foto/BAGIBAGI.webp",
+    image: "/assets/img/foto/BAGIBAGI.webp",
     link: "/berita/bagi-takjil-sahur-on-the-road.html",
     featured: false
   },
@@ -75,7 +75,7 @@ const beritaData = [
     excerpt: "Peringatan Harlah PMII ke-66 dan halal bihalal bersama seluruh kader.",
     date: "1 Maret 2026",
     uploadDate: "2026-03-01",
-    image: "/public/assets/img/foto/HARLAH2.webp",
+    image: "/assets/img/foto/HARLAH2.webp",
     link: "/berita/harlah-66-halal-bihalal.html",
     featured: false
   },
@@ -85,7 +85,7 @@ const beritaData = [
     excerpt: "Kajian intelektual untuk mengembangkan kapasitas kader PMII.",
     date: "1 Februari 2026",
     uploadDate: "2026-02-01",
-    image: "/public/assets/img/foto/KAJIAN_INTELEK.webp",
+    image: "/assets/img/foto/KAJIAN_INTELEK.webp",
     link: "/berita/kajian-intelektual.html",
     featured: false
   },
@@ -95,7 +95,7 @@ const beritaData = [
     excerpt: "Rapat Kerja dan Evaluasi Rayon (RTAR) I PMII Rayon Inklusif Justicia UNESA.",
     date: "30 Januari 2026",
     uploadDate: "2026-01-30",
-    image: "/public/assets/img/foto/RTAR I_20260225_180804_0020.webp",
+    image: "/assets/img/foto/RTAR I_20260225_180804_0020.webp",
     link: "/berita/rtar-1-rayon-inklusif-justicia.html",
     featured: false
   },
@@ -105,7 +105,7 @@ const beritaData = [
     excerpt: "Rapat kerja untuk perencanaan program dan evaluasi kinerja kepengurusan.",
     date: "1 Januari 2026",
     uploadDate: "2026-01-01",
-    image: "/public/assets/img/foto/RAKER1.webp",
+    image: "/assets/img/foto/RAKER1.webp",
     link: "/berita/rapat-kerja-rayon-justicia-unesa-2026.html",
     featured: false
   },
@@ -115,7 +115,7 @@ const beritaData = [
     excerpt: "Masa Penerimaan Anggota Baru dengan antusiasme tinggi dari peserta.",
     date: "16 November 2025",
     uploadDate: "2025-11-16",
-    image: "/public/assets/img/foto/MAPABA 1 (2)_20260225_180801_0014.webp",
+    image: "/assets/img/foto/MAPABA 1 (2)_20260225_180801_0014.webp",
     link: "/berita/mapaba-1-rayon-inklusif-justicia-unesa.html",
     featured: false
   },
@@ -125,7 +125,7 @@ const beritaData = [
     excerpt: "Kolaborasi lintas rayon hukum untuk memperkuat jaringan pergerakan.",
     date: "31 Oktober 2025",
     uploadDate: "2025-10-31",
-    image: "/public/assets/img/foto/STUDI_BANDING_KOLABORARI.webp",
+    image: "/assets/img/foto/STUDI_BANDING_KOLABORARI.webp",
     link: "/berita/studi-banding-pmii-hukum-surabaya.html",
     featured: false
   },
@@ -135,7 +135,7 @@ const beritaData = [
     excerpt: "KEGIATAN seni dan pergerakan untuk memperkuat solidaritas kader.",
     date: "20 September 2025",
     uploadDate: "2025-09-20",
-    image: "/public/assets/img/foto/HARMONI PERGERAKAN_20260225_180759_0010.webp",
+    image: "/assets/img/foto/HARMONI PERGERAKAN_20260225_180759_0010.webp",
     link: "/berita/harmoni-pergerakan-1.html",
     featured: false
   },
@@ -145,7 +145,7 @@ const beritaData = [
     excerpt: "Diskusi nasional tentang penguatan sistem kaderisasi PMII.",
     date: "17 Agustus 2025",
     uploadDate: "2025-08-17",
-    image: "/public/assets/img/foto/SIMPOSIUM_20260225_180803_0017.webp",
+    image: "/assets/img/foto/SIMPOSIUM_20260225_180803_0017.webp",
     link: "/berita/simposium-sekolah-kaderisasi-nasional.html",
     featured: false
   },
@@ -155,7 +155,7 @@ const beritaData = [
     excerpt: "Program pembentukan kader PMII yang unggul secara intelektual dan organisasi.",
     date: "7 Juli 2025",
     uploadDate: "2025-07-07",
-    image: "/public/assets/img/foto/SEKOLAH KADERISASI_20260225_180803_0016.webp",
+    image: "/assets/img/foto/SEKOLAH KADERISASI_20260225_180803_0016.webp",
     link: "/berita/sekolah-kaderisasi-1.html",
     featured: false
   },
@@ -165,7 +165,7 @@ const beritaData = [
     excerpt: "Ziarah untuk memperkuat spiritualitas kader PMII.",
     date: "10 Mei 2025",
     uploadDate: "2025-05-10",
-    image: "/public/assets/img/foto/SAFARI RELIGI_20260225_180754_0000.webp",
+    image: "/assets/img/foto/SAFARI RELIGI_20260225_180754_0000.webp",
     link: "/berita/safari-religi-ziarah-sunan-ampel.html",
     featured: false
   },
@@ -175,7 +175,7 @@ const beritaData = [
     excerpt: "Kajian inspiratif tentang peran perempuan dalam kepemimpinan masa kini.",
     date: "30 April 2025",
     uploadDate: "2025-04-30",
-    image: "/public/assets/img/foto/KAJIAN INSPIRATIF_20260225_180756_0009.webp",
+    image: "/assets/img/foto/KAJIAN INSPIRATIF_20260225_180756_0009.webp",
     link: "/berita/jejak-kartini-2025.html",
     featured: false
   },
@@ -185,7 +185,7 @@ const beritaData = [
     excerpt: "Evaluasi program sekaligus mempererat silaturahmi antar pengurus.",
     date: "25 Maret 2025",
     uploadDate: "2025-03-25",
-    image: "/public/assets/img/foto/RAKER & BUKBER_20260225_180755_0003.webp",
+    image: "/assets/img/foto/RAKER & BUKBER_20260225_180755_0003.webp",
     link: "/berita/rapat-kerja-dan-buka-bersama-optimalisasi-pergerakan.html",
     featured: false
   },
@@ -195,7 +195,7 @@ const beritaData = [
     excerpt: "Penguatan nilai keislaman dan pergerakan kader PMII.",
     date: "15 Februari 2025",
     uploadDate: "2025-02-15",
-    image: "/public/assets/img/foto/PESANTREN PERGERAKAN_20260225_180756_0008.webp",
+    image: "/assets/img/foto/PESANTREN PERGERAKAN_20260225_180756_0008.webp",
     link: "/berita/pesantren-pergerakan-vol-1.html",
     featured: false
   },
@@ -205,7 +205,7 @@ const beritaData = [
     excerpt: "Diskusi santai tentang dinamika Islam kontemporer.",
     date: "8 Januari 2025",
     uploadDate: "2025-01-08",
-    image: "/public/assets/img/foto/NGOPI_20260225_180756_0006.webp",
+    image: "/assets/img/foto/NGOPI_20260225_180756_0006.webp",
     link: "/berita/ngobrol-perkara-islam-gerakan-purifikasi.html",
     featured: false
   },
@@ -215,7 +215,7 @@ const beritaData = [
     excerpt: "Kajian kritis tentang demokrasi dan Neo Orba.",
     date: "20 Desember 2024",
     uploadDate: "2024-12-20",
-    image: "/public/assets/img/foto/KAJIAN CIPAYUNG FH UNESA_20260225_180755_0002.webp",
+    image: "/assets/img/foto/KAJIAN CIPAYUNG FH UNESA_20260225_180755_0002.webp",
     link: "/berita/kajian-cipayung-fh-unesa-neo-orba.html",
     featured: false
   },
@@ -225,7 +225,7 @@ const beritaData = [
     excerpt: "Pelatihan public speaking untuk kader.",
     date: "5 November 2024",
     uploadDate: "2024-11-05",
-    image: "/public/assets/img/foto/AKADEMI PERGERAKAN 1_20260225_180755_0001.webp",
+    image: "/assets/img/foto/AKADEMI PERGERAKAN 1_20260225_180755_0001.webp",
     link: "/berita/akademi-pergerakan-1-overcoming-stage-fright.html",
     featured: false
   },
@@ -235,7 +235,7 @@ const beritaData = [
     excerpt: "Peringatan Harlah PMII ke-65.",
     date: "10 Oktober 2024",
     uploadDate: "2024-10-10",
-    image: "/public/assets/img/foto/HARLAH PMII & HALAL BIHALAL_20260225_180755_0005.webp",
+    image: "/assets/img/foto/HARLAH PMII & HALAL BIHALAL_20260225_180755_0005.webp",
     link: "/berita/harlah-pmii-65-halal-bihalal-rayon-justicia-sosial-unesa.html",
     featured: false
   },
@@ -245,7 +245,7 @@ const beritaData = [
     excerpt: "Diskusi panel tentang peran perempuan dalam pergerakan mahasiswa.",
     date: "21 April 2024",
     uploadDate: "2024-04-21",
-    image: "/public/assets/img/foto/HARMONI PERGERAKAN (2)_20260225_180800_0011.webp",
+    image: "/assets/img/foto/HARMONI PERGERAKAN (2)_20260225_180800_0011.webp",
     link: "/berita/diskusi-panel-jejak-kartini-2024.html",
     featured: false
   }

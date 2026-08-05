@@ -148,9 +148,13 @@ module.exports = async (req, res) => {
       path: '/'
     }));
 
-    // Issue CSRF token cookie
-    const csrfToken = csrf.issueCsrfToken(res);
-    res.setHeader('X-CSRF-Token', csrfToken);
+// Issue CSRF token cookie (defensive: never let this break a successful login)
+    try {
+      const csrfToken = csrf.issueCsrfToken(res);
+      res.setHeader('X-CSRF-Token', csrfToken);
+    } catch (csrfErr) {
+      console.error('CSRF token issuance failed (non-fatal):', csrfErr.message);
+    }
 
     await logAudit({
       userId: user.id,

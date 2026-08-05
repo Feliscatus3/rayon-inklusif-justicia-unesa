@@ -20,10 +20,14 @@ module.exports = async (req, res) => {
     const user = await requireAuth(req, res);
     if (!user) return;
 
-    // Ensure the CSRF token cookie is present for this session
-    const existingCookie = csrf.parseCookies(req.headers.cookie || '')[csrf.COOKIE_NAME];
-    if (!existingCookie) {
-      csrf.issueCsrfToken(res);
+// Ensure the CSRF token cookie is present for this session (never crash on failure)
+    try {
+      const existingCookie = csrf.parseCookies(req.headers.cookie || '')[csrf.COOKIE_NAME];
+      if (!existingCookie) {
+        csrf.issueCsrfToken(res);
+      }
+    } catch (csrfErr) {
+      console.error('CSRF issuance in /auth/me failed (non-fatal):', csrfErr.message);
     }
 
     return res.status(200).json({

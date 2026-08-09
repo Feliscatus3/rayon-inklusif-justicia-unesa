@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS events (
   event_date DATE NOT NULL,
   event_time TIME,
   color VARCHAR(7) DEFAULT '#1a237e',
-  created_by INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_by UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -21,6 +21,3 @@ CREATE TABLE IF NOT EXISTS events (
 CREATE INDEX IF NOT EXISTS idx_events_date ON events(event_date);
 CREATE INDEX IF NOT EXISTS idx_events_category ON events(category);
 CREATE INDEX IF NOT EXISTS idx_events_created_by ON events(created_by);
-</create_field>
-</invoke>
-</tool_calls>

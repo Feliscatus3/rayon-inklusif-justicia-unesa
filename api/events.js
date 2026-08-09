@@ -1,30 +1,22 @@
 /**
- * /api/events/*
- *
- * Calendar Events API.
- *
- * RBAC:
- *   GET    /api/events          — All authenticated users (view)
- *   GET    /api/events/:id      — All authenticated users (view)
- *   POST   /api/events          — super_admin, admin, ketua_rayon, sekretaris (create)
- *   PUT    /api/events/:id      — super_admin, admin, ketua_rayon, sekretaris (edit)
- *   DELETE /api/events/:id      — super_admin, admin only
+ * /api/events — Consolidated Calendar Events Handler
+ * Merges: events/index.js
  */
-
-const { query } = require('../../lib/db');
-const { requireAuth, requireRole } = require('../../lib/auth');
-const { logAudit } = require('../../lib/audit');
-const { corsMiddleware } = require('../../lib/cors');
-const { parseJsonBody } = require('../../lib/bodyParser');
-const csrf = require('../../lib/csrf');
-const sec = require('../../lib/security');
+const { query } = require('../lib/db');
+const { requireAuth, requireRole } = require('../lib/auth');
+const { logAudit } = require('../lib/audit');
+const { corsMiddleware } = require('../lib/cors');
+const { parseJsonBody } = require('../lib/bodyParser');
+const csrf = require('../lib/csrf');
+const sec = require('../lib/security');
 
 module.exports = async (req, res) => {
   if (corsMiddleware(req, res)) return;
-
+  if (req.query && typeof req.query.__path === 'string') {
+    req.url = req.query.__path;
+  }
   const user = await requireAuth(req, res);
   if (!user) return;
-
   const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
   const userAgent = req.headers['user-agent'] || 'unknown';
 
@@ -35,7 +27,6 @@ module.exports = async (req, res) => {
       case 'POST':
       case 'PUT':
       case 'DELETE':
-        // CSRF protection for all state-changing requests
         if (!csrf.validateCsrf(req)) {
           return res.status(403).json({ error: 'CSRF token tidak valid' });
         }
@@ -113,7 +104,9 @@ async function getEvents(req, res) {
 }
 
 async function createEvent(req, res, user, ip, userAgent) {
-  const { title, description, category, location, event_date, event_time, color } = req.body;
+  const body = await parseJsonBody(req);
+  if (body === null) return res.status(400).json({ error: 'Invalid JSON body' });
+  const { title, description, category, location, event_date, event_time, color } = body;
 
   if (!title || !String(title).trim()) return res.status(400).json({ error: 'Judul event wajib diisi' });
   if (!sec.isValidDate(event_date)) return res.status(400).json({ error: 'Tanggal event tidak valid' });
@@ -128,11 +121,7 @@ async function createEvent(req, res, user, ip, userAgent) {
     [String(title).trim(), description || null, eventCategory, location || null, event_date, event_time || null, color || '#1a237e', user.id]
   );
 
-  await logAudit({
-    userId: user.id, action: 'EVENT_CREATED', ip, userAgent,
-    details: JSON.stringify({ id: result.rows[0].id, title: result.rows[0].title })
-  });
-
+  await logAudit({ userId: user.id, action: 'EVENT_CREATED', ip, userAgent, details: JSON.stringify({ id: result.rows[0].id, title: result.rows[0].title }) });
   return res.status(201).json({ message: 'Event berhasil dibuat', event: result.rows[0] });
 }
 
@@ -140,13 +129,14 @@ async function updateEvent(req, res, user, ip, userAgent) {
   const url = new URL(req.url, 'http://' + (req.headers.host || 'localhost'));
   const parts = url.pathname.replace('/api/events', '').split('/').filter(Boolean);
   const eventId = parts[0];
-
   if (!eventId) return res.status(400).json({ error: 'Event ID diperlukan' });
 
   const existing = await query('SELECT * FROM events WHERE id = $1', [eventId]);
   if (existing.rows.length === 0) return res.status(404).json({ error: 'Event tidak ditemukan' });
 
-  const { title, description, category, location, event_date, event_time, color } = req.body;
+  const body = await parseJsonBody(req);
+  if (body === null) return res.status(400).json({ error: 'Invalid JSON body' });
+  const { title, description, category, location, event_date, event_time, color } = body;
   if (!title || !title.trim()) return res.status(400).json({ error: 'Judul event wajib diisi' });
   if (!event_date) return res.status(400).json({ error: 'Tanggal event wajib diisi' });
 
@@ -161,11 +151,7 @@ async function updateEvent(req, res, user, ip, userAgent) {
      color || existing.rows[0].color, eventId]
   );
 
-  await logAudit({
-    userId: user.id, action: 'EVENT_UPDATED', ip, userAgent,
-    details: JSON.stringify({ id: eventId, title: result.rows[0].title })
-  });
-
+  await logAudit({ userId: user.id, action: 'EVENT_UPDATED', ip, userAgent, details: JSON.stringify({ id: eventId, title: result.rows[0].title }) });
   return res.status(200).json({ message: 'Event berhasil diperbarui', event: result.rows[0] });
 }
 
@@ -173,18 +159,12 @@ async function deleteEvent(req, res, user, ip, userAgent) {
   const url = new URL(req.url, 'http://' + (req.headers.host || 'localhost'));
   const parts = url.pathname.replace('/api/events', '').split('/').filter(Boolean);
   const eventId = parts[0];
-
   if (!eventId) return res.status(400).json({ error: 'Event ID diperlukan' });
 
   const existing = await query('SELECT id, title FROM events WHERE id = $1', [eventId]);
   if (existing.rows.length === 0) return res.status(404).json({ error: 'Event tidak ditemukan' });
 
   await query('DELETE FROM events WHERE id = $1', [eventId]);
-
-  await logAudit({
-    userId: user.id, action: 'EVENT_DELETED', ip, userAgent,
-    details: JSON.stringify({ id: eventId, title: existing.rows[0].title })
-  });
-
+  await logAudit({ userId: user.id, action: 'EVENT_DELETED', ip, userAgent, details: JSON.stringify({ id: eventId, title: existing.rows[0].title }) });
   return res.status(200).json({ message: 'Event berhasil dihapus' });
 }

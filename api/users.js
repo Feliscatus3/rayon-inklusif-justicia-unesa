@@ -1,24 +1,23 @@
 /**
- * /api/users/*
+ * /api/users — Consolidated User Management Handler
  *
- * User Management API (Admin only).
- * Admin can: Create, Read, Update, Delete, Reset Password, Enable/Disable, Change Role.
+ * Merges: api/users/index.js
  *
- * Endpoints:
- *   GET    /api/users          — List users (search + pagination)
- *   GET    /api/users/:id      — Get single user
- *   POST   /api/users          — Create user
- *   PUT    /api/users/:id      — Update user
- *   DELETE /api/users/:id      — Delete user (with confirmation)
- *   PATCH  /api/users/:id/password  — Reset password
- *   PATCH  /api/users/:id/status    — active / inactive / suspended
- *   PATCH  /api/users/:id/role      — admin / kader
+ * Dispatches on reconstructed URL pathname:
+ *   GET    /api/users                    — List users (search + pagination)
+ *   GET    /api/users/:id                — Get single user
+ *   POST   /api/users                    — Create user
+ *   PUT    /api/users/:id                — Update user
+ *   DELETE /api/users/:id                — Delete user
+ *   PATCH  /api/users/:id/password       — Reset password
+ *   PATCH  /api/users/:id/status         — active / inactive / suspended
+ *   PATCH  /api/users/:id/role           — admin / kader
  */
 
-const { query } = require('../../lib/db');
+const { query } = require('../lib/db');
 const bcrypt = require('bcrypt');
-const { requireAuth, requireRole, getValidRoles } = require('../../lib/auth');
-const { logAudit } = require('../../lib/audit');
+const { requireAuth, requireRole, getValidRoles } = require('../lib/auth');
+const { logAudit } = require('../lib/audit');
 const VALID_ROLES = getValidRoles();
 
 module.exports = async (req, res) => {
@@ -33,7 +32,12 @@ module.exports = async (req, res) => {
     || req.socket?.remoteAddress || 'unknown';
   const userAgent = req.headers['user-agent'] || 'unknown';
 
-// ── Authenticate via shared middleware ──────────────────────
+  // Reconstruct the original request path from vercel.json rewrite
+  if (req.query && typeof req.query.__path === 'string') {
+    req.url = req.query.__path;
+  }
+
+  // ── Authenticate via shared middleware ──────────────────────
   const currentUser = await requireAuth(req, res);
   if (!currentUser) return;
 
@@ -231,7 +235,7 @@ module.exports = async (req, res) => {
       return res.status(200).json({ message: 'Password berhasil direset' });
     }
 
-// ═══════════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════
     // PATCH /api/users/:id/status — Set status (active/inactive/suspended)
     // ═══════════════════════════════════════════════════════════
     if (req.method === 'PATCH' && userId && action === 'status') {

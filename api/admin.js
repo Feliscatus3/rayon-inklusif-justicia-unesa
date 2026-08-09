@@ -1,16 +1,14 @@
 /**
- * /api/admin/*
- *
- * Admin dashboard & management API.
+ * /api/admin — Consolidated Admin Dashboard Handler
+ * Merges: admin/index.js
  *
  * RBAC:
  *   GET    /api/admin?action=stats   — super_admin, admin, ketua_rayon, sekretaris, bendahara
  *   GET    /api/admin?action=kaders  — super_admin, admin, ketua_rayon, sekretaris
  *   POST   /api/admin                — super_admin, admin only
  */
-
-const { query } = require('../../lib/db');
-const { requireAuth, requireRole } = require('../../lib/auth');
+const { query } = require('../lib/db');
+const { requireAuth, requireRole } = require('../lib/auth');
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -19,6 +17,10 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  if (req.query && typeof req.query.__path === 'string') {
+    req.url = req.query.__path;
+  }
 
   const user = await requireAuth(req, res);
   if (!user) return;
@@ -77,7 +79,8 @@ async function getDashboard(req, res, user) {
 }
 
 async function adminAction(req, res, user) {
-  const { action, user_id } = req.body;
+  const body = await readBody(req);
+  const { action, user_id } = body || {};
   if (!action || !user_id) return res.status(400).json({ error: 'Action and user_id are required' });
 
   switch (action) {
@@ -93,4 +96,14 @@ async function adminAction(req, res, user) {
     default:
       return res.status(400).json({ error: 'Invalid action. Use activate, deactivate, or suspend' });
   }
+}
+
+function readBody(req) {
+  return new Promise((resolve) => {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try { resolve(JSON.parse(body || '{}')); } catch (e) { resolve(null); }
+    });
+  });
 }

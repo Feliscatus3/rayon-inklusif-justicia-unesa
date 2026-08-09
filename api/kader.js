@@ -1,18 +1,19 @@
 /**
- * /api/kader/*
+ * /api/kader — Consolidated Kader Handler
  *
- * Kader management API.
+ * Merges: api/kader/index.js + api/kader/profile.js
  *
- * RBAC:
- *   GET       — All authenticated users
- *   POST      — super_admin, admin, ketua_rayon, sekretaris
- *   PUT       — Own profile (any role) or super_admin/admin/ketua_rayon can update anyone
- *   DELETE    — super_admin, admin only
+ * Dispatches on reconstructed pathname:
+ *   /api/kader             → kader list/create/update/delete
+ *   /api/kader/profile     → own profile GET/PUT
+ *
+ * RBAC preserved from original implementation.
  */
 
-const { query } = require('../../lib/db');
-const { requireAuth, requireRole } = require('../../lib/auth');
-const { logAudit } = require('../../lib/audit');
+const { query } = require('../lib/db');
+const bcrypt = require('bcrypt');
+const { requireAuth, requireRole } = require('../lib/auth');
+const { logAudit } = require('../lib/audit');
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -22,6 +23,12 @@ module.exports = async (req, res) => {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
+  // Reconstruct path from vercel.json rewrite
+  if (req.query && typeof req.query.__path === 'string') {
+    req.url = req.query.__path;
+  }
+  const path = (req.url || '').split('?')[0];
+
   const user = await requireAuth(req, res);
   if (!user) return;
 
@@ -29,6 +36,14 @@ module.exports = async (req, res) => {
   const userAgent = req.headers['user-agent'] || 'unknown';
 
   try {
+    // Profile sub-route
+    if (path.endsWith('/profile')) {
+      if (req.method === 'GET') return await getProfile(req, res, user);
+      if (req.method === 'PUT') return await updateProfile(req, res, user);
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    // Base kader routes
     switch (req.method) {
       case 'GET':
         return await getKader(req, res, user);
@@ -53,6 +68,44 @@ module.exports = async (req, res) => {
   }
 };
 
+/* ==================== Profile (from profile.js) ==================== */
+async function getProfile(req, res, user) {
+  const result = await query(
+    `SELECT u.id, u.username, u.email, u.full_name, u.role, u.status, u.created_at,
+            kp.nis, kp.tempat_lahir, kp.tanggal_lahir, kp.jenis_kelamin,
+            kp.alamat, kp.no_telepon, kp.universitas, kp.fakultas, kp.jurusan,
+            kp.angkatan, kp.status_kader, kp.foto_url
+     FROM users u
+     LEFT JOIN kader_profiles kp ON u.id = kp.user_id
+     WHERE u.id = $1`,
+    [user.id]
+  );
+  if (result.rows.length === 0) return res.status(404).json({ error: 'Profile not found' });
+  return res.status(200).json(result.rows[0]);
+}
+
+async function updateProfile(req, res, user) {
+  const { full_name, email, ...profileData } = req.body;
+  if (full_name || email) {
+    const updates = [];
+    const params = [];
+    let idx = 1;
+    if (full_name) { updates.push('full_name = $' + idx++); params.push(full_name); }
+    if (email) { updates.push('email = $' + idx++); params.push(email); }
+    if (updates.length > 0) { params.push(user.id); await query('UPDATE users SET ' + updates.join(', ') + ' WHERE id = $' + idx, params); }
+  }
+  const profileFields = ['nis', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin', 'alamat', 'no_telepon', 'universitas', 'fakultas', 'jurusan', 'angkatan', 'status_kader', 'foto_url'];
+  const profileUpdates = [];
+  const profileParams = [];
+  let pIdx = 1;
+  for (const field of profileFields) {
+    if (profileData[field] !== undefined) { profileUpdates.push(field + ' = $' + pIdx++); profileParams.push(profileData[field]); }
+  }
+  if (profileUpdates.length > 0) { profileParams.push(user.id); await query('UPDATE kader_profiles SET ' + profileUpdates.join(', ') + ' WHERE user_id = $' + pIdx, profileParams); }
+  return res.status(200).json({ message: 'Profile updated successfully' });
+}
+
+/* ==================== Kader CRUD (from index.js) ==================== */
 async function getKader(req, res, user) {
   const { id, search, page = 1, limit = 10 } = req.query;
 
@@ -99,7 +152,6 @@ async function createKader(req, res, user, ip, userAgent) {
     return res.status(400).json({ error: 'Username, email, password, dan nama lengkap wajib diisi' });
   }
   const userRole = role || 'kader';
-  const bcrypt = require('bcrypt');
   const passwordHash = await bcrypt.hash(password, 10);
   const userResult = await query("INSERT INTO users (username, email, password_hash, full_name, role, status) VALUES ($1, $2, $3, $4, $5, 'active') RETURNING id", [username, email, passwordHash, full_name, userRole]);
   const newUserId = userResult.rows[0].id;
@@ -125,8 +177,8 @@ async function updateKader(req, res, user, ip, userAgent) {
   }
   const fields = ['nis', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin', 'alamat', 'no_telepon', 'universitas', 'fakultas', 'jurusan', 'angkatan', 'status_kader', 'foto_url'];
   var ps = []; var pv = []; var p = 1;
-  for (var f = 0; f < fields.length; f++) {
-    var field = fields[f];
+  for (var j = 0; j < fields.length; j++) {
+    var field = fields[j];
     if (updateData[field] !== undefined) { ps.push(field + ' = $' + p++); pv.push(updateData[field]); }
   }
   if (ps.length > 0) { pv.push(id); await query('UPDATE kader_profiles SET ' + ps.join(', ') + ' WHERE user_id = $' + p, pv); }

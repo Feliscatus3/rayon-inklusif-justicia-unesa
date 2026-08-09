@@ -1,15 +1,78 @@
 {
-  "cleanUrls": true,
+  "cleanUrls": false,
   "trailingSlash": false,
   "routes": [
-    { "src": "^/$", "dest": "/index.html" },
-    { "src": "^/panel$", "dest": "/panel.html" },
-    { "src": "^/panel.html$", "dest": "/panel.html" },
-    { "src": "^/pages/(.*)$", "dest": "/pages/$1" },
-    { "src": "^/assets/(.*)$", "dest": "/assets/$1" },
-    { "src": "^/berita/(.*)$", "dest": "/berita/$1" },
-    { "src": "^/js/(.*)$", "dest": "/js/$1" },
-    { "src": "^/uploads/(.*)$", "dest": "/uploads/$1" },
-    { "src": "^/api/(.*)$", "dest": "/api/$1" }
+    {
+      "src": "^/$",
+      "dest": "/index.html"
+    },
+    {
+      "src": "^/panel$",
+      "dest": "/panel.html"
+    },
+    {
+      "src": "^/panel.html$",
+      "dest": "/panel.html"
+    },
+    {
+      "src": "^/pages/(.*)$",
+      "dest": "/pages/$1"
+    },
+    {
+      "src": "^/assets/(.*)$",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "^/berita/(.*)$",
+      "dest": "/berita/$1"
+    },
+    {
+      "src": "^/js/(.*)$",
+      "dest": "/js/$1"
+    },
+    {
+      "src": "^/css/(.*)$",
+      "dest": "/css/$1"
+    },
+    {
+      "src": "^/uploads/(.*)$",
+      "dest": "/uploads/$1"
+    },
+    {
+      "src": "^/api/health$",
+      "dest": "/api/health"
+    },
+    {
+      "src": "^/api/auth(.*)$",
+      "dest": "/api/auth?__path=/api/auth$1"
+    },
+    {
+      "src": "^/api/announcements(.*)$",
+      "dest": "/api/announcements?__path=/api/announcements$1"
+    },
+    {
+      "src": "^/api/events(.*)$",
+      "dest": "/api/events?__path=/api/events$1"
+    },
+    {
+      "src": "^/api/users(.*)$",
+      "dest": "/api/users?__path=/api/users$1"
+    },
+    {
+      "src": "^/api/kader(.*)$",
+      "dest": "/api/kader?__path=/api/kader$1"
+    },
+    {
+      "src": "^/api/organization(.*)$",
+      "dest": "/api/organization?__path=/api/organization$1"
+    },
+    {
+      "src": "^/api/settings(.*)$",
+      "dest": "/api/settings?__path=/api/settings$1"
+    },
+    {
+      "src": "^/api/admin(.*)$",
+      "dest": "/api/admin?__path=/api/admin$1"
+    }
   ]
 }

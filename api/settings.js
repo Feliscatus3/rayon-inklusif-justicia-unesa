@@ -1,16 +1,10 @@
 /**
- * /api/settings
- *
- * Website Settings API — singleton settings row (id=1).
- *
- * RBAC:
- *   GET    /api/settings — Public (allows login page & dashboard to read branding)
- *   PUT    /api/settings — super_admin, admin only (update settings)
+ * /api/settings — Consolidated Website Settings Handler
+ * Merges: settings/index.js
  */
-
-const { query } = require('../../lib/db');
-const { requireAuth, requireRole } = require('../../lib/auth');
-const { logAudit } = require('../../lib/audit');
+const { query } = require('../lib/db');
+const { requireAuth, requireRole } = require('../lib/auth');
+const { logAudit } = require('../lib/audit');
 
 const DEFAULTS = {
   site_name: 'Kader Panel',
@@ -26,6 +20,9 @@ const DEFAULTS = {
 };
 
 module.exports = async (req, res) => {
+  if (req.query && typeof req.query.__path === 'string') {
+    req.url = req.query.__path;
+  }
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, OPTIONS');
@@ -76,16 +73,8 @@ async function getSettings(req, res) {
 }
 
 async function updateSettings(req, res, user) {
-  let body = '';
-  req.on('data', chunk => { body += chunk; });
-  await new Promise(resolve => req.on('end', resolve));
-
-  let data;
-  try {
-    data = JSON.parse(body || '{}');
-  } catch (e) {
-    return res.status(400).json({ error: 'Invalid JSON' });
-  }
+  const data = await readBody(req);
+  if (data === null) return res.status(400).json({ error: 'Invalid JSON' });
 
   const clean = (v, max) => {
     if (v === undefined || v === null) return null;
@@ -169,3 +158,12 @@ async function updateSettings(req, res, user) {
   return res.status(200).json({ message: 'Pengaturan berhasil disimpan', settings: result.rows[0] });
 }
 
+function readBody(req) {
+  return new Promise((resolve) => {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try { resolve(JSON.parse(body || '{}')); } catch (e) { resolve(null); }
+    });
+  });
+}

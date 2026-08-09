@@ -1,28 +1,35 @@
-# TODO — Fix Routing, Navigation, Authentication & Deployment
+# TODO — Routing/Auth/Deployment Fix + Serverless Function Reduction
 
-## Goal
-Make the website domain `/` always open `index.html` (public landing page), and
-`panel.html` only reachable via explicit navigation (never the default homepage).
+## Part A: Routing / Auth / Deployment (Goal: "/" loads landing, panel only via click)
 
-## Root Cause
-- `vercel.json` had no explicit `/` route -> Vercel resolved the root to the panel
-  (because `public/` holds the panel and was treated as the site root).
-- `public/pages/organization.html` and `public/pages/settings.html` redirected
-  unauthenticated users to `../index.html` (public homepage) instead of the login page.
+### Root cause
+- `vercel.json` pointed `/` to a non-existent root `/index.html` (the landing page actually lives under `public/`). With `outputDirectory: public`, the correct route is `/` → `/index.html` at the web root.
+- The static site + panel all live under `public/`: `public/index.html` (landing), `public/panel.html` (login), `public/pages/*` (dashboard), `public/assets/`, `public/berita/`, `public/js/`, `public/uploads/`.
 
-## Steps
-- [x] 1. Update `vercel.json` — explicit `/` -> `/index.html`, service public site
-      folders (`page/`, `berita/`, `assets/`), keep panel + API routes.
-- [x] 2. Fix `public/pages/organization.html` — unauth/logout redirect -> `../panel.html`.
-- [x] 3. Fix `public/pages/settings.html` — unauth/logout redirect -> `../panel.html`.
-- [x] 4. Verify `index.html` navbar (Home -> `/`, Kader Panel -> `/panel.html`).
-- [x] 5. Verify `public/panel.html` login behavior (redirect to dashboard only after auth).
-- [x] 6. Verify no other automatic redirects to panel.html exist.
-- [x] 7. Final verification of application flow.
+### Status
+- [x] Landing page exists at `public/index.html` (public homepage, no auto-redirect to panel)
+- [x] `public/panel.html` is the login page
+- [x] Navbar "Kader Panel" → `/panel.html` (link on click only)
+- [x] Navbar "Beranda" → `/` (links to landing)
+- [x] Panel pages redirect unauthenticated users to `../panel.html` (login)
+- [x] Logout buttons redirect to `../panel.html`
+- [x] No automatic redirect from `index.html` → `panel.html`
+- [x] `vercel.json` routes:
+  - `/` → `/index.html` (public landing)
+  - `/panel`, `/panel.html` → `/panel.html`
+  - `/pages/*`, `/assets/*`, `/berita/*`, `/js/*`, `/css/*`, `/uploads/*`
+  - `/api/*` → consolidated top-level handlers
 
-## Files Modified
-1. `vercel.json` — added explicit `/` -> `/index.html` route + public site folder routes.
-2. `public/pages/organization.html` — unauth/logout redirect now -> `../panel.html`.
-3. `public/pages/settings.html` — unauth/logout redirect now -> `../panel.html`.
-4. `index.html` — footer "Beranda" link -> `/` (navbar already correct).
+## Part B: Reduce Serverless Functions 13 → 9
 
+### Result
+- [x] Consolidated all nested `api/*/index.js` and `api/auth/*.js` into 9 top-level handlers:
+  - `api/admin.js`, `api/announcements.js`, `api/auth.js`, `api/events.js`,
+  - `api/kader.js`, `api/organization.js`, `api/settings.js`, `api/users.js`, `api/health.js`
+- [x] Removed all old nested files (`api/auth/login.js`, `api/events/index.js`, `api/admin/index.js`, etc.)
+- [x] All handlers use correct `../lib/...` require paths
+- [x] `vercel.json` uses `__path` query-param technique so consolidated handlers can reconstruct original URLs, preserving the exact public API contract
+- [x] `node --check` passes on all 9 consolidated handlers (EXIT 0)
+
+### Acceptance criteria
+- [ ] `npx vercel build` → inspect `.vercel/output/functions` → function count ≤ 10, root `/` serves landing page

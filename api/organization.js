@@ -1,22 +1,10 @@
 /**
- * /api/organization/*
- *
- * Organization Structure API.
- *
- * Returns structured organization hierarchy:
- *   - Leadership (ketua_rayon, sekretaris, bendahara)
- *   - Departments/Divisions with kabid, wakabid, anggota
- *
- * RBAC:
- *   GET    /api/organization          — All authenticated users
- *   POST   /api/organization          — super_admin, admin
- *   PUT    /api/organization/:id      — super_admin, admin
- *   DELETE /api/organization/:id      — super_admin, admin
+ * /api/organization — Consolidated Organization Structure Handler
+ * Merges: organization/index.js
  */
-
-const { query } = require('../../lib/db');
-const { requireAuth, requireRole } = require('../../lib/auth');
-const { logAudit } = require('../../lib/audit');
+const { query } = require('../lib/db');
+const { requireAuth, requireRole } = require('../lib/auth');
+const { logAudit } = require('../lib/audit');
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -25,6 +13,10 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  if (req.query && typeof req.query.__path === 'string') {
+    req.url = req.query.__path;
+  }
 
   const user = await requireAuth(req, res);
   if (!user) return;
@@ -58,7 +50,6 @@ async function getOrganization(req, res) {
   const parts = url.pathname.replace('/api/organization', '').split('/').filter(Boolean);
   const orgId = parts[0] || null;
 
-  // Single member detail
   if (orgId) {
     const result = await query(
       `SELECT u.id, u.username, u.full_name, u.email, u.role, u.status,
@@ -74,7 +65,6 @@ async function getOrganization(req, res) {
     return res.status(200).json(result.rows[0]);
   }
 
-  // Get leadership (inti)
   const leadership = await query(
     `SELECT u.id, u.username, u.full_name, u.email, u.role, u.status,
             kp.foto_url, kp.universitas, kp.fakultas, kp.jurusan, kp.angkatan
@@ -91,7 +81,6 @@ async function getOrganization(req, res) {
        END`
   );
 
-  // Get divisions with kabid, wakabid, anggota
   const divisions = await query(
     `SELECT d.id, d.name, d.description, d.sort_order,
             json_agg(
@@ -127,18 +116,21 @@ async function getOrganization(req, res) {
   });
 }
 
-async function updateDivision(req, res, user, ip, ua) {
-  let body = '';
-  req.on('data', chunk => { body += chunk; });
-  await new Promise(resolve => req.on('end', resolve));
+async function readBody(req) {
+  return new Promise((resolve) => {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try { resolve(JSON.parse(body || '{}')); } catch (e) { resolve(null); }
+    });
+  });
+}
 
-  let data;
-  try { data = JSON.parse(body); } catch (e) {
-    return res.status(400).json({ error: 'Invalid JSON' });
-  }
+async function updateDivision(req, res, user, ip, ua) {
+  const data = await readBody(req);
+  if (!data) return res.status(400).json({ error: 'Invalid JSON' });
 
   const { user_id, division_id, division_role } = data;
-
   if (!user_id) return res.status(400).json({ error: 'user_id required' });
 
   if (division_id !== undefined && division_id !== null) {
@@ -151,8 +143,7 @@ async function updateDivision(req, res, user, ip, ua) {
     [division_id || null, division_role || 'anggota', user_id]
   );
 
-  await logAudit(user.id, 'ORGANIZATION_UPDATE', 'kader_profiles', user_id, { division_id, division_role }, ip, ua);
-
+await logAudit({ userId: user.id, action: 'ORGANIZATION_UPDATE', ip, userAgent: ua, details: JSON.stringify({ user_id, division_id, division_role }) });
   return res.status(200).json({ message: 'Division updated successfully' });
 }
 
@@ -160,17 +151,10 @@ async function updateMemberDiv(req, res, user, ip, ua) {
   const url = new URL(req.url, 'http://' + (req.headers.host || 'localhost'));
   const parts = url.pathname.replace('/api/organization', '').split('/').filter(Boolean);
   const id = parts[0];
-
   if (!id) return res.status(400).json({ error: 'ID required' });
 
-  let body = '';
-  req.on('data', chunk => { body += chunk; });
-  await new Promise(resolve => req.on('end', resolve));
-
-  let data;
-  try { data = JSON.parse(body); } catch (e) {
-    return res.status(400).json({ error: 'Invalid JSON' });
-  }
+  const data = await readBody(req);
+  if (!data) return res.status(400).json({ error: 'Invalid JSON' });
 
   const { division_id, division_role, role } = data;
 
@@ -195,7 +179,6 @@ async function updateMemberDiv(req, res, user, ip, ua) {
     }
   }
 
-  await logAudit(user.id, 'ORGANIZATION_UPDATE_MEMBER', 'users', id, { division_id, division_role, role }, ip, ua);
-
+await logAudit({ userId: user.id, action: 'ORGANIZATION_UPDATE_MEMBER', ip, userAgent: ua, details: JSON.stringify({ id, division_id, division_role, role }) });
   return res.status(200).json({ message: 'Member updated successfully' });
 }

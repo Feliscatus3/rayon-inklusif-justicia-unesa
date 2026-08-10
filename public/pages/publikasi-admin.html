@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Publikasi - Kader Panel PMII Justicia</title>
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="dash-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo" id="sbLogo"><i class="fas fa-people-arrows"></i></div>
+      <div class="brand-text">
+        <h2 id="sbName">Kader Panel</h2>
+        <small id="sbOrg">PMII Justicia UNESA</small>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-label">Menu</div>
+      <a class="sidebar-link" href="dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a class="sidebar-link" href="users.html"><i class="fas fa-users"></i> Manajemen Pengguna</a>
+      <a class="sidebar-link active" href="publikasi-admin.html"><i class="fas fa-book-open"></i> Publikasi</a>
+      <a class="sidebar-link" href="calendar.html"><i class="fas fa-calendar-days"></i> Event</a>
+      <a class="sidebar-link" href="announcements.html"><i class="fas fa-bullhorn"></i> Pengumuman</a>
+      <div class="sidebar-label">Lainnya</div>
+      <a class="sidebar-link" href="settings.html"><i class="fas fa-cog"></i> Pengaturan</a>
+      <a class="sidebar-link" id="logoutBtn" href="#"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+    </nav>
+    <div class="sidebar-footer">PMII Rayon Justicia &copy; 2025</div>
+  </aside>
+
+  <div class="main-area">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+        <div class="topbar-title"><i class="fas fa-book-open"></i> Publikasi</div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn theme-toggle" id="themeToggle" title="Ganti tema"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
+        <div class="topbar-user" id="userChip">
+          <div class="u-avatar" id="userAvatar">K</div>
+          <div class="u-info">
+            <div class="u-name" id="userName">Kader</div>
+            <div class="u-role" id="userRole">-</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="dash-content">
+      <div class="page-head">
+        <h1 class="page-title"><i class="fas fa-book-open"></i> Publikasi Rayon</h1>
+        <p class="page-subtitle">Kumpulan buku, modul, artikel, dan dokumentasi karya kader PMII Justicia.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:18px">
+        <div class="card-hd">
+          <h3><i class="fas fa-filter"></i> Filter Publikasi</h3>
+          <a href="publikasi.html" class="btn btn-ghost btn-sm" target="_blank"><i class="fas fa-external-link-alt"></i> Lihat Halaman Publik</a>
+        </div>
+        <div class="card-bd">
+          <div class="sb" style="margin-bottom:14px">
+            <input type="text" id="srch" placeholder="Cari judul atau deskripsi publikasi...">
+          </div>
+          <div class="pub-filters" id="filters"></div>
+        </div>
+      </div>
+
+      <div id="pubGrid" class="pub-grid">
+        <div class="state spin"><i class="fas fa-spinner"></i><p>Memuat publikasi...</p></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+function $(id){return document.getElementById(id)}
+function initials(n){if(!n)return '?';return n.trim().split(/\s+/).map(function(w){return w[0]}).join('').substring(0,2).toUpperCase();}
+function capRole(r){if(!r)return '-';return r.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()});}
+function escapeHtml(s){
+  if(s===null||s===undefined) return '';
+  return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
+}
+
+/* ===== Data ===== */
+var CATEGORIES = ['Semua','Artikel','Kajian','Berita','Opini','Dokumentasi','Pengumuman'];
+var ICONS = {Artikel:'fa-newspaper',Kajian:'fa-book',Berita:'fa-bullhorn',Opini:'fa-pen-nib',Dokumentasi:'fa-photo-video',Pengumuman:'fa-bullhorn'};
+var publikasiData = [
+  {
+    id: 1,
+    title: 'MODUL MAPABA 1 Rayon Justicia',
+    category: 'Dokumentasi',
+    description: 'Modul Mapaba 1 untuk pengenalan organisasi PMII. Berisi materi dasar ke-PMII-an, AD/ART, dan pengantar kaderisasi.',
+    file: '/assets/file/MODUL_MAPABA_1_RAYON_JUSTICIA.pdf',
+    date: '2025-11-15',
+    size: '2.4 MB'
+  },
+  {
+    id: 2,
+    title: 'MODUL PKD 1 Rayon Justicia',
+    category: 'Kajian',
+    description: 'Modul PKD 1 untuk pendalaman organisasi PMII. Membahas ideologi, metodologi, dan arah gerak kader.',
+    file: '#',
+    date: '2025-12-01',
+    size: 'Segera'
+  }
+];
+
+/* ===== Theme ===== */
+(function initTheme(){
+  var saved=localStorage.getItem('theme');
+  if(saved==='dark'||(!saved&&window.matchMedia('(prefers-color-scheme: dark)').matches)){
+    document.documentElement.setAttribute('data-theme','dark');
+  }
+})();
+$('themeToggle').addEventListener('click',function(){
+  var dark=document.documentElement.getAttribute('data-theme')==='dark';
+  if(dark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme','light');}
+  else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('theme','dark');}
+});
+
+/* ===== Hamburger ===== */
+$('hamburger').addEventListener('click',function(){ $('sidebar').classList.toggle('open'); });
+document.addEventListener('click',function(e){
+  if(window.innerWidth<=768 && !e.target.closest('.sidebar') && !e.target.closest('.hamburger')){
+    $('sidebar').classList.remove('open');
+  }
+});
+
+/* ===== Auth ===== */
+async function initAuth(){
+  try{
+    var r=await fetch('/api/auth/me',{credentials:'include'});
+    var d=await r.json();
+    if(!d.authenticated){window.location.href='../panel.html';return;}
+    var u=d.user;
+    var name=u.full_name||u.username||'Kader';
+    $('userName').textContent=name;
+    $('userRole').textContent=capRole(u.role);
+    $('userAvatar').textContent=initials(name);
+  }catch(e){window.location.href='../panel.html';return;}
+}
+
+/* ===== Filters ===== */
+var activeCat='Semua';
+function renderFilters(){
+  var h='';
+  for(var i=0;i<CATEGORIES.length;i++){
+    var c=CATEGORIES[i];
+    h+='<button class="chip-filter'+(c===activeCat?' active':'')+'" data-cat="'+c+'">'+c+'</button>';
+  }
+  $('filters').innerHTML=h;
+  var btns=document.querySelectorAll('.chip-filter');
+  for(var j=0;j<btns.length;j++){
+    btns[j].onclick=function(){activeCat=this.dataset.cat;renderFilters();render();};
+  }
+}
+
+/* ===== Render ===== */
+function fmtDate(iso){
+  if(!iso||iso==='Segera') return 'Segera';
+  try{return new Date(iso).toLocaleDateString('id-ID',{year:'numeric',month:'short',day:'numeric'});}catch(e){return iso;}
+}
+function render(){
+  var q=$('srch').value.toLowerCase().trim();
+  var list=publikasiData.filter(function(p){
+    var okCat=(activeCat==='Semua'||p.category===activeCat);
+    var okQ=!q||(p.title||'').toLowerCase().indexOf(q)>=0||(p.description||'').toLowerCase().indexOf(q)>=0;
+    return okCat&&okQ;
+  });
+  var grid=$('pubGrid');
+  if(list.length===0){
+    grid.innerHTML='<div class="ne" style="grid-column:1/-1"><i class="fas fa-book-open"></i><p>Tidak ada publikasi yang cocok.</p></div>';
+    return;
+  }
+  var h='';
+  for(var i=0;i<list.length;i++){
+    var p=list[i];
+    var icon=ICONS[p.category]||'fa-file';
+    var disabled=(p.file==='#'||p.file===''||!p.file);
+    h+='<div class="pub-card">';
+    h+='<div class="pub-thumb"><i class="fas '+icon+'"></i><span class="pub-badge">'+escapeHtml(p.category)+'</span></div>';
+    h+='<div class="pub-body">';
+    h+='<div class="pub-title">'+escapeHtml(p.title)+'</div>';
+    h+='<div class="pub-meta"><span><i class="fas fa-calendar-alt"></i>'+fmtDate(p.date)+'</span><span><i class="fas fa-file-pdf"></i>'+escapeHtml(p.size)+'</span></div>';
+    h+='<div class="pub-desc">'+escapeHtml(p.description)+'</div>';
+    h+='<div class="pub-actions">';
+    if(disabled){
+      h+='<a class="btn btn-s btn-sm" style="pointer-events:none;opacity:.6"><i class="fas fa-clock"></i> Segera</a>';
+    }else{
+      h+='<a class="btn btn-pri btn-sm" href="'+escapeHtml(p.file)+'" target="_blank" rel="noopener"><i class="fas fa-download"></i> Download</a>';
+    }
+    h+='<a class="btn btn-ghost btn-sm" href="publikasi.html" target="_blank"><i class="fas fa-eye"></i> Publik</a>';
+    h+='</div>';
+    h+='</div>';
+    h+='</div>';
+  }
+  grid.innerHTML=h;
+}
+
+/* ===== Load ===== */
+function load(){
+  $('pubGrid').innerHTML='<div class="state spin"><i class="fas fa-spinner"></i><p>Memuat publikasi...</p></div>';
+  setTimeout(function(){render();},300);
+}
+
+/* ===== Init ===== */
+document.addEventListener('DOMContentLoaded',async function(){
+  await initAuth();
+  renderFilters();
+  load();
+  $('srch').addEventListener('input',function(){render();});
+  $('logoutBtn').addEventListener('click',async function(ev){
+    ev.preventDefault();
+    var headers={'Content-Type':'application/json'};
+    var csrf=(function(){var cs=document.cookie.split(';');for(var i=0;i<cs.length;i++){var c=cs[i].trim();if(c.indexOf('csrf_token=')===0){return c.substring('csrf_token='.length).split('.')[0];}}return null;})();
+    if(csrf) headers['X-CSRF-Token']=csrf;
+    try{await fetch('/api/auth/logout',{method:'POST',headers:headers,credentials:'include'});}catch(e){}
+    window.location.href='../panel.html';
+  });
+});
+</script>
+</body>
+</html>

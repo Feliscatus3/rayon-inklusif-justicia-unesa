@@ -5,55 +5,55 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pengumuman - Kader Panel PMII Justicia</title>
 <link rel="stylesheet" href="/assets/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>
-.an-bar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px;background:#fff;padding:16px 20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.nr{display:flex;align-items:center;gap:10px}
-.bb{color:rgba(255,255,255,.9);text-decoration:none;font-size:.85rem;display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:6px}
-.bb:hover{background:rgba(255,255,255,.15);color:#fff}
-.an-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px}
-.an-card{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden;transition:.2s;border:1px solid #eee}
-.an-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.12);transform:translateY(-2px)}
-.an-card.pin{border-left:4px solid #1a237e;background:#f8f9ff}
-.an-h{padding:16px 20px 12px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-.an-t{font-size:1.05rem;font-weight:700;margin:0;flex:1}
-.an-b{padding:12px 20px 16px}
-.an-c{font-size:.9rem;line-height:1.6;margin-bottom:12px;white-space:pre-line}
-.an-m{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.8rem;color:#999}
-.an-m .cat{background:#1a237e;color:#fff;padding:2px 10px;border-radius:12px;font-size:.7rem}
-.an-f{padding:12px 20px;border-top:1px solid #f0f0f0;display:flex;gap:8px;flex-wrap:wrap}
-.pin-b{background:#1a237e;color:#fff;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:.8rem}
-.pin-b:hover{opacity:.85}
-.btn-sm{background:#f0f0f0;border:1px solid #ddd;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:.8rem;display:inline-flex;align-items:center;gap:4px}
-.btn-sm:hover{background:#1a237e;color:#fff}
-.mod{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center}
-.mod.show{display:flex}
-.mc{background:#fff;border-radius:14px;padding:28px;max-width:620px;width:90%;max-height:85vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.2)}
-.mx{position:absolute;top:12px;right:16px;font-size:1.5rem;cursor:pointer;color:#999}
-.mc h3{margin:0 0 16px;color:#1a237e}
-.fg{margin-bottom:14px}
-.fg label{display:block;font-size:.85rem;font-weight:600;margin-bottom:4px}
-.fg input,.fg select,.fg textarea{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:.9rem;box-sizing:border-box}
-.fa{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
-.cp{background:#1a237e;color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer}
-.cc{background:#757575;color:#fff;border:none;border-radius:8px;padding:6px 14px;cursor:pointer}
-.sb{display:flex;gap:8px;align-items:center}
-.sb input{padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:.85rem;min-width:200px}
-.sb select{padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:.85rem}
-.toast{position:fixed;bottom:24px;right:24px;background:#2e7d32;color:#fff;padding:12px 20px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:2000;display:none}
-.toast.show{display:block}.toast.err{background:#c62828}
-.ne{text-align:center;padding:60px 20px;color:#999}
-.ne i{font-size:3rem;margin-bottom:12px;display:block}
-</style>
 </head>
 <body>
-<nav class="dashboard-nav"><div class="nav-container">
-<h2><i class="fas fa-bullhorn"></i> Pengumuman</h2>
-<div class="nr">
-<a href="dashboard.html" class="bb"><i class="fas fa-arrow-left"></i> Dashboard</a>
-<button id="lo" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Keluar</button>
-</div></nav>
-<main class="dashboard-container">
+<div class="dash-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo" id="sbLogo"><i class="fas fa-people-arrows"></i></div>
+      <div class="brand-text">
+        <h2 id="sbName">Kader Panel</h2>
+        <small id="sbOrg">PMII Justicia UNESA</small>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-label">Menu</div>
+      <a class="sidebar-link" href="dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a class="sidebar-link" href="users.html"><i class="fas fa-users"></i> Manajemen Pengguna</a>
+      <a class="sidebar-link" href="publikasi-admin.html"><i class="fas fa-book-open"></i> Publikasi</a>
+      <a class="sidebar-link" href="calendar.html"><i class="fas fa-calendar-days"></i> Event</a>
+      <a class="sidebar-link active" href="announcements.html"><i class="fas fa-bullhorn"></i> Pengumuman</a>
+      <div class="sidebar-label">Lainnya</div>
+      <a class="sidebar-link" href="settings.html"><i class="fas fa-cog"></i> Pengaturan</a>
+      <a class="sidebar-link" id="logoutBtn" href="#"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+    </nav>
+    <div class="sidebar-footer">PMII Rayon Justicia &copy; 2025</div>
+  </aside>
+  <div class="main-area">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+        <div class="topbar-title"><i class="fas fa-bullhorn"></i> Pengumuman</div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn theme-toggle" id="themeToggle" title="Ganti tema"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
+        <div class="topbar-user" id="userChip">
+          <div class="u-avatar" id="userAvatar">K</div>
+          <div class="u-info">
+            <div class="u-name" id="userName">Kader</div>
+            <div class="u-role" id="userRole">-</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="dash-content">
+      <div class="page-head">
+        <h1 class="page-title"><i class="fas fa-bullhorn"></i> Pengumuman</h1>
+        <p class="page-subtitle">Kelola informasi dan pengumuman untuk seluruh kader.</p>
+      </div>
 <div class="an-bar"><div class="sb">
 <input type="text" id="srch" placeholder="Cari...">
 <select id="cf"><option value="">Semua</option><option>Umum</option><option>Kegiatan</option><option>Pendidikan</option><option>Organisasi</option><option>Kaderisasi</option><option>KOPRI</option><option>Lembaga</option><option>External</option></select>
@@ -68,8 +68,31 @@
 <div class="fa"><button type="submit" class="cp" id="fsb">Simpan</button><button type="button" class="cc" id="fc">Batal</button></div>
 </form></div>
 <div id="toast" class="toast"></div>
-</main>
+    </main>
+  </div>
+</div>
 <script>
+function initials(n){if(!n)return '?';return n.trim().split(/\s+/).map(function(w){return w[0]}).join('').substring(0,2).toUpperCase();}
+function capRole(r){if(!r)return '-';return r.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()});}
+/* ===== Theme ===== */
+(function initTheme(){
+  var saved=localStorage.getItem('theme');
+  if(saved==='dark'||(!saved&&window.matchMedia('(prefers-color-scheme: dark)').matches)){
+    document.documentElement.setAttribute('data-theme','dark');
+  }
+})();
+$('themeToggle').addEventListener('click',function(){
+  var dark=document.documentElement.getAttribute('data-theme')==='dark';
+  if(dark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme','light');}
+  else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('theme','dark');}
+});
+/* ===== Hamburger ===== */
+$('hamburger').addEventListener('click',function(){ $('sidebar').classList.toggle('open'); });
+document.addEventListener('click',function(e){
+  if(window.innerWidth<=768 && !e.target.closest('.sidebar') && !e.target.closest('.hamburger')){
+    $('sidebar').classList.remove('open');
+  }
+});
 var ER=['super_admin','admin','ketua_rayon','sekretaris'];var an=[],cu=null;
 function $(i){return document.getElementById(i)}
 function getCsrfToken(){
@@ -87,9 +110,14 @@ document.addEventListener('DOMContentLoaded',async function(){
   try{var r=await fetch('/api/auth/me',{credentials:'include'});var d=await r.json();
     if(!d.authenticated){window.location.href='../panel.html';return;}
     cu=d.user;if(ER.indexOf(cu.role)>=0)$('ab').style.display='inline-flex';
+    var uname=cu.full_name||cu.username||'Kader';
+    $('userName').textContent=uname;
+    $('userRole').textContent=capRole(cu.role);
+    $('userAvatar').textContent=initials(uname);
   }catch(e){window.location.href='../panel.html';return;}
   await loadAnn();
-  $('lo').onclick=async function(){
+  $('logoutBtn').onclick=async function(ev){
+    ev.preventDefault();
     var headers={'Content-Type':'application/json'};
     var csrf=getCsrfToken();
     if(csrf) headers['X-CSRF-Token']=csrf;

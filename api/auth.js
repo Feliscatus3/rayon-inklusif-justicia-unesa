@@ -50,10 +50,28 @@ async function handleLogin(req, res) {
     || 'unknown';
   const userAgent = req.headers['user-agent'] || 'unknown';
 
+  console.error('[AUTH LOGIN] request received, ip:', ip);
+  console.error('[AUTH LOGIN] DATABASE_URL configured:', !!process.env.DATABASE_URL);
+  console.error('[AUTH LOGIN] SESSION_SECRET configured:', !!process.env.SESSION_SECRET);
+  console.error('[AUTH LOGIN] NODE_ENV:', process.env.NODE_ENV);
+
+  // Early environment validation
+  if (!process.env.DATABASE_URL) {
+    console.error('[AUTH LOGIN] FATAL: DATABASE_URL not configured');
+    return res.status(500).json({ error: 'Server configuration error: database not configured' });
+  }
+  if (!process.env.SESSION_SECRET) {
+    console.error('[AUTH LOGIN] FATAL: SESSION_SECRET not configured');
+    return res.status(500).json({ error: 'Server configuration error: session secret not configured' });
+  }
+
   const body = await parseJsonBody(req);
   if (body === null) {
+    console.error('[AUTH LOGIN] parseJsonBody returned null - invalid JSON');
     return res.status(400).json({ error: 'Invalid JSON body' });
   }
+
+  console.error('[AUTH LOGIN] body parsed, keys:', Object.keys(body));
 
   let username = body.username;
   let password = body.password;
@@ -65,6 +83,8 @@ async function handleLogin(req, res) {
     password = password.slice(0, 128);
   }
 
+  console.error('[AUTH LOGIN] username:', username);
+
   const errors = [];
   if (!username || username.length === 0) errors.push('Username wajib diisi');
   else if (!/^[a-z0-9_@.+-]+$/.test(username)) errors.push('Username mengandung karakter tidak valid');
@@ -73,6 +93,7 @@ async function handleLogin(req, res) {
   else if (password.length < 6) errors.push('Password minimal 6 karakter');
 
   if (errors.length > 0) {
+    console.error('[AUTH LOGIN] validation errors:', errors);
     return res.status(400).json({ error: errors.join('. ') });
   }
 
@@ -90,18 +111,30 @@ async function handleLogin(req, res) {
     });
   }
 
-  const userResult = await query(
-    'SELECT id, username, email, password_hash, full_name, role, status, is_active FROM users WHERE username = $1',
-    [username]
-  );
+  console.error('[AUTH LOGIN] querying database for user...');
+  let userResult;
+  try {
+    userResult = await query(
+      'SELECT id, username, email, password_hash, full_name, role, status, is_active FROM users WHERE username = $1',
+      [username]
+    );
+    console.error('[AUTH LOGIN] query success, rows:', userResult.rows.length);
+  } catch (queryErr) {
+    console.error('[AUTH LOGIN] DATABASE QUERY ERROR:', queryErr.message, queryErr.code, queryErr.stack);
+    return res.status(500).json({ error: 'Database query failed', code: queryErr.code });
+  }
 
   if (userResult.rows.length === 0) {
+    console.error('[AUTH LOGIN] user not found:', username);
     await logAudit({ action: 'LOGIN_FAILED', ip, userAgent, username, details: JSON.stringify({ reason: 'user_not_found' }) });
     return res.status(401).json({ error: 'Username atau password salah' });
   }
 
   const user = userResult.rows[0];
+  console.error('[AUTH LOGIN] user found:', { id: user.id, username: user.username, role: user.role, status: user.status, is_active: user.is_active, hasPasswordHash: !!user.password_hash });
+
   const userStatus = user.status || (user.is_active ? 'active' : 'inactive');
+  console.error('[AUTH LOGIN] effective status:', userStatus);
   
   if (userStatus === 'pending') {
     await logAudit({ userId: user.id, action: 'LOGIN_FAILED', ip, userAgent, username, details: JSON.stringify({ reason: 'account_pending' }) });
@@ -118,33 +151,65 @@ async function handleLogin(req, res) {
     return res.status(403).json({ error: 'Akun dinonaktifkan. Hubungi administrator.' });
   }
 
-  const isValid = await bcrypt.compare(password, user.password_hash);
+  console.error('[AUTH LOGIN] verifying password...');
+  let isValid;
+  try {
+    isValid = await bcrypt.compare(password, user.password_hash);
+    console.error('[AUTH LOGIN] password verification result:', isValid);
+  } catch (bcryptErr) {
+    console.error('[AUTH LOGIN] BCRYPT ERROR:', bcryptErr.message, bcryptErr.stack);
+    return res.status(500).json({ error: 'Password verification failed' });
+  }
+  
   if (!isValid) {
     await logAudit({ userId: user.id, action: 'LOGIN_FAILED', ip, userAgent, username, details: JSON.stringify({ reason: 'wrong_password' }) });
     return res.status(401).json({ error: 'Username atau password salah' });
   }
 
-  await query('DELETE FROM sessions WHERE user_id = $1', [user.id]);
+  console.error('[AUTH LOGIN] deleting old sessions...');
+  try {
+    await query('DELETE FROM sessions WHERE user_id = $1', [user.id]);
+    console.error('[AUTH LOGIN] old sessions deleted');
+  } catch (delErr) {
+    console.error('[AUTH LOGIN] DELETE SESSIONS ERROR:', delErr.message, delErr.code, delErr.stack);
+    return res.status(500).json({ error: 'Session cleanup failed', code: delErr.code });
+  }
 
   const token = crypto.randomBytes(32).toString('hex');
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-  await query(
-    'INSERT INTO sessions (user_id, token, expires_at) VALUES ($1, $2, $3)',
-    [user.id, token, expiresAt]
-  );
+  console.error('[AUTH LOGIN] inserting new session...');
+  try {
+    await query(
+      'INSERT INTO sessions (user_id, token, expires_at) VALUES ($1, $2, $3)',
+      [user.id, token, expiresAt]
+    );
+    console.error('[AUTH LOGIN] session inserted');
+  } catch (insertErr) {
+    console.error('[AUTH LOGIN] INSERT SESSION ERROR:', insertErr.message, insertErr.code, insertErr.stack);
+    return res.status(500).json({ error: 'Session creation failed', code: insertErr.code });
+  }
 
-  res.append('Set-Cookie', cookie.serialize('session_token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: 7 * 24 * 60 * 60,
-    path: '/'
-  }));
+  console.error('[AUTH LOGIN] setting cookie...');
+  try {
+    const sessionCookie = cookie.serialize('session_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60,
+      path: '/'
+    });
+    res.setHeader('Set-Cookie', sessionCookie);
+    console.error('[AUTH LOGIN] cookie set via setHeader');
+  } catch (cookieErr) {
+    console.error('[AUTH LOGIN] COOKIE ERROR:', cookieErr.message, cookieErr.stack);
+    return res.status(500).json({ error: 'Cookie creation failed' });
+  }
 
   try {
     const csrfToken = csrf.issueCsrfToken(res);
     res.setHeader('X-CSRF-Token', csrfToken);
+    console.error('[AUTH LOGIN] CSRF token issued');
   } catch (csrfErr) {
     console.error('CSRF token issuance failed (non-fatal):', csrfErr.message);
   }
@@ -152,6 +217,7 @@ async function handleLogin(req, res) {
   await logAudit({ userId: user.id, action: 'LOGIN_SUCCESS', ip, userAgent, username, details: JSON.stringify({ role: user.role }) });
   loginLimiter.reset(ip);
 
+  console.error('[AUTH LOGIN] returning success response');
   return res.status(200).json({
     message: 'Login berhasil',
     user: {

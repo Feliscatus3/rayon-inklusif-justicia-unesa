@@ -15,6 +15,18 @@ module.exports = async (req, res) => {
   if (req.query && typeof req.query.__path === 'string') {
     req.url = req.query.__path;
   }
+
+  // Public read access: GET is intentionally unauthenticated so the public
+  // calendar (pages/kalender.html) can display events without a session.
+  if (req.method === 'GET') {
+    try {
+      return await getEvents(req, res);
+    } catch (error) {
+      console.error('Events API error:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
   const user = await requireAuth(req, res);
   if (!user) return;
   const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
@@ -22,8 +34,6 @@ module.exports = async (req, res) => {
 
   try {
     switch (req.method) {
-      case 'GET':
-        return await getEvents(req, res);
       case 'POST':
       case 'PUT':
       case 'DELETE':

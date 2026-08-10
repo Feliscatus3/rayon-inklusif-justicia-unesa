@@ -23,7 +23,6 @@
       <div class="sidebar-label">Menu</div>
       <a class="sidebar-link" href="dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
       <a class="sidebar-link" href="users.html"><i class="fas fa-users"></i> Manajemen Pengguna</a>
-      <a class="sidebar-link" href="publikasi-admin.html"><i class="fas fa-book-open"></i> Publikasi</a>
       <a class="sidebar-link active" href="calendar.html"><i class="fas fa-calendar-days"></i> Event</a>
       <a class="sidebar-link" href="announcements.html"><i class="fas fa-bullhorn"></i> Pengumuman</a>
       <div class="sidebar-label">Lainnya</div>
@@ -32,6 +31,7 @@
     </nav>
     <div class="sidebar-footer">PMII Rayon Justicia &copy; 2025</div>
   </aside>
+
   <div class="main-area">
     <header class="topbar">
       <div class="topbar-left">
@@ -49,52 +49,66 @@
         </div>
       </div>
     </header>
+
     <main class="dash-content">
       <div class="page-head">
         <h1 class="page-title"><i class="fas fa-calendar-alt"></i> Kalender Event</h1>
         <p class="page-subtitle">Kelola agenda dan jadwal kegiatan Rayon PMII Justicia.</p>
       </div>
-<div class="toolbar">
-<div class="t-left">
-<button id="prevBtn" class="btn-ico"><i class="fas fa-chevron-left"></i></button>
-<h2 id="titleLabel">Januari 2025</h2>
-<button id="nextBtn" class="btn-ico"><i class="fas fa-chevron-right"></i></button>
-<button id="todayBtn" class="btn-tdy">Hari Ini</button>
-</div>
-<div class="t-right">
-<div class="vsw">
-<button class="active" data-view="month"><i class="fas fa-calendar"></i> Bulan</button>
-<button data-view="week"><i class="fas fa-calendar-week"></i> Minggu</button>
-<button data-view="day"><i class="fas fa-calendar-day"></i> Hari</button>
-</div>
-<select id="catFilter" class="cf">
-<option value="">Semua Kategori</option>
-<option value="PMII">PMII</option>
-<option value="Rayon">Rayon</option>
-<option value="Komisariat">Komisariat</option>
-<option value="BEM">BEM</option>
-<option value="DPM">DPM</option>
-<option value="Faculty">Faculty</option>
-<option value="University">University</option>
-<option value="External">External</option>
-</select>
-<button id="addBtn" class="btn-pri" style="display:none"><i class="fas fa-plus"></i> Tambah</button>
-</div>
 
-<div id="monthView"><div class="mgrid"><div class="mhdr"><div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div><div id="monthDays" class="mdays"></div></div>
-<div id="weekView" style="display:none"><div class="wgrid"><div id="weekBody" class="wg"></div></div>
-<div id="dayView" class="dv" style="display:none"><h3 id="dayTitle">Agenda Hari Ini</h3><div id="dayList"></div>
+      <div class="toolbar">
+        <div class="t-left">
+          <button id="prevBtn" class="btn-ico"><i class="fas fa-chevron-left"></i></button>
+          <h2 id="titleLabel">Januari 2025</h2>
+          <button id="nextBtn" class="btn-ico"><i class="fas fa-chevron-right"></i></button>
+          <button id="todayBtn" class="btn-tdy">Hari Ini</button>
+        </div>
+        <div class="t-right">
+          <div class="vsw">
+            <button class="active" data-view="month"><i class="fas fa-calendar"></i> Bulan</button>
+            <button data-view="week"><i class="fas fa-calendar-week"></i> Minggu</button>
+            <button data-view="day"><i class="fas fa-calendar-day"></i> Hari</button>
+          </div>
+          <select id="catFilter" class="cf">
+            <option value="">Semua Kategori</option>
+            <option value="PMII">PMII</option>
+            <option value="Rayon">Rayon</option>
+            <option value="Komisariat">Komisariat</option>
+            <option value="BEM">BEM</option>
+            <option value="DPM">DPM</option>
+            <option value="Faculty">Faculty</option>
+            <option value="University">University</option>
+            <option value="External">External</option>
+          </select>
+          <button id="addBtn" class="btn-pri" style="display:none"><i class="fas fa-plus"></i> Tambah</button>
+        </div>
+      </div>
 
-<div id="detailModal" class="modal"><div class="mc"><span class="mx">&times;</span><div id="detailContent"></div></div>
-<div id="formModal" class="modal"><div class="mc"><span class="mx">&times;</span><h3 id="formTitle">Tambah Event Baru</h3>
-<form id="eventForm"><input type="hidden" id="eventId">
-<div class="fg"><label>Judul *</label><input type="text" id="evTitle" required></div>
-<div class="fg"><label>Deskripsi</label><textarea id="evDesc" rows="3"></textarea></div>
-<div class="fr"><div class="fg"><label>Kategori</label><select id="evCategory"><option value="Rayon">Rayon</option><option value="PMII">PMII</option><option value="Komisariat">Komisariat</option><option value="BEM">BEM</option><option value="DPM">DPM</option><option value="Faculty">Faculty</option><option value="University">University</option><option value="External">External</option></select></div><div class="fg"><label>Warna</label><input type="color" id="evColor" value="#1a237e"></div>
-<div class="fg"><label>Lokasi</label><input type="text" id="evLocation"></div>
-<div class="fr"><div class="fg"><label>Tanggal *</label><input type="date" id="evDate" required></div><div class="fg"><label>Waktu</label><input type="time" id="evTime"></div>
-<div class="fa"><button type="submit" class="btn-pri" id="formSubmit">Simpan</button><button type="button" class="btn-cancel" id="formCancel">Batal</button></div></form></div>
-</main>
+      <div class="cal-views">
+        <div id="monthView" class="mv"><div class="mgrid"><div class="mhdr"><div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div></div><div id="monthDays" class="mdays"></div></div></div>
+        <div id="weekView" class="mv" style="display:none"><div class="wgrid"><div id="weekBody" class="wg"></div></div></div>
+        <div id="dayView" class="mv dv" style="display:none"><h3 id="dayTitle">Agenda Hari Ini</h3><div id="dayList"></div></div>
+      </div>
+
+      <div id="detailModal" class="modal"><div class="mc"><span class="mx">&times;</span><div id="detailContent"></div></div></div>
+      <div id="formModal" class="modal"><div class="mc"><span class="mx">&times;</span><h3 id="formTitle">Tambah Event Baru</h3>
+        <form id="eventForm"><input type="hidden" id="eventId">
+          <div class="fg"><label>Judul *</label><input type="text" id="evTitle" required></div>
+          <div class="fg"><label>Deskripsi</label><textarea id="evDesc" rows="3"></textarea></div>
+          <div class="fr">
+            <div class="fg"><label>Kategori</label><select id="evCategory"><option value="Rayon">Rayon</option><option value="PMII">PMII</option><option value="Komisariat">Komisariat</option><option value="BEM">BEM</option><option value="DPM">DPM</option><option value="Faculty">Faculty</option><option value="University">University</option><option value="External">External</option></select></div>
+            <div class="fg"><label>Warna</label><input type="color" id="evColor" value="#1a237e"></div>
+          </div>
+          <div class="fg"><label>Lokasi</label><input type="text" id="evLocation"></div>
+          <div class="fr">
+            <div class="fg"><label>Tanggal *</label><input type="date" id="evDate" required></div>
+            <div class="fg"><label>Waktu</label><input type="time" id="evTime"></div>
+          </div>
+          <div class="fa"><button type="submit" class="btn-pri" id="formSubmit"><i class="fas fa-save"></i> Simpan</button><button type="button" class="btn-cancel" id="formCancel">Batal</button></div>
+        </form></div></div>
+
+      <div id="toast" class="toast"></div>
+    </main>
   </div>
 </div>
 
@@ -102,6 +116,10 @@
 function $(id){return document.getElementById(id)}
 function initials(n){if(!n)return '?';return n.trim().split(/\s+/).map(function(w){return w[0]}).join('').substring(0,2).toUpperCase();}
 function capRole(r){if(!r)return '-';return r.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()});}
+function escapeHtml(s){
+  if(s===null||s===undefined) return '';
+  return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
+}
 /* ===== Theme ===== */
 (function initTheme(){
   var saved=localStorage.getItem('theme');
@@ -121,33 +139,35 @@ document.addEventListener('click',function(e){
     $('sidebar').classList.remove('open');
   }
 });
+
 var MONTHS = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 var CAT_COLORS = {PMII:'#d32f2f',Rayon:'#1a237e',Komisariat:'#2e7d32',BEM:'#e65100',DPM:'#6a1b9a',Faculty:'#00695c',University:'#37474f',External:'#c62828'};
 var EDITOR_ROLES = ['super_admin','admin','ketua_rayon','sekretaris'];
-var today = new Date(), curView = 'month', events = [], curUser = null;
-function getCsrfToken(){
-  var cookies=document.cookie.split(';');
-  for(var i=0;i<cookies.length;i++){
-    var c=cookies[i].trim();
-    if(c.indexOf('csrf_token=')===0){
-      var val=c.substring('csrf_token='.length);
-      return val.split('.')[0];
-    }
-  }
-  return null;
+var today = new Date(), curView = 'month', events = [], curUser = null, csrfToken = null;
+
+function getCsrfToken(){ return csrfToken || null; }
+
+function toast(msg, type){
+  var t=$('toast');
+  t.textContent=msg;
+  t.className='toast'+(type==='err'?' err':'')+' show';
+  setTimeout(function(){ t.classList.remove('show'); }, 3500);
 }
 
 document.addEventListener('DOMContentLoaded', async function(){
   try {
     var r = await fetch('/api/auth/me', {credentials:'include'});
     var d = await r.json();
-if (!d.authenticated) { window.location.href='../panel.html'; return; }
+    if (!d.authenticated) { window.location.href='../panel.html'; return; }
     curUser = d.user;
+    csrfToken = d.csrfToken || null;
     var uname = curUser.full_name || curUser.username || 'Kader';
     $('userName').textContent = uname;
     $('userRole').textContent = capRole(curUser.role);
     $('userAvatar').textContent = initials(uname);
-    if (EDITOR_ROLES.indexOf(curUser.role) >= 0) document.getElementById('addBtn').style.display = 'inline-flex';
+    if (EDITOR_ROLES.indexOf(curUser.role) >= 0 || curUser.privilege === 'super_admin' || curUser.privilege === 'admin') {
+      document.getElementById('addBtn').style.display = 'inline-flex';
+    }
     await loadEvents();
   } catch(e) { window.location.href='../panel.html'; return; }
 
@@ -168,7 +188,7 @@ if (!d.authenticated) { window.location.href='../panel.html'; return; }
   document.getElementById('eventForm').onsubmit = handleSubmit;
 
   var q = document.querySelectorAll('.mx');
-  for (var i=0; i<q.length; i++) q[i].onclick = function(){ this.parentElement.parentElement.classList.remove('show'); };
+  for (var i=0; i<q.length; i++) q[i].onclick = function(){ this.closest('.modal').classList.remove('show'); };
 
   var vBtns = document.querySelectorAll('[data-view]');
   for (var i=0; i<vBtns.length; i++) vBtns[i].onclick = function(){
@@ -207,12 +227,23 @@ function closeModal(id) {
 }
 
 function render() {
-  document.getElementById('monthView').parentElement.style.display = (curView === 'month') ? 'block' : 'none';
-  document.getElementById('weekView').parentElement.style.display = (curView === 'week') ? 'block' : 'none';
-  document.getElementById('dayView').parentElement.style.display = (curView === 'day') ? 'block' : 'none';
+  document.getElementById('monthView').style.display = (curView === 'month') ? 'block' : 'none';
+  document.getElementById('weekView').style.display = (curView === 'week') ? 'block' : 'none';
+  document.getElementById('dayView').style.display = (curView === 'day') ? 'block' : 'none';
   if (curView === 'month') renderMonth();
   else if (curView === 'week') renderWeek();
   else renderDay();
+}
+
+function showCalState(msg, iconCls){
+  var el=document.querySelector('.cal-views');
+  if(!el) return;
+  el.innerHTML='<div class="state"><i class="fas '+(iconCls||'fa-spinner')+'"></i><p>'+msg+'</p></div>';
+}
+function showCalGrid(){
+  var el=document.querySelector('.cal-views');
+  if(!el) return;
+  el.innerHTML='<div id="monthView" class="mv" style="'+(curView==='month'?'':'display:none')+'"><div class="mgrid"><div class="mhdr"><div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div></div><div id="monthDays" class="mdays"></div></div></div><div id="weekView" class="mv" style="'+(curView==='week'?'':'display:none')+'"><div class="wgrid"><div id="weekBody" class="wg"></div></div></div><div id="dayView" class="mv dv" style="'+(curView==='day'?'':'display:none')+'"><h3 id="dayTitle">Agenda Hari Ini</h3><div id="dayList"></div></div>';
 }
 
 function renderMonth() {
@@ -225,15 +256,15 @@ function renderMonth() {
   var ts = getDateStr(new Date());
   var h = '';
   for (var i = fd - 1; i >= 0; i--) {
-    h += '<div class="cell om"><div class="num">' + (dip - i) + '</div>';
+    h += '<div class="cell om"><div class="num">' + (dip - i) + '</div></div>';
   }
   for (var d = 1; d <= dim; d++) {
     var ds = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
     var it = (ds === ts);
-    var de = f.filter(function(e) { return e.event_date === ds; });
+    var de = f.filter(function(e) { return String(e.event_date) === ds; });
     h += '<div class="cell' + (it ? ' today' : '') + '" onclick="goToDay(\'' + ds + '\')"><div class="num">' + d + '</div>';
     for (var j = 0; j < Math.min(de.length, 3); j++) {
-      h += '<div class="chip" style="background:' + getColor(de[j]) + '" onclick="event.stopPropagation();showDetail(' + de[j].id + ')">' + de[j].title + '</div>';
+      h += '<div class="chip" style="background:' + getColor(de[j]) + '" onclick="event.stopPropagation();showDetail(' + de[j].id + ')">' + escapeHtml(de[j].title) + '</div>';
     }
     if (de.length > 3) h += '<div style="font-size:.7rem;color:#999">+' + (de.length - 3) + '</div>';
     h += '</div>';
@@ -241,7 +272,7 @@ function renderMonth() {
   var tc = fd + dim;
   var rem = (7 - (tc % 7)) % 7;
   for (var i = 1; i <= rem; i++) {
-    h += '<div class="cell om"><div class="num">' + i + '</div>';
+    h += '<div class="cell om"><div class="num">' + i + '</div></div>';
   }
   document.getElementById('monthDays').innerHTML = h;
 }
@@ -251,7 +282,7 @@ function renderWeek() {
   var ts = getDateStr(new Date());
   var mon = new Date(today);
   mon.setDate(mon.getDate() - ((mon.getDay() + 6) % 7));
-  document.getElementById('titleLabel').textContent = 'Minggu ' + MONTHS[mon.getMonth()];
+  document.getElementById('titleLabel').textContent = 'Minggu ' + MONTHS[mon.getMonth()] + ' ' + mon.getFullYear();
   var dy = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
   var h = '';
   for (var i = 0; i < 7; i++) {
@@ -259,10 +290,11 @@ function renderWeek() {
     dt.setDate(mon.getDate() + i);
     var ds = getDateStr(dt);
     var it = (ds === ts);
-    var de = f.filter(function(e) { return e.event_date === ds; });
+    var de = f.filter(function(e) { return String(e.event_date) === ds; });
     h += '<div class="wc"><div class="wl' + (it ? ' td' : '') + '">' + dy[i] + ' ' + dt.getDate() + '</div>';
+    if (de.length === 0) h += '<div style="font-size:.72rem;color:var(--text-light);padding:4px">Tidak ada event</div>';
     for (var j = 0; j < de.length; j++) {
-      h += '<div class="we" style="background:' + getColor(de[j]) + '" onclick="showDetail(' + de[j].id + ')">' + (de[j].event_time ? de[j].event_time.substring(0, 5) : '') + ' ' + de[j].title + '</div>';
+      h += '<div class="we" style="background:' + getColor(de[j]) + '" onclick="showDetail(' + de[j].id + ')">' + (de[j].event_time ? String(de[j].event_time).substring(0, 5) : '') + ' ' + escapeHtml(de[j].title) + '</div>';
     }
     h += '</div>';
   }
@@ -274,16 +306,16 @@ function renderDay() {
   var ds = getDateStr(today);
   document.getElementById('titleLabel').textContent = today.getDate() + ' ' + MONTHS[today.getMonth()] + ' ' + today.getFullYear();
   document.getElementById('dayTitle').textContent = 'Agenda ' + today.getDate() + ' ' + MONTHS[today.getMonth()] + ' ' + today.getFullYear();
-  var de = f.filter(function(e) { return e.event_date === ds; });
+  var de = f.filter(function(e) { return String(e.event_date) === ds; });
   var h = '';
   if (de.length === 0) {
-    h = '<div class="noe"><i class="far fa-calendar"></i><p>Tidak ada event</p></div>';
+    h = '<div class="noe"><i class="far fa-calendar"></i><p>Tidak ada event pada tanggal ini</p></div>';
   } else {
     de.sort(function(a, b) { return (a.event_time || '00:00') > (b.event_time || '00:00') ? 1 : -1; });
     for (var j = 0; j < de.length; j++) {
       var e = de[j];
-      var t = e.event_time ? e.event_time.substring(0, 5) : '--:--';
-      h += '<div class="de" onclick="showDetail(' + e.id + ')"><div class="de-t">' + t + '</div><div class="de-b"><h4>' + e.title + '</h4><span class="ec" style="background:' + getColor(e) + '">' + e.category + '</span>' + (e.location ? '<p><i class="fas fa-map-marker-alt"></i> ' + e.location + '</p>' : '') + '</div>';
+      var t = e.event_time ? String(e.event_time).substring(0, 5) : '--:--';
+      h += '<div class="de" onclick="showDetail(' + e.id + ')"><div class="de-t">' + t + '</div><div class="de-b"><h4>' + escapeHtml(e.title) + '</h4><span class="ec" style="background:' + getColor(e) + '">' + escapeHtml(e.category) + '</span>' + (e.location ? '<p><i class="fas fa-map-marker-alt"></i> ' + escapeHtml(e.location) + '</p>' : '') + '</div></div>';
     }
   }
   document.getElementById('dayList').innerHTML = h;
@@ -298,9 +330,28 @@ function goToDay(ds) {
   render();
 }
 
+function showCalError(msg){
+  var el=document.querySelector('.cal-views');
+  if(el) el.innerHTML='<div class="state"><i class="fas fa-exclamation-triangle"></i><p>'+msg+'</p></div>';
+}
+
 async function loadEvents() {
-  try { var r = await fetch('/api/events', { credentials: 'include' }); events = await r.json(); } catch (e) { events = []; }
-  render();
+  var el=document.querySelector('.cal-views');
+  if(el) el.innerHTML='<div class="state spin"><i class="fas fa-spinner"></i><p>Memuat event...</p></div>';
+  try {
+    var r = await fetch('/api/events', { credentials: 'include' });
+    if (r.status === 401 || r.status === 403) {
+      window.location.href = '../panel.html';
+      return;
+    }
+    if (!r.ok) { showCalError('Gagal memuat event. Silakan coba lagi.'); return; }
+    var d = await r.json();
+    events = Array.isArray(d) ? d : [];
+    showCalGrid();
+    render();
+  } catch (err) {
+    showCalError('Koneksi gagal. Periksa jaringan Anda.');
+  }
 }
 
 function openForm() {
@@ -313,12 +364,13 @@ function openForm() {
   document.getElementById('evDate').value = getDateStr(today);
   document.getElementById('evTime').value = '';
   document.getElementById('formTitle').textContent = 'Tambah Event Baru';
+  document.getElementById('formSubmit').innerHTML = '<i class="fas fa-save"></i> Simpan';
   document.getElementById('formModal').classList.add('show');
 }
 
 function editEvent(id) {
   var e = null;
-  for (var i = 0; i < events.length; i++) { if (events[i].id === id) { e = events[i]; break; } }
+  for (var i = 0; i < events.length; i++) { if (String(events[i].id) === String(id)) { e = events[i]; break; } }
   if (!e) return;
   document.getElementById('eventId').value = e.id;
   document.getElementById('evTitle').value = e.title;
@@ -327,8 +379,9 @@ function editEvent(id) {
   document.getElementById('evColor').value = getColor(e);
   document.getElementById('evLocation').value = e.location || '';
   document.getElementById('evDate').value = e.event_date;
-  document.getElementById('evTime').value = e.event_time || '';
+  document.getElementById('evTime').value = e.event_time ? String(e.event_time).substring(0,5) : '';
   document.getElementById('formTitle').textContent = 'Edit Event';
+  document.getElementById('formSubmit').innerHTML = '<i class="fas fa-save"></i> Perbarui';
   document.getElementById('detailModal').classList.remove('show');
   document.getElementById('formModal').classList.add('show');
 }
@@ -336,43 +389,62 @@ function editEvent(id) {
 async function handleSubmit(e) {
   e.preventDefault();
   var id = document.getElementById('eventId').value;
-  var data = {title: document.getElementById('evTitle').value, description: document.getElementById('evDesc').value, category: document.getElementById('evCategory').value, color: document.getElementById('evColor').value, location: document.getElementById('evLocation').value, event_date: document.getElementById('evDate').value, event_time: document.getElementById('evTime').value};
+  var data = {title: document.getElementById('evTitle').value.trim(), description: document.getElementById('evDesc').value, category: document.getElementById('evCategory').value, color: document.getElementById('evColor').value, location: document.getElementById('evLocation').value, event_date: document.getElementById('evDate').value, event_time: document.getElementById('evTime').value};
+  if (!data.title) { toast('Judul event wajib diisi','err'); return; }
+  if (!data.event_date) { toast('Tanggal event wajib diisi','err'); return; }
+  var btn=document.getElementById('formSubmit');
+  var orig=btn.innerHTML;
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
   try {
     var url = '/api/events' + (id ? '/' + id : '');
     var method = id ? 'PUT' : 'POST';
-    var resp = await fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), credentials: 'include' });
-    if (resp.ok) { document.getElementById('formModal').classList.remove('show'); await loadEvents(); }
-    else { alert('Gagal menyimpan event'); }
-  } catch (err) { alert('Error: ' + err.message); }
+    var headers = { 'Content-Type': 'application/json' };
+    var csrf = getCsrfToken();
+    if (csrf) headers['X-CSRF-Token'] = csrf;
+    var resp = await fetch(url, { method: method, headers: headers, body: JSON.stringify(data), credentials: 'include' });
+    var body = null; try { body = await resp.json(); } catch(_){}
+    if (resp.status === 401 || resp.status === 403) {
+      toast((body && body.error) || 'Akses ditolak','err');
+      return;
+    }
+    if (resp.ok) { closeModal('formModal'); toast(id ? 'Event berhasil diperbarui' : 'Event berhasil ditambahkan'); await loadEvents(); }
+    else { toast((body && body.error) || 'Gagal menyimpan event','err'); }
+  } catch (err) { toast('Koneksi gagal: ' + (err && err.message ? err.message : ''),'err'); }
+  finally { btn.disabled=false; btn.innerHTML=orig; }
 }
 
 async function deleteEvent(id) {
   if (!confirm('Hapus event ini?')) return;
   try {
-    var resp = await fetch('/api/events/' + id, { method: 'DELETE', credentials: 'include' });
-    if (resp.ok) { document.getElementById('detailModal').classList.remove('show'); await loadEvents(); }
-    else { alert('Gagal menghapus event'); }
-  } catch (err) { alert('Error: ' + err.message); }
+    var headers = {};
+    var csrf = getCsrfToken();
+    if (csrf) headers['X-CSRF-Token'] = csrf;
+    var resp = await fetch('/api/events/' + id, { method: 'DELETE', headers: headers, credentials: 'include' });
+    var body = null; try { body = await resp.json(); } catch(_){}
+    if (resp.ok) { closeModal('detailModal'); toast('Event berhasil dihapus'); await loadEvents(); }
+    else { toast((body && body.error) || 'Gagal menghapus event','err'); }
+  } catch (err) { toast('Koneksi gagal','err'); }
 }
 
 function showDetail(id) {
   var e = null;
-  for (var i = 0; i < events.length; i++) { if (events[i].id === id) { e = events[i]; break; } }
+  for (var i = 0; i < events.length; i++) { if (String(events[i].id) === String(id)) { e = events[i]; break; } }
   if (!e) return;
   var c = getColor(e);
-  var dt = new Date(e.event_date + 'T00:00:00');
-  var ds = dt.getDate() + ' ' + MONTHS[dt.getMonth()] + ' ' + dt.getFullYear();
-  var t = e.event_time ? e.event_time.substring(0, 5) : '--:--';
-  var h = '<div class="dh"><div class="dc" style="background:' + c + '"></div><h3>' + e.title + '</h3></div>';
+  var dtParts = String(e.event_date).split('-');
+  var ds = parseInt(dtParts[2],10) + ' ' + MONTHS[parseInt(dtParts[1],10)-1] + ' ' + dtParts[0];
+  var t = e.event_time ? String(e.event_time).substring(0, 5) : '--:--';
+  var canEdit = (EDITOR_ROLES.indexOf(curUser.role) >= 0 || curUser.privilege === 'super_admin' || curUser.privilege === 'admin');
+  var h = '<div class="dh"><div class="dc" style="background:' + c + '"></div><h3>' + escapeHtml(e.title) + '</h3></div>';
   h += '<div class="db">';
   h += '<p><i class="fas fa-calendar-alt"></i> ' + ds + '</p>';
   h += '<p><i class="fas fa-clock"></i> ' + t + '</p>';
-  h += '<p><i class="fas fa-tag"></i> <span style="background:' + c + ';padding:2px 12px;border-radius:12px;color:#fff;font-size:.8rem">' + e.category + '</span></p>';
-  if (e.location) h += '<p><i class="fas fa-map-marker-alt"></i> ' + e.location + '</p>';
-  if (e.description) h += '<div class="dd">' + e.description + '</div>';
-  if (e.created_by_name) h += '<p><i class="fas fa-user"></i> ' + e.created_by_name + '</p>';
+  h += '<p><i class="fas fa-tag"></i> <span style="background:' + c + ';padding:2px 12px;border-radius:12px;color:#fff;font-size:.8rem">' + escapeHtml(e.category) + '</span></p>';
+  if (e.location) h += '<p><i class="fas fa-map-marker-alt"></i> ' + escapeHtml(e.location) + '</p>';
+  if (e.description) h += '<div class="dd">' + escapeHtml(e.description) + '</div>';
+  if (e.created_by_name) h += '<p><i class="fas fa-user"></i> ' + escapeHtml(e.created_by_name) + '</p>';
   h += '</div>';
-  if (EDITOR_ROLES.indexOf(curUser.role) >= 0) {
+  if (canEdit) {
     h += '<div class="da"><button class="btn-pri" onclick="editEvent(' + e.id + ')"><i class="fas fa-edit"></i> Edit</button><button class="btn-dgr" onclick="deleteEvent(' + e.id + ')"><i class="fas fa-trash"></i> Hapus</button></div>';
   }
   document.getElementById('detailContent').innerHTML = h;

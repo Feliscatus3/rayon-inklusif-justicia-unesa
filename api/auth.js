@@ -408,17 +408,16 @@ async function handleMe(req, res) {
   const user = await requireAuth(req, res);
   if (!user) return;
 
+  let csrfToken = null;
   try {
-    const existingCookie = csrf.parseCookies(req.headers.cookie || '')[csrf.COOKIE_NAME];
-    if (!existingCookie) {
-      csrf.issueCsrfToken(res);
-    }
+    csrfToken = csrf.getCsrfTokenForRequest(req, res);
   } catch (csrfErr) {
-    console.error('CSRF issuance in /auth/me failed (non-fatal):', csrfErr.message);
+    console.error('CSRF retrieval in /auth/me failed (non-fatal):', csrfErr.message);
   }
 
   return res.status(200).json({
     authenticated: true,
+    csrfToken,
     user: {
       id: user.id,
       username: user.username,

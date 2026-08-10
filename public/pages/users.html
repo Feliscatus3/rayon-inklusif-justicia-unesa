@@ -1,1 +1,425 @@
-function eh(s){return s?String(s).replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"').replace(/'/g,'''):''}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manajemen Pengguna - Kader Panel PMII Justicia</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;padding:0;font-family:'Segoe UI',sans-serif;background:#f0f2f5}
+    .d-nav{background:linear-gradient(135deg,#1a1a2e,#16213e);padding:15px 20px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+    .d-nav h2{margin:0;font-size:1.3rem}
+    .d-nav a,.d-nav button{background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px;text-decoration:none;display:inline-block}
+    .cont{max-width:1200px;margin:0 auto;padding:20px}
+    .hdr{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;margin-bottom:20px}
+    .hdr h1{margin:0;font-size:1.5rem;color:#1a1a2e}
+    .sb{display:flex;border:1px solid #ddd;border-radius:8px;overflow:hidden}
+    .sb input{padding:10px 14px;border:none;font-size:14px;min-width:220px;outline:none}
+    .sb button{padding:10px 16px;background:#0055A4;color:#fff;border:none;cursor:pointer}
+    .btn{padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;display:inline-flex;align-items:center;gap:8px}
+    .btn-p{background:#0055A4;color:#fff}
+    .btn-g{background:#28a745;color:#fff}
+    .btn-r{background:#dc3545;color:#fff}
+    .btn-w{background:#ffc107;color:#000}
+    .btn-i{background:#17a2b8;color:#fff}
+    .btn-s{background:#6c757d;color:#fff}
+    .btn-sm{padding:6px 12px;font-size:12px}
+    .tw{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);overflow-x:auto}
+    table{width:100%;border-collapse:collapse}
+    th{background:#f8f9fa;padding:14px 16px;text-align:left;font-weight:600;color:#495057;font-size:13px;text-transform:uppercase;border-bottom:2px solid #e9ecef}
+    td{padding:12px 16px;border-bottom:1px solid #eee;font-size:14px;color:#333}
+    tr:hover td{background:#f8f9fa}
+    .badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
+    .ba{background:#d4edda;color:#155724}
+    .bi{background:#fff3cd;color:#856404}
+    .bs{background:#f8d7da;color:#721c24}
+    .badm{background:#cce5ff;color:#004085}
+    .bkd{background:#e2e3e5;color:#383d41}
+    .act{display:flex;gap:4px;flex-wrap:wrap}
+    .pag{display:flex;justify-content:center;align-items:center;gap:5px;margin-top:20px;flex-wrap:wrap}
+    .pag button{padding:8px 14px;border:1px solid #dee2e6;background:#fff;border-radius:6px;cursor:pointer;font-size:14px;min-width:40px}
+    .pag button.actv{background:#0055A4;color:#fff;border-color:#0055A4}
+    .pag button:disabled{opacity:0.5;cursor:not-allowed}
+    .pag .info{font-size:14px;color:#6c757d;margin:0 10px}
+    .modal-o{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center;padding:20px}
+    .modal-o.on{display:flex}
+    .modal{background:#fff;border-radius:12px;padding:28px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+    .modal h2{margin:0 0 8px 0;font-size:1.3rem;color:#1a1a2e}
+    .modal .sub{color:#6c757d;margin:0 0 20px 0;font-size:14px}
+    .fg{margin-bottom:16px}
+    .fg label{display:block;margin-bottom:6px;font-weight:500;font-size:14px;color:#333}
+    .fg input,.fg select{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none}
+    .fg input:focus,.fg select:focus{border-color:#0055A4;box-shadow:0 0 0 3px rgba(0,85,164,0.1)}
+    .fg small{display:block;color:#6c757d;font-size:12px;margin-top:4px}
+    .ma{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+    .tc{position:fixed;bottom:20px;right:20px;z-index:9999}
+    .tt{padding:14px 24px;border-radius:10px;color:#fff;font-size:14px;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,0.15);display:none;margin-top:8px;animation:si .3s ease}
+    .tt-s{background:#28a745}
+    .tt-e{background:#dc3545}
+    @keyframes si{from{opacity:0;transform:translateX(100px)}to{opacity:1;transform:translateX(0)}}
+    .empty{text-align:center;padding:50px 20px;color:#6c757d}
+    .empty i{font-size:48px;color:#dee2e6;margin-bottom:15px}
+    .empty p{font-size:16px;margin:0}
+    select.filter-sel{padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;background:#fff}
+  </style>
+</head>
+<body>
+<nav class="d-nav">
+  <h2><i class="fas fa-users-cog"></i> Manajemen Pengguna</h2>
+  <div>
+    <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+  </div>
+</nav>
+<div class="cont">
+  <div class="hdr">
+    <div style="display:flex;align-items:center;gap:15px;flex-wrap:wrap">
+      <h1><i class="fas fa-users" style="color:#0055A4"></i> Daftar Pengguna</h1>
+      <div class="sb">
+        <input type="text" id="si" placeholder="Cari username, nama, atau email...">
+        <button id="searchBtn"><i class="fas fa-search"></i></button>
+      </div>
+      <select id="statusFilter" class="filter-sel">
+        <option value="">Semua Status</option>
+        <option value="pending">Pending</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+        <option value="suspended">Suspended</option>
+        <option value="rejected">Rejected</option>
+      </select>
+    <button class="btn btn-g" id="addBtn"><i class="fas fa-plus"></i> Tambah Pengguna</button>
+    </div>
+  </div>
+  <div class="tw">
+    <table>
+      <thead><tr>
+        <th>No.</th><th>Username</th><th>Nama Lengkap</th><th>Email</th><th>Role</th><th>Privilege</th><th>Status</th><th>Aksi</th>
+      </tr></thead>
+      <tbody id="tb"><tr><td colspan="8" class="empty"><i class="fas fa-spinner fa-spin"></i><p>Memuat data...</p></td></tr></tbody>
+    </table>
+  </div>
+  <div class="pag" id="pc"></div>
+<div class="tc" id="tc"></div>
+<div class="modal-o" id="um"><div class="modal">
+  <h2 id="mt">Tambah Pengguna</h2>
+  <p class="sub" id="ms">Isi data untuk membuat akun baru.</p>
+  <form id="uf">
+    <input type="hidden" id="eid">
+    <div class="fg"><label>Username</label><input type="text" id="fu" required pattern="[a-zA-Z0-9_.-]{3,50}" title="3-50 karakter" placeholder="johndoe"></div>
+    <div class="fg" id="pg"><label>Password</label><input type="password" id="fp" minlength="6" placeholder="Min 6 karakter"><small>Kosongkan saat edit jika tidak ingin mengubah.</small></div>
+    <div class="fg"><label>Nama Lengkap</label><input type="text" id="ffn" required placeholder="John Doe"></div>
+    <div class="fg"><label>Email</label><input type="email" id="fe" required placeholder="john@example.com"></div>
+    <div class="fg"><label>No. Telepon</label><input type="text" id="fph" placeholder="08123456789"></div>
+    <div class="fg"><label>Role</label><select id="fr"><option value="kader">Kader</option><option value="admin">Admin</option></select></div>
+    <div class="ma">
+      <button type="button" class="btn btn-s" id="cancelBtn">Batal</button>
+      <button type="submit" class="btn btn-p" id="sbtn"><i class="fas fa-save"></i> Simpan</button>
+    </div>
+  </form>
+</div></div>
+<div class="modal-o" id="pm"><div class="modal">
+  <h2><i class="fas fa-key" style="color:#ffc107"></i> Reset Password</h2>
+  <p class="sub" id="pui">Reset password untuk pengguna.</p>
+  <div class="fg"><label>Password Baru</label><input type="password" id="np" minlength="6" placeholder="Min 6 karakter"></div>
+  <div class="ma">
+    <button class="btn btn-s" id="cancelPmBtn">Batal</button>
+    <button class="btn btn-w" id="resetBtn"><i class="fas fa-key"></i> Reset Password</button>
+  </div></div></div>
+</div>
+<div class="modal-o" id="dm"><div class="modal" style="text-align:center">
+  <div style="font-size:48px;color:#dc3545;margin-bottom:15px"><i class="fas fa-exclamation-triangle"></i></div>
+  <h2>Konfirmasi Hapus</h2>
+  <p style="color:#6c757d;font-size:14px" id="dui">Apakah Anda yakin ingin menghapus pengguna ini?</p>
+  <p style="color:#dc3545;font-size:13px">Tindakan ini tidak dapat dibatalkan.</p>
+  <div class="ma" style="justify-content:center">
+    <button class="btn btn-s" id="cancelDmBtn">Batal</button>
+    <button class="btn btn-r" id="deleteBtn"><i class="fas fa-trash"></i> Hapus</button>
+  </div></div></div>
+<script>
+var cp = 1;
+var dtid = null;
+var ptid = null;
+
+function escapeHtml(value) {
+    if (value === null || value === undefined) {
+        return '';
+    }
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function om(id) { document.getElementById(id).classList.add('on'); }
+function cm(id) { document.getElementById(id).classList.remove('on'); }
+
+function st(msg, type) {
+    var el = document.createElement('div');
+    el.className = 'tt ' + (type === 'e' ? 'tt-e' : 'tt-s');
+    el.textContent = msg;
+    document.getElementById('tc').appendChild(el);
+    el.style.display = 'block';
+    setTimeout(function(){ el.remove(); }, 3000);
+}
+
+function getCsrfToken() {
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+        var c = cookies[i].trim();
+        if (c.indexOf('csrf_token=') === 0) {
+            var val = c.substring('csrf_token='.length);
+            return val.split('.')[0];
+        }
+    }
+    return null;
+}
+
+async function load(page) {
+    if (page) cp = page;
+    var s = document.getElementById('si').value;
+    var statusFilter = document.getElementById('statusFilter').value;
+    var tb = document.getElementById('tb');
+    tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-spinner fa-spin"></i><p>Memuat data...</p></td></tr>';
+    try {
+        var url = '/api/users?search=' + encodeURIComponent(s) + '&page=' + cp + '&limit=10';
+        if (statusFilter) url += '&status=' + encodeURIComponent(statusFilter);
+        var r = await fetch(url, { credentials: 'include' });
+        if (r.status === 401) {
+            tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-user-lock"></i><p>Sesi Anda telah berakhir. Silakan login kembali.</p></td></tr>';
+            setTimeout(function(){ window.location.href = '../panel.html'; }, 1200);
+            return;
+        }
+        if (r.status === 403) {
+            tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-ban"></i><p>Anda tidak memiliki akses ke data pengguna.</p></td></tr>';
+            return;
+        }
+        if (!r.ok) {
+            tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat data pengguna dari server.</p></td></tr>';
+            return;
+        }
+        var d = await r.json();
+        var users = d.users || [];
+        if (users.length === 0) {
+            tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-users"></i><p>Belum ada data pengguna.</p></td></tr>';
+            document.getElementById('pc').innerHTML = '';
+            return;
+        }
+        var h = '';
+        for (var i = 0; i < users.length; i++) {
+            var u = users[i];
+            var sc = 'b' + (u.status || 'unknown').charAt(0);
+            var rc = 'b' + (u.role || 'unknown').charAt(0);
+            var pr = u.privilege ? 'b' + u.privilege.charAt(0) : 'bkd';
+            var cr = u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' }) : '-';
+            h += '<tr>';
+            h += '<td>' + (((cp - 1) * 10) + i + 1) + '</td>';
+            h += '<td><strong>' + escapeHtml(u.username) + '</strong></td>';
+            h += '<td>' + escapeHtml(u.full_name || '-') + '</td>';
+            h += '<td>' + escapeHtml(u.email || '-') + '</td>';
+            h += '<td><span class="badge ' + rc + '">' + escapeHtml(u.role) + '</span></td>';
+            h += '<td><span class="badge ' + pr + '">' + escapeHtml(u.privilege || 'member') + '</span></td>';
+            h += '<td><span class="badge ' + sc + '">' + escapeHtml(u.status) + '</span></td>';
+            h += '<td><div class="act">';
+            h += '<button class="btn btn-p btn-sm" onclick="oem(\'' + u.id + '\')" title="Edit"><i class="fas fa-edit"></i></button>';
+            h += '<button class="btn btn-w btn-sm" onclick="opm(\'' + u.id + '\',\'' + escapeHtml(u.username) + '\')" title="Reset Password"><i class="fas fa-key"></i></button>';
+            if (u.status === 'active') {
+                h += '<button class="btn btn-s btn-sm" onclick="ts(\'' + u.id + '\',\'inactive\')" title="Nonaktifkan"><i class="fas fa-ban"></i></button>';
+            } else {
+                h += '<button class="btn btn-g btn-sm" onclick="ts(\'' + u.id + '\',\'active\')" title="Aktifkan"><i class="fas fa-check-circle"></i></button>';
+            }
+            h += '<button class="btn btn-i btn-sm" onclick="tr(\'' + u.id + '\',\'' + escapeHtml(u.role) + '\')" title="Ubah Role"><i class="fas fa-user-tag"></i></button>';
+            h += '<button class="btn btn-r btn-sm" onclick="odm(\'' + u.id + '\',\'' + escapeHtml(u.username) + '\')" title="Hapus"><i class="fas fa-trash"></i></button>';
+            h += '</div></td>';
+            h += '</tr>';
+        }
+        tb.innerHTML = h;
+        rp(d.pagination);
+    } catch (e) {
+        console.error('[USERS] error:', e);
+        tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-exclamation-triangle"></i><p>Gagal terhubung ke server.</p></td></tr>';
+    }
+}
+
+function rp(p) {
+    var el = document.getElementById('pc');
+    if (!p || p.totalPages <= 1) { el.innerHTML = ''; return; }
+    var h = '';
+    h += '<button ' + (p.page <= 1 ? 'disabled' : '') + ' onclick="load(' + (p.page - 1) + ')"><i class="fas fa-chevron-left"></i></button>';
+    h += '<span class="info">' + p.page + '/' + p.totalPages + ' (' + p.total + ')</span>';
+    h += '<button ' + (p.page >= p.totalPages ? 'disabled' : '') + ' onclick="load(' + (p.page + 1) + ')"><i class="fas fa-chevron-right"></i></button>';
+    el.innerHTML = h;
+}
+
+function ocm() {
+    document.getElementById('mt').textContent = 'Tambah Pengguna Baru';
+    document.getElementById('ms').textContent = 'Isi data untuk membuat akun baru.';
+    document.getElementById('eid').value = '';
+    document.getElementById('uf').reset();
+    document.getElementById('pg').style.display = 'block';
+    document.getElementById('fp').required = true;
+    document.getElementById('sbtn').innerHTML = '<i class="fas fa-save"></i> Simpan';
+    om('um');
+}
+
+async function oem(id) {
+    try {
+        var r = await fetch('/api/users/' + id, { credentials: 'include' });
+        var d = await r.json();
+        if (!r.ok) { st(d.error || 'Gagal', 'e'); return; }
+        var u = d.user;
+        document.getElementById('mt').textContent = 'Edit Pengguna';
+        document.getElementById('ms').textContent = 'Edit data untuk @' + u.username;
+        document.getElementById('eid').value = u.id;
+        document.getElementById('fu').value = u.username;
+        document.getElementById('ffn').value = u.full_name || '';
+        document.getElementById('fe').value = u.email || '';
+        document.getElementById('fph').value = u.phone || '';
+        document.getElementById('fr').value = u.role;
+        document.getElementById('pg').style.display = 'block';
+        document.getElementById('fp').required = false;
+        document.getElementById('fp').value = '';
+        document.getElementById('sbtn').innerHTML = '<i class="fas fa-save"></i> Simpan Perubahan';
+        om('um');
+    } catch (e) {
+        st('Gagal memuat data', 'e');
+    }
+}
+
+async function sv(e) {
+    e.preventDefault();
+    var id = document.getElementById('eid').value;
+    var isE = !!id;
+    var body = {
+        username: document.getElementById('fu').value,
+        password: document.getElementById('fp').value,
+        full_name: document.getElementById('ffn').value,
+        email: document.getElementById('fe').value,
+        phone: document.getElementById('fph').value,
+        role: document.getElementById('fr').value
+    };
+    if (!isE) body.password = body.password || '';
+    var url = isE ? '/api/users/' + id : '/api/users';
+    var method = isE ? 'PUT' : 'POST';
+    try {
+        var r = await fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), credentials: 'include' });
+        var d = await r.json();
+        if (!r.ok) { st(d.error || 'Gagal', 'e'); return; }
+        st(isE ? 'Pengguna diperbarui' : 'Pengguna dibuat', 's');
+        cm('um');
+        load(cp);
+    } catch (e) {
+        st('Gagal menyimpan', 'e');
+    }
+}
+
+function opm(id, un) {
+    document.getElementById('pui').textContent = 'Reset password untuk @' + un;
+    document.getElementById('np').value = '';
+    om('pm');
+    ptid = id;
+}
+
+async function hrp() {
+    try {
+        var r = await fetch('/api/users/' + ptid + '/password', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: document.getElementById('np').value }), credentials: 'include' });
+        var d = await r.json();
+        if (!r.ok) { st(d.error || 'Gagal', 'e'); return; }
+        st('Password direset', 's');
+        cm('pm');
+    } catch (e) {
+        st('Gagal reset', 'e');
+    }
+}
+
+async function ts(id, status) {
+    try {
+        var r = await fetch('/api/users/' + id + '/status', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: status }), credentials: 'include' });
+        var d = await r.json();
+        if (!r.ok) { st(d.error || 'Gagal', 'e'); return; }
+        st(d.message, 's');
+        load(cp);
+    } catch (e) {
+        st('Gagal mengubah status', 'e');
+    }
+}
+
+async function tr(id, role) {
+    var newRole = role === 'admin' ? 'kader' : 'admin';
+    if (!confirm('Ubah role menjadi ' + newRole + '?')) return;
+    try {
+        var r = await fetch('/api/users/' + id + '/role', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: newRole }), credentials: 'include' });
+        var d = await r.json();
+        if (!r.ok) { st(d.error || 'Gagal', 'e'); return; }
+        st(d.message, 's');
+        load(cp);
+    } catch (e) {
+        st('Gagal mengubah role', 'e');
+    }
+}
+
+function odm(id, un) {
+    document.getElementById('dui').textContent = 'Apakah Anda yakin ingin menghapus @' + un + '?';
+    dtid = id;
+    om('dm');
+}
+
+async function cd() {
+    try {
+        var r = await fetch('/api/users/' + dtid, { method: 'DELETE', credentials: 'include' });
+        var d = await r.json();
+        if (!r.ok) { st(d.error || 'Gagal', 'e'); return; }
+        st(d.message, 's');
+        cm('dm');
+        load(cp);
+    } catch (e) {
+        st('Gagal menghapus', 'e');
+    }
+}
+
+/* ---- Event wiring ---- */
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        var r = await fetch('/api/auth/me', { credentials: 'include' });
+        var d = await r.json();
+        if (r.status === 401 || !d.authenticated) {
+            window.location.href = '../panel.html';
+            return;
+        }
+        var u = d.user;
+        var hasAdminPriv = u.privilege === 'admin' || u.privilege === 'super_admin' || u.role === 'admin' || u.role === 'super_admin';
+        if (!hasAdminPriv) {
+            window.location.href = '../panel.html';
+            return;
+        }
+        load(1);
+    } catch (e) {
+        window.location.href = '../panel.html';
+        return;
+    }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async function() {
+    var headers = { 'Content-Type': 'application/json' };
+    var csrf = getCsrfToken();
+    if (csrf) headers['X-CSRF-Token'] = csrf;
+    try { await fetch('/api/auth/logout', { method: 'POST', headers: headers, credentials: 'include' }); } catch (e) {}
+    window.location.href = '../panel.html';
+});
+
+document.getElementById('searchBtn').addEventListener('click', function() { load(1); });
+document.getElementById('si').addEventListener('keypress', function(e) { if (e.key === 'Enter') load(1); });
+document.getElementById('statusFilter').addEventListener('change', function() { load(1); });
+document.getElementById('addBtn').addEventListener('click', ocm);
+document.getElementById('uf').addEventListener('submit', sv);
+document.getElementById('cancelBtn').addEventListener('click', function() { cm('um'); });
+document.getElementById('cancelPmBtn').addEventListener('click', function() { cm('pm'); });
+document.getElementById('resetBtn').addEventListener('click', hrp);
+document.getElementById('cancelDmBtn').addEventListener('click', function() { cm('dm'); });
+document.getElementById('deleteBtn').addEventListener('click', cd);
+</script>
+</body>
+</html>

@@ -44,6 +44,3 @@ CREATE INDEX IF NOT EXISTS idx_users_full_name ON users(full_name);
 
 -- Step 8: Update existing sessions to use the new auth validation
 -- (No structural change needed, sessions already reference user_id)
-</｜｜DSML｜｜parameter>
-</invoke>
-</｜｜DSML｜｜tool_calls>

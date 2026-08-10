@@ -80,7 +80,16 @@
         <input type="text" id="si" placeholder="Cari username, nama, atau email...">
         <button onclick="load(1)"><i class="fas fa-search"></i></button>
       </div>
+      <select id="statusFilter" onchange="load(1)" style="padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px">
+        <option value="">Semua Status</option>
+        <option value="pending">Pending</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+        <option value="suspended">Suspended</option>
+        <option value="rejected">Rejected</option>
+      </select>
     <button class="btn btn-g" onclick="ocm()"><i class="fas fa-plus"></i> Tambah Pengguna</button>
+    </div>
   </div>
   <div class="tw">
     <table>
@@ -128,13 +137,13 @@
   </div></div>
 <script>
 var cp=1,dtid=null,ptid=null;
-function eh(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"').replace(/'/g,'&#39;'):''}
+function eh(s){return s?String(s).replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"').replace(/'/g,'''):''}
 function om(i){document.getElementById(i).classList.add('on')}
 function cm(i){document.getElementById(i).classList.remove('on')}
 function st(m,t){var e=document.createElement('div');e.className='tt tt-'+(t==='e'?'e':'s');e.textContent=m;document.getElementById('tc').appendChild(e);e.style.display='block';setTimeout(function(){e.remove()},3000)}
-document.addEventListener('DOMContentLoaded',async function(){try{var r=await fetch('/api/auth/me',{credentials:'include'});var d=await r.json();if(!d.authenticated||d.user.role!=='admin'){window.location.href='../panel.html';return}load(1)}catch(e){window.location.href='../panel.html'}});
+document.addEventListener('DOMContentLoaded',async function(){try{var r=await fetch('/api/auth/me',{credentials:'include'});var d=await r.json();if(!d.authenticated||!d.user.privilege && d.user.role!=='admin'){window.location.href='../panel.html';return}load(1)}catch(e){window.location.href='../panel.html'}});
 document.getElementById('logoutBtn').addEventListener('click',async function(){await fetch('/api/auth/logout',{method:'POST',credentials:'include'});window.location.href='../panel.html'});
-async function load(p){if(p)cp=p;var s=document.getElementById('si').value;var tb=document.getElementById('tb');tb.innerHTML='<tr><td colspan="7" class="empty"><i class="fas fa-spinner fa-spin"></i><p>Memuat data...</p></td></tr>';try{var r=await fetch('/api/users?search='+encodeURIComponent(s)+'&page='+cp+'&limit=10',{credentials:'include'});if(!r.ok){var ed=await r.json();st(ed.error||'Gagal','e');return}var d=await r.json();if(!d.users||!d.users.length){tb.innerHTML='<tr><td colspan="7" class="empty"><i class="fas fa-users"></i><p>Tidak ada pengguna</p></td></tr>';document.getElementById('pc').innerHTML='';return}
+async function load(p){if(p)cp=p;var s=document.getElementById('si').value;var statusFilter=document.getElementById('statusFilter').value;var tb=document.getElementById('tb');tb.innerHTML='<tr><td colspan="7" class="empty"><i class="fas fa-spinner fa-spin"></i><p>Memuat data...</p></td></tr>';try{var url='/api/users?search='+encodeURIComponent(s)+'&page='+cp+'&limit=10';if(statusFilter)url+='&status='+encodeURIComponent(statusFilter);var r=await fetch(url,{credentials:'include'});if(!r.ok){var ed=await r.json();st(ed.error||'Gagal','e');return}var d=await r.json();if(!d.users||!d.users.length){tb.innerHTML='<tr><td colspan="7" class="empty"><i class="fas fa-users"></i><p>Tidak ada pengguna</p></td></tr>';document.getElementById('pc').innerHTML='';return}
 tb.innerHTML=d.users.map(function(u){var sc='b'+u.status.charAt(0);var rc='b'+u.role.charAt(0);var cr=u.created_at?new Date(u.created_at).toLocaleDateString('id-ID',{year:'numeric',month:'short',day:'numeric'}):'-';return'<tr><td><strong>'+eh(u.username)+'</strong></td><td>'+eh(u.full_name||'-')+'</td><td>'+eh(u.email||'-')+'</td><td><span class="badge '+rc+'">'+eh(u.role)+'</span></td><td><span class="badge '+sc+'">'+eh(u.status)+'</span></td><td>'+cr+'</td><td class="act">'+
 '<button class="btn btn-p btn-sm" onclick="oem(\''+u.id+'\')" title="Edit"><i class="fas fa-edit"></i></button>'+
 '<button class="btn btn-w btn-sm" onclick="opm(\''+u.id+'\',\''+eh(u.username)+'\')" title="Reset Password"><i class="fas fa-key"></i></button>'+
@@ -144,11 +153,13 @@ tb.innerHTML=d.users.map(function(u){var sc='b'+u.status.charAt(0);var rc='b'+u.
 function rp(p){var el=document.getElementById('pc');if(!p||p.totalPages<=1){el.innerHTML='';return}var h='<button '+(p.page<=1?'disabled':'')+' onclick="load('+(p.page-1)+')"><i class="fas fa-chevron-left"></i></button>';h+='<span class="info">'+p.page+'/'+p.totalPages+' ('+p.total+')</span>';h+='<button '+(p.page>=p.totalPages?'disabled':'')+' onclick="load('+(p.page+1)+')"><i class="fas fa-chevron-right"></i></button>';el.innerHTML=h}
 function ocm(){document.getElementById('mt').textContent='Tambah Pengguna Baru';document.getElementById('ms').textContent='Isi data untuk membuat akun baru.';document.getElementById('eid').value='';document.getElementById('uf').reset();document.getElementById('pg').style.display='block';document.getElementById('fp').required=true;document.getElementById('sbtn').innerHTML='<i class="fas fa-save"></i> Simpan';om('um')}
 async function oem(id){try{var r=await fetch('/api/users/'+id,{credentials:'include'});var d=await r.json();if(!r.ok){st(d.error,'e');return}var u=d.user;document.getElementById('mt').textContent='Edit Pengguna';document.getElementById('ms').textContent='Edit data untuk @'+u.username;document.getElementById('eid').value=u.id;document.getElementById('fu').value=u.username;document.getElementById('ffn').value=u.full_name||'';document.getElementById('fe').value=u.email||'';document.getElementById('fph').value=u.phone||'';document.getElementById('fr').value=u.role;document.getElementById('pg').style.display='block';document.getElementById('fp').required=false;document.getElementById('fp').value='';document.getElementById('sbtn').innerHTML='<i class="fas fa-save"></i> Simpan Perubahan';om('um')}catch(e){st('Gagal memuat data','e')}}
-async function sv(e){e.preventDefault();var id=document.getElementById('eid').value;var isE=!!id;var body={I see the PowerShell command is stuck again. The large here-string is causing issues. Let me use a simpler approach - write the HTML file in smaller chunks using Node.js.
-
-<execute_command>
-<command>
-cd "c:\Users\ASUS\Documents\Website\kader-panel-pmii-justicia" && node -e "console.log('test')"</command>
-</parameter>
-</invoke>
-</tool_calls>
+async function sv(e){e.preventDefault();var id=document.getElementById('eid').value;var isE=!!id;var body={username:document.getElementById('fu').value,password:document.getElementById('fp').value,full_name:document.getElementById('ffn').value,email:document.getElementById('fe').value,phone:document.getElementById('fph').value,role:document.getElementById('fr').value};if(!isE)body.password=body.password||'';var url=isE?'/api/users/'+id:'/api/users';var method=isE?'PUT':'POST';try{var r=await fetch(url,{method:method,headers:{'Content-Type':'application/json'},body:JSON.stringify(body),credentials:'include'});var d=await r.json();if(!r.ok){st(d.error,'e');return}st(isE?'Pengguna diperbarui':'Pengguna dibuat','s');cm('um');load(cp)}catch(e){st('Gagal menyimpan','e')}}
+async function opm(id,un){document.getElementById('pui').textContent='Reset password untuk @'+un;document.getElementById('np').value='';om('pm');ptid=id}
+async function hrp(){try{var r=await fetch('/api/users/'+ptid+'/password',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:document.getElementById('np').value}),credentials:'include'});var d=await r.json();if(!r.ok){st(d.error,'e');return}st('Password direset','s');cm('pm')}catch(e){st('Gagal reset','e')}}
+async function ts(id,status){try{var r=await fetch('/api/users/'+id+'/status',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:status}),credentials:'include'});var d=await r.json();if(!r.ok){st(d.error,'e');return}st(d.message,'s');load(cp)}catch(e){st('Gagal mengubah status','e')}}
+async function tr(id,role){var newRole=role==='admin'?'kader':'admin';if(!confirm('Ubah role menjadi '+newRole+'?'))return;try{var r=await fetch('/api/users/'+id+'/role',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({role:newRole}),credentials:'include'});var d=await r.json();if(!r.ok){st(d.error,'e');return}st(d.message,'s');load(cp)}catch(e){st('Gagal mengubah role','e')}}
+async function odm(id,un){document.getElementById('dui').textContent='Apakah Anda yakin ingin menghapus @'+un+'?';dtid=id;om('dm')}
+async function cd(){try{var r=await fetch('/api/users/'+dtid,{method:'DELETE',credentials:'include'});var d=await r.json();if(!r.ok){st(d.error,'e');return}st(d.message,'s');cm('dm');load(cp)}catch(e){st('Gagal menghapus','e')}}
+</script>
+</body>
+</html>

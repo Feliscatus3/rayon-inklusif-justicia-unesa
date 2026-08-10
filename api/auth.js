@@ -29,6 +29,7 @@ module.exports = async (req, res) => {
 
   try {
     if (path.endsWith('/login')) return handleLogin(req, res);
+    if (path.endsWith('/register')) return handleRegister(req, res);
     if (path.endsWith('/logout')) return handleLogout(req, res);
     if (path.endsWith('/me')) return handleMe(req, res);
     return res.status(404).json({ error: 'Endpoint tidak ditemukan' });
@@ -101,6 +102,17 @@ async function handleLogin(req, res) {
 
   const user = userResult.rows[0];
   const userStatus = user.status || (user.is_active ? 'active' : 'inactive');
+  
+  if (userStatus === 'pending') {
+    await logAudit({ userId: user.id, action: 'LOGIN_FAILED', ip, userAgent, username, details: JSON.stringify({ reason: 'account_pending' }) });
+    return res.status(403).json({ error: 'Akun Anda masih menunggu persetujuan administrator.' });
+  }
+  
+  if (userStatus === 'rejected') {
+    await logAudit({ userId: user.id, action: 'LOGIN_FAILED', ip, userAgent, username, details: JSON.stringify({ reason: 'account_rejected' }) });
+    return res.status(403).json({ error: 'Registrasi akun Anda ditolak.' });
+  }
+  
   if (userStatus !== 'active') {
     await logAudit({ userId: user.id, action: 'LOGIN_FAILED', ip, userAgent, username, details: JSON.stringify({ reason: 'account_deactivated' }) });
     return res.status(403).json({ error: 'Akun dinonaktifkan. Hubungi administrator.' });
@@ -150,6 +162,121 @@ async function handleLogin(req, res) {
       role: user.role,
       status: user.status || 'active'
     }
+  });
+}
+
+/* ==================== POST /api/auth/register ==================== */
+async function handleRegister(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim()
+    || req.socket?.remoteAddress
+    || 'unknown';
+  const userAgent = req.headers['user-agent'] || 'unknown';
+
+  const body = await parseJsonBody(req);
+  if (body === null) {
+    return res.status(400).json({ error: 'Invalid JSON body' });
+  }
+
+  let {
+    username,
+    email,
+    password,
+    full_name,
+    phone,
+    pmii_name,
+    gender,
+    birth_date,
+    faculty,
+    study_program,
+    cohort
+  } = body;
+
+  if (typeof username === 'string') {
+    username = username.trim().toLowerCase().slice(0, 50);
+  }
+  if (typeof email === 'string') {
+    email = email.trim().toLowerCase().slice(0, 100);
+  }
+  if (typeof password === 'string') {
+    password = password.slice(0, 128);
+  }
+  if (typeof full_name === 'string') {
+    full_name = full_name.trim().slice(0, 100);
+  }
+  if (typeof phone === 'string') {
+    phone = phone.trim().slice(0, 20);
+  }
+  if (typeof pmii_name === 'string') {
+    pmii_name = pmii_name.trim().slice(0, 100);
+  }
+  if (typeof gender === 'string') {
+    gender = gender.trim();
+  }
+  if (typeof birth_date === 'string') {
+    birth_date = birth_date.trim();
+  }
+  if (typeof faculty === 'string') {
+    faculty = faculty.trim().slice(0, 100);
+  }
+  if (typeof study_program === 'string') {
+    study_program = study_program.trim().slice(0, 100);
+  }
+  if (typeof cohort === 'string') {
+    cohort = cohort.trim().slice(0, 4);
+  }
+
+  const errors = [];
+  if (!username || username.length === 0) errors.push('Username wajib diisi');
+  else if (!/^[a-z0-9_@.+-]+$/.test(username)) errors.push('Username mengandung karakter tidak valid');
+
+  if (!email || email.length === 0) errors.push('Email wajib diisi');
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push('Format email tidak valid');
+
+  if (!password || password.length === 0) errors.push('Password wajib diisi');
+  else if (password.length < 8) errors.push('Password minimal 8 karakter');
+
+  if (!full_name || full_name.length === 0) errors.push('Nama lengkap wajib diisi');
+
+  if (phone && !/^[+0-9\s-]{8,20}$/.test(phone)) errors.push('Nomor telepon tidak valid');
+  if (gender && !['Laki-laki', 'Perempuan'].includes(gender)) errors.push('Jenis kelamin tidak valid');
+  if (birth_date && !/^\d{4}-\d{2}-\d{2}$/.test(birth_date)) errors.push('Format tanggal lahir tidak valid');
+  if (cohort && !/^\d{4}$/.test(cohort)) errors.push('Angkatan harus 4 digit angka');
+
+  if (errors.length > 0) {
+    return res.status(400).json({ error: errors.join('. ') });
+  }
+
+  const dup = await query(
+    'SELECT id FROM users WHERE username=$1 OR email=$2',
+    [username, email]
+  );
+  if (dup.rows.length) {
+    return res.status(409).json({ error: 'Username/email sudah terdaftar' });
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(password, salt);
+
+  const r = await query(
+    `INSERT INTO users (username,email,password_hash,full_name,phone,pmii_name,gender,birth_date,faculty,study_program,cohort,role,status,is_active,privilege)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'anggota','pending',false,'member')
+     RETURNING id,username,full_name,email,role,status,created_at`,
+    [username, email, hash, full_name, phone || null, pmii_name || null,
+     gender || null, birth_date || null, faculty || null, study_program || null, cohort || null]
+  );
+
+  await logAudit({
+    userId: r.rows[0].id, action: 'USER_REGISTERED', ip, userAgent,
+    details: JSON.stringify({ id: r.rows[0].id, username: r.rows[0].username })
+  });
+
+  return res.status(201).json({
+    message: 'Registrasi berhasil. Akun Anda sedang menunggu persetujuan administrator.',
+    user: r.rows[0]
   });
 }
 

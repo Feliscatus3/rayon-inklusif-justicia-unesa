@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS kader_profiles (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    nis NUmerik(10), -- Nomor Induk Kader
+    nis VARCHAR(10), -- Nomor Induk Kader
     tempat_lahir VARCHAR(100),
     tanggal_lahir DATE,
     jenis_kelamin VARCHAR(10) CHECK (jenis_kelamin IN ('Laki-laki', 'Perempuan')),

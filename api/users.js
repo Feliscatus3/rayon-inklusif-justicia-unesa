@@ -16,7 +16,7 @@
 
 const { query } = require('../lib/db');
 const bcrypt = require('bcrypt');
-const { requireAuth, requireRole, getValidRoles } = require('../lib/auth');
+const { requireAuth, requireRole, hasAdminPrivilege, getValidRoles } = require('../lib/auth');
 const { logAudit } = require('../lib/audit');
 const VALID_ROLES = getValidRoles();
 
@@ -52,13 +52,14 @@ module.exports = async (req, res) => {
     // GET /api/users — List (search + pagination)
     // ═══════════════════════════════════════════════════════════
     if (req.method === 'GET' && !userId) {
-      if (currentUser.role !== 'admin') {
+      if (!hasAdminPrivilege(currentUser)) {
         return res.status(403).json({ error: 'Hanya admin' });
       }
       const search = url.searchParams.get('search') || '';
       const page = Math.max(1, parseInt(url.searchParams.get('page') || '1', 10));
       const limit = Math.min(100, Math.max(1, parseInt(url.searchParams.get('limit') || '10', 10)));
       const offset = (page - 1) * limit;
+      const statusFilter = url.searchParams.get('status') || '';
 
       let countQ = 'SELECT COUNT(*) FROM users WHERE 1=1';
       let dataQ = `SELECT id, username, full_name, email, phone, photo, role, status,
@@ -70,6 +71,13 @@ module.exports = async (req, res) => {
         const cl = ` AND (username ILIKE $${i} OR full_name ILIKE $${i} OR email ILIKE $${i})`;
         countQ += cl; dataQ += cl;
         params.push(`%${search}%`);
+        i++;
+      }
+
+      if (statusFilter) {
+        const cl = ` AND status = $${i}`;
+        countQ += cl; dataQ += cl;
+        params.push(statusFilter);
         i++;
       }
 
@@ -106,7 +114,7 @@ module.exports = async (req, res) => {
     // POST /api/users — Create
     // ═══════════════════════════════════════════════════════════
     if (req.method === 'POST') {
-      if (currentUser.role !== 'admin') {
+      if (!hasAdminPrivilege(currentUser)) {
         return res.status(403).json({ error: 'Hanya admin' });
       }
       const { username, password, full_name, email, phone, role } = req.body || {};
@@ -152,7 +160,7 @@ module.exports = async (req, res) => {
     // PUT /api/users/:id — Update
     // ═══════════════════════════════════════════════════════════
     if (req.method === 'PUT' && userId && !action) {
-      if (currentUser.role !== 'admin') {
+      if (!hasAdminPrivilege(currentUser)) {
         return res.status(403).json({ error: 'Hanya admin' });
       }
       const exists = await query('SELECT id FROM users WHERE id=$1', [userId]);
@@ -188,7 +196,7 @@ module.exports = async (req, res) => {
     // DELETE /api/users/:id — Delete (admin only)
     // ═══════════════════════════════════════════════════════════
     if (req.method === 'DELETE' && userId && !action) {
-      if (currentUser.role !== 'admin') {
+      if (!hasAdminPrivilege(currentUser)) {
         return res.status(403).json({ error: 'Hanya admin' });
       }
       if (currentUser.id === userId) {
@@ -236,22 +244,24 @@ module.exports = async (req, res) => {
     }
 
     // ═══════════════════════════════════════════════════════════
-    // PATCH /api/users/:id/status — Set status (active/inactive/suspended)
+    // PATCH /api/users/:id/status — Set status (active/inactive/suspended/pending/rejected)
     // ═══════════════════════════════════════════════════════════
     if (req.method === 'PATCH' && userId && action === 'status') {
-      if (currentUser.role !== 'admin') {
+      if (!hasAdminPrivilege(currentUser)) {
         return res.status(403).json({ error: 'Hanya admin' });
       }
       const { status } = req.body || {};
-      const valid = ['active', 'inactive', 'suspended'];
+      const valid = ['active', 'inactive', 'suspended', 'pending', 'rejected'];
       if (!status || !valid.includes(status)) {
-        return res.status(400).json({ error: 'Status harus active, inactive, atau suspended' });
+        return res.status(400).json({ error: 'Status tidak valid' });
       }
 
       const exists = await query('SELECT id,username FROM users WHERE id=$1', [userId]);
       if (!exists.rows.length) return res.status(404).json({ error: 'Tidak ditemukan' });
 
-      await query('UPDATE users SET status=$1 WHERE id=$2', [status, userId]);
+      // Update is_active based on status
+      const isActive = status === 'active';
+      await query('UPDATE users SET status=$1, is_active=$2 WHERE id=$3', [status, isActive, userId]);
 
       await logAudit({
         userId: currentUser.id, action: 'STATUS_CHANGED', ip, userAgent,
@@ -265,7 +275,7 @@ module.exports = async (req, res) => {
     // PATCH /api/users/:id/role — Change role (admin/kader)
     // ═══════════════════════════════════════════════════════════
     if (req.method === 'PATCH' && userId && action === 'role') {
-      if (currentUser.role !== 'admin') {
+      if (!hasAdminPrivilege(currentUser)) {
         return res.status(403).json({ error: 'Hanya admin' });
       }
       if (currentUser.id === userId) {

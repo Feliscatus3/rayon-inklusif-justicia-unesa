@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrasi - Kader Panel PMII Justicia</title>
+  <link rel="shortcut icon" id="favicon" href="./assets/img/logo/RAYON.png">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style id="dynamicTheme"></style>
+</head>
+<body class="login-page">
+  <div class="login-container">
+    <div class="login-card" id="loginCard">
+      <div class="login-header">
+        <img src="./assets/img/logo/RAYON.png" alt="Logo Rayon Justicia" class="login-logo" id="loginLogo">
+        <h1 id="loginTitle">Registrasi Akun</h1>
+        <p id="loginOrg">PMII Rayon Inklusif Justicia</p>
+      </div>
+      <form id="registerForm" class="login-form">
+        <div class="form-group">
+          <label for="full_name">
+            <i class="fas fa-user"></i> Nama Lengkap <span class="required">*</span>
+          </label>
+          <input type="text" id="full_name" name="full_name" placeholder="Masukkan nama lengkap" required autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label for="username">
+            <i class="fas fa-at"></i> Username <span class="required">*</span>
+          </label>
+          <input type="text" id="username" name="username" placeholder="Masukkan username" required autocomplete="username" pattern="[a-zA-Z0-9_.-]{3,50}" title="3-50 karakter (huruf, angka, _, ., -)">
+        </div>
+        <div class="form-group">
+          <label for="email">
+            <i class="fas fa-envelope"></i> Email <span class="required">*</span>
+          </label>
+          <input type="email" id="email" name="email" placeholder="Masukkan email" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="password">
+            <i class="fas fa-lock"></i> Password <span class="required">*</span>
+          </label>
+          <input type="password" id="password" name="password" placeholder="Masukkan password (min 8 karakter)" required autocomplete="new-password" minlength="8">
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">
+            <i class="fas fa-lock"></i> Konfirmasi Password <span class="required">*</span>
+          </label>
+          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Konfirmasi password" required autocomplete="new-password" minlength="8">
+        </div>
+        <div class="form-group">
+          <label for="phone">
+            <i class="fas fa-phone"></i> No. Telepon
+          </label>
+          <input type="text" id="phone" name="phone" placeholder="Masukkan nomor telepon" autocomplete="tel">
+        </div>
+        <div class="form-group">
+          <label for="pmii_name">
+            <i class="fas fa-user-tag"></i> Nama PMII
+          </label>
+          <input type="text" id="pmii_name" name="pmii_name" placeholder="Nama dalam PMII (opsional)">
+        </div>
+        <div class="form-group">
+          <label for="gender">
+            <i class="fas fa-venus-mars"></i> Jenis Kelamin
+          </label>
+          <select id="gender" name="gender">
+            <option value="">Pilih jenis kelamin</option>
+            <option value="Laki-laki">Laki-laki</option>
+            <option value="Perempuan">Perempuan</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="birth_date">
+            <i class="fas fa-calendar-alt"></i> Tanggal Lahir
+          </label>
+          <input type="date" id="birth_date" name="birth_date">
+        </div>
+        <div class="form-group">
+          <label for="faculty">
+            <i class="fas fa-university"></i> Fakultas
+          </label>
+          <input type="text" id="faculty" name="faculty" placeholder="Fakultas (opsional)">
+        </div>
+        <div class="form-group">
+          <label for="study_program">
+            <i class="fas fa-graduation-cap"></i> Program Studi
+          </label>
+          <input type="text" id="study_program" name="study_program" placeholder="Program studi (opsional)">
+        </div>
+        <div class="form-group">
+          <label for="cohort">
+            <i class="fas fa-calendar"></i> Angkatan
+          </label>
+          <input type="text" id="cohort" name="cohort" placeholder="Angkatan (opsional, cth: 2024)" maxlength="4" pattern="[0-9]{4}">
+        </div>
+        <div id="errorMessage" class="error-message" style="display:none;"></div>
+        <div id="successMessage" class="success-message" style="display:none;"></div>
+        <button type="submit" class="btn-login">
+          <i class="fas fa-user-plus"></i> Daftar
+        </button>
+      </form>
+      <div class="login-footer">
+        <p>Sudah punya akun? <a href="panel.html">Masuk di sini</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Apply website settings (branding, login background, default dark mode)
+    (async function applySettings() {
+      try {
+        const r = await fetch('/api/settings');
+        if (!r.ok) return;
+        const d = await r.json();
+        const s = d.settings || {};
+
+        // Dark mode default
+        if (s.default_dark_mode && !localStorage.getItem('theme')) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          var el = document.getElementById('dynamicTheme');
+          el.textContent = '.login-page{background:linear-gradient(135deg,#0b0e17 0%,#141926 100%)}.login-card{background:#141926}.login-header h1{color:#e8ecf4}.login-header p{color:#94a3b8}.login-form label{color:#e8ecf4}.login-form input,.login-form select{background:#0b0e17;border-color:#242c42;color:#e8ecf4}.login-footer p{color:#64748b}.login-footer a{color:#60a5fa}';
+        }
+
+        // Title
+        if (s.site_name) {
+          document.title = s.site_name + ' - ' + (s.org_name || 'PMII Rayon Inklusif Justicia');
+        }
+
+        // Heading / org name
+        if (s.site_name) document.getElementById('loginTitle').textContent = s.site_name;
+        if (s.org_name) document.getElementById('loginOrg').textContent = s.org_name;
+
+        // Logo
+        if (s.site_logo) {
+          var img = document.getElementById('loginLogo');
+          img.onerror = function() { img.src = './assets/img/logo/RAYON.png'; };
+          img.src = s.site_logo;
+        }
+
+        // Favicon
+        if (s.site_favicon) {
+          var f = document.getElementById('favicon');
+          f.href = s.site_favicon;
+        }
+
+        // Login background
+        if (s.login_background) {
+          document.body.style.background = 'linear-gradient(rgba(10,12,30,.78),rgba(10,12,30,.82)), url("' + s.login_background + '") center/cover no-repeat fixed';
+          document.body.style.backgroundBlendMode = 'multiply';
+        } else if (s.default_dark_mode) {
+          // keep dark gradient
+        } else {
+          document.body.style.background = '';
+        }
+      } catch (e) {
+        // ignore - fall back to defaults
+      }
+    })();
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorEl = document.getElementById('errorMessage');
+      const successEl = document.getElementById('successMessage');
+      const btn = e.target.querySelector('button');
+      
+      const full_name = document.getElementById('full_name').value.trim();
+      const username = document.getElementById('username').value.trim().toLowerCase();
+      const email = document.getElementById('email').value.trim().toLowerCase();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const phone = document.getElementById('phone').value.trim();
+      const pmii_name = document.getElementById('pmii_name').value.trim();
+      const gender = document.getElementById('gender').value;
+      const birth_date = document.getElementById('birth_date').value;
+      const faculty = document.getElementById('faculty').value.trim();
+      const study_program = document.getElementById('study_program').value.trim();
+      const cohort = document.getElementById('cohort').value.trim();
+
+      errorEl.style.display = 'none';
+      successEl.style.display = 'none';
+
+      // Client-side validation
+      const errors = [];
+      if (!full_name) errors.push('Nama lengkap wajib diisi');
+      if (!username) errors.push('Username wajib diisi');
+      else if (!/^[a-zA-Z0-9_.-]{3,50}$/.test(username)) errors.push('Username 3-50 karakter (huruf, angka, _, ., -)');
+      if (!email) errors.push('Email wajib diisi');
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push('Format email tidak valid');
+      if (!password) errors.push('Password wajib diisi');
+      else if (password.length < 8) errors.push('Password minimal 8 karakter');
+      if (password !== confirmPassword) errors.push('Konfirmasi password tidak cocok');
+      if (phone && !/^[+0-9\s-]{8,20}$/.test(phone)) errors.push('Nomor telepon tidak valid');
+      if (gender && !['Laki-laki', 'Perempuan'].includes(gender)) errors.push('Jenis kelamin tidak valid');
+      if (birth_date && !/^\d{4}-\d{2}-\d{2}$/.test(birth_date)) errors.push('Format tanggal lahir tidak valid');
+      if (cohort && !/^\d{4}$/.test(cohort)) errors.push('Angkatan harus 4 digit angka');
+
+      if (errors.length > 0) {
+        errorEl.textContent = errors.join('. ');
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            full_name,
+            username,
+            email,
+            password,
+            phone: phone || null,
+            pmii_name: pmii_name || null,
+            gender: gender || null,
+            birth_date: birth_date || null,
+            faculty: faculty || null,
+            study_program: study_program || null,
+            cohort: cohort || null
+          })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          successEl.textContent = data.message || 'Registrasi berhasil. Akun Anda sedang menunggu persetujuan administrator.';
+          successEl.style.display = 'block';
+          errorEl.style.display = 'none';
+          // Reset form
+          document.getElementById('registerForm').reset();
+        } else {
+          errorEl.textContent = data.error || 'Registrasi gagal';
+          errorEl.style.display = 'block';
+        }
+      } catch (err) {
+        errorEl.textContent = 'Terjadi kesalahan. Silakan coba lagi.';
+        errorEl.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-user-plus"></i> Daftar';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -115,7 +115,7 @@ async function handleLogin(req, res) {
   let userResult;
   try {
     userResult = await query(
-      'SELECT id, username, email, password_hash, full_name, role, status, is_active FROM users WHERE username = $1',
+      'SELECT id, username, email, password_hash, full_name, role, status, is_active, privilege FROM users WHERE username = $1',
       [username]
     );
     console.error('[AUTH LOGIN] query success, rows:', userResult.rows.length);
@@ -226,7 +226,8 @@ async function handleLogin(req, res) {
       email: user.email,
       full_name: user.full_name,
       role: user.role,
-      status: user.status || 'active'
+      status: user.status || 'active',
+      privilege: user.privilege
     }
   });
 }
@@ -424,7 +425,8 @@ async function handleMe(req, res) {
       email: user.email,
       full_name: user.full_name,
       role: user.role,
-      status: user.status
+      status: user.status,
+      privilege: user.privilege
     }
   });
 }

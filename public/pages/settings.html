@@ -512,9 +512,23 @@ $('settingsForm').addEventListener('submit',async function(e){
 });
 
 /* ===== Auth / logout ===== */
+function getCsrfToken(){
+  var cookies=document.cookie.split(';');
+  for(var i=0;i<cookies.length;i++){
+    var c=cookies[i].trim();
+    if(c.indexOf('csrf_token=')===0){
+      var val=c.substring('csrf_token='.length);
+      return val.split('.')[0];
+    }
+  }
+  return null;
+}
 $('logoutBtn').addEventListener('click',async function(ev){
   ev.preventDefault();
-  try{await fetch('/api/auth/logout',{method:'POST',credentials:'include'});}catch(e){}
+  var headers={'Content-Type':'application/json'};
+  var csrf=getCsrfToken();
+  if(csrf) headers['X-CSRF-Token']=csrf;
+  try{await fetch('/api/auth/logout',{method:'POST',headers:headers,credentials:'include'});}catch(e){}
 window.location.href='../panel.html';
 });
 async function init(){
@@ -523,10 +537,11 @@ async function init(){
     var r=await fetch('/api/auth/me',{credentials:'include'});
     var d=await r.json();
     if(!d.authenticated){window.location.href='../panel.html';return;}
-    if(['super_admin','admin'].indexOf(d.user.role)<0){
+    var u=d.user;
+    var hasAdminPriv = u.privilege === 'admin' || u.privilege === 'super_admin' || u.role === 'admin' || u.role === 'super_admin';
+    if(!hasAdminPriv){
       window.location.href='dashboard.html';return;
     }
-    var u=d.user;
     var name=u.full_name||u.username||'Kader';
     $('userName').textContent=name;
     $('userRole').textContent=capRole(u.role);

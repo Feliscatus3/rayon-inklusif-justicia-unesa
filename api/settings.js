@@ -3,7 +3,7 @@
  * Merges: settings/index.js
  */
 const { query } = require('../lib/db');
-const { requireAuth, requireRole } = require('../lib/auth');
+const { requireAuth, requireRole, hasAdminPrivilege } = require('../lib/auth');
 const { logAudit } = require('../lib/audit');
 
 const DEFAULTS = {
@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
     if (req.method === 'PUT') {
       const user = await requireAuth(req, res);
       if (!user) return;
-      if (!requireRole(user, 'super_admin', 'admin')) {
+      if (!hasAdminPrivilege(user)) {
         return res.status(403).json({ error: 'Forbidden: Hanya super admin atau admin' });
       }
       return await updateSettings(req, res, user);

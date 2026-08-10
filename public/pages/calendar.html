@@ -140,6 +140,17 @@ var MONTHS = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus'
 var CAT_COLORS = {PMII:'#d32f2f',Rayon:'#1a237e',Komisariat:'#2e7d32',BEM:'#e65100',DPM:'#6a1b9a',Faculty:'#00695c',University:'#37474f',External:'#c62828'};
 var EDITOR_ROLES = ['super_admin','admin','ketua_rayon','sekretaris'];
 var today = new Date(), curView = 'month', events = [], curUser = null;
+function getCsrfToken(){
+  var cookies=document.cookie.split(';');
+  for(var i=0;i<cookies.length;i++){
+    var c=cookies[i].trim();
+    if(c.indexOf('csrf_token=')===0){
+      var val=c.substring('csrf_token='.length);
+      return val.split('.')[0];
+    }
+  }
+  return null;
+}
 
 document.addEventListener('DOMContentLoaded', async function(){
   try {
@@ -151,7 +162,13 @@ if (!d.authenticated) { window.location.href='../panel.html'; return; }
     await loadEvents();
   } catch(e) { window.location.href='../panel.html'; return; }
 
-  document.getElementById('logoutBtn').onclick = async function(){ await fetch('/api/auth/logout',{method:'POST',credentials:'include'}); window.location.href='../panel.html'; };
+  document.getElementById('logoutBtn').onclick = async function(){
+    var headers={'Content-Type':'application/json'};
+    var csrf=getCsrfToken();
+    if(csrf) headers['X-CSRF-Token']=csrf;
+    try{ await fetch('/api/auth/logout',{method:'POST',headers:headers,credentials:'include'}); }catch(e){}
+    window.location.href='../panel.html';
+  };
   document.getElementById('prevBtn').onclick = function(){ changeDate(-1); };
   document.getElementById('nextBtn').onclick = function(){ changeDate(1); };
   document.getElementById('todayBtn').onclick = function(){ today = new Date(); render(); };

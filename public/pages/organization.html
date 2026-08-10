@@ -85,9 +85,26 @@ function rB(r){if(r==='ketua_rayon')return'ketua';if(r==='sekretaris')return'sek
 function dR(r){if(r==='kabid')return'Kabid';if(r==='wakabid')return'Wakabid';return'Anggota'}
 function gA(m){if(m.foto_url)return'<img class="div-member-avatar" src="'+m.foto_url+'" alt="'+m.full_name+'">';return'<div class="div-member-avatar">'+gI(m.full_name)+'</div>'}
 function gAS(m){if(m.foto_url)return'<img class="cc-avatar" src="'+m.foto_url+'" alt="'+m.full_name+'">';return'<div class="cc-avatar">'+gI(m.full_name)+'</div>'}
+function getCsrfToken(){
+  var cookies=document.cookie.split(';');
+  for(var i=0;i<cookies.length;i++){
+    var c=cookies[i].trim();
+    if(c.indexOf('csrf_token=')===0){
+      var val=c.substring('csrf_token='.length);
+      return val.split('.')[0];
+    }
+  }
+  return null;
+}
 document.addEventListener('DOMContentLoaded',async function(){
 try{var r=await fetch('/api/auth/me',{credentials:'include'});var d=await r.json();if(!d.authenticated){window.location.href='../panel.html';return}}catch(e){window.location.href='../panel.html';return}
-  $('lo').onclick=async function(){await fetch('/api/auth/logout',{method:'POST',credentials:'include'});window.location.href='../panel.html'};
+  $('lo').onclick=async function(){
+    var headers={'Content-Type':'application/json'};
+    var csrf=getCsrfToken();
+    if(csrf) headers['X-CSRF-Token']=csrf;
+    try{await fetch('/api/auth/logout',{method:'POST',headers:headers,credentials:'include'});}catch(e){}
+    window.location.href='../panel.html';
+  };
   $('ref').onclick=load;await load()});
 async function load(){
   $('load').style.display='flex';$('cont').style.display='none';

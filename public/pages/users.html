@@ -138,11 +138,28 @@
 <script>
 var cp=1,dtid=null,ptid=null;
 function eh(s){return s?String(s).replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"').replace(/'/g,'''):''}
+function getCsrfToken(){
+  var cookies=document.cookie.split(';');
+  for(var i=0;i<cookies.length;i++){
+    var c=cookies[i].trim();
+    if(c.indexOf('csrf_token=')===0){
+      var val=c.substring('csrf_token='.length);
+      return val.split('.')[0];
+    }
+  }
+  return null;
+}
 function om(i){document.getElementById(i).classList.add('on')}
 function cm(i){document.getElementById(i).classList.remove('on')}
 function st(m,t){var e=document.createElement('div');e.className='tt tt-'+(t==='e'?'e':'s');e.textContent=m;document.getElementById('tc').appendChild(e);e.style.display='block';setTimeout(function(){e.remove()},3000)}
-document.addEventListener('DOMContentLoaded',async function(){try{var r=await fetch('/api/auth/me',{credentials:'include'});var d=await r.json();if(!d.authenticated||!d.user.privilege && d.user.role!=='admin'){window.location.href='../panel.html';return}load(1)}catch(e){window.location.href='../panel.html'}});
-document.getElementById('logoutBtn').addEventListener('click',async function(){await fetch('/api/auth/logout',{method:'POST',credentials:'include'});window.location.href='../panel.html'});
+document.addEventListener('DOMContentLoaded',async function(){try{var r=await fetch('/api/auth/me',{credentials:'include'});var d=await r.json();var u=d.user;var hasAdminPriv=u.privilege==='admin'||u.privilege==='super_admin'||u.role==='admin'||u.role==='super_admin';if(!d.authenticated||!hasAdminPriv){window.location.href='../panel.html';return}load(1)}catch(e){window.location.href='../panel.html'}});
+document.getElementById('logoutBtn').addEventListener('click',async function(){
+  var headers={'Content-Type':'application/json'};
+  var csrf=getCsrfToken();
+  if(csrf) headers['X-CSRF-Token']=csrf;
+  try{await fetch('/api/auth/logout',{method:'POST',headers:headers,credentials:'include'});}catch(e){}
+  window.location.href='../panel.html';
+});
 async function load(p){if(p)cp=p;var s=document.getElementById('si').value;var statusFilter=document.getElementById('statusFilter').value;var tb=document.getElementById('tb');tb.innerHTML='<tr><td colspan="7" class="empty"><i class="fas fa-spinner fa-spin"></i><p>Memuat data...</p></td></tr>';try{var url='/api/users?search='+encodeURIComponent(s)+'&page='+cp+'&limit=10';if(statusFilter)url+='&status='+encodeURIComponent(statusFilter);var r=await fetch(url,{credentials:'include'});if(!r.ok){var ed=await r.json();st(ed.error||'Gagal','e');return}var d=await r.json();if(!d.users||!d.users.length){tb.innerHTML='<tr><td colspan="7" class="empty"><i class="fas fa-users"></i><p>Tidak ada pengguna</p></td></tr>';document.getElementById('pc').innerHTML='';return}
 tb.innerHTML=d.users.map(function(u){var sc='b'+u.status.charAt(0);var rc='b'+u.role.charAt(0);var cr=u.created_at?new Date(u.created_at).toLocaleDateString('id-ID',{year:'numeric',month:'short',day:'numeric'}):'-';return'<tr><td><strong>'+eh(u.username)+'</strong></td><td>'+eh(u.full_name||'-')+'</td><td>'+eh(u.email||'-')+'</td><td><span class="badge '+rc+'">'+eh(u.role)+'</span></td><td><span class="badge '+sc+'">'+eh(u.status)+'</span></td><td>'+cr+'</td><td class="act">'+
 '<button class="btn btn-p btn-sm" onclick="oem(\''+u.id+'\')" title="Edit"><i class="fas fa-edit"></i></button>'+

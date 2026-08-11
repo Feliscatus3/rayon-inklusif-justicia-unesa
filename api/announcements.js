@@ -19,17 +19,7 @@ module.exports = async (req, res) => {
     req.url = req.query.__path;
   }
 
-  // Public read access: GET is intentionally unauthenticated so published
-  // announcements can be shown on the public homepage without a session.
-  if (req.method === 'GET') {
-    try {
-      return await getAnnouncements(req, res);
-    } catch (error) {
-      console.error('Announcements API error:', error);
-      return res.status(500).json({ error: 'Internal server error' });
-    }
-  }
-
+  // Announcements are a kader-panel feature. Only authenticated users may read them.
   const user = await requireAuth(req, res);
   if (!user) return;
   const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
@@ -37,6 +27,8 @@ module.exports = async (req, res) => {
 
   try {
     switch (req.method) {
+      case 'GET':
+        return await getAnnouncements(req, res);
       case 'POST':
       case 'PUT':
       case 'PATCH':
@@ -45,26 +37,26 @@ module.exports = async (req, res) => {
           return res.status(403).json({ error: 'CSRF token tidak valid. Muat ulang halaman.' });
         }
         if (req.method === 'POST') {
-          if (!requireRole(user, 'super_admin', 'admin', 'ketua_rayon', 'sekretaris')) {
-            return res.status(403).json({ error: 'Forbidden: Hanya pengurus inti yang dapat membuat pengumuman' });
+          if (!requireRole(user, 'admin', 'super_admin')) {
+            return res.status(403).json({ error: 'Forbidden: Hanya admin atau super admin yang dapat membuat pengumuman' });
           }
           return await createAnnouncement(req, res, user, ip, ua);
         }
         if (req.method === 'PUT') {
-          if (!requireRole(user, 'super_admin', 'admin', 'ketua_rayon', 'sekretaris')) {
-            return res.status(403).json({ error: 'Forbidden: Hanya pengurus inti yang dapat mengedit pengumuman' });
+          if (!requireRole(user, 'admin', 'super_admin')) {
+            return res.status(403).json({ error: 'Forbidden: Hanya admin atau super admin yang dapat mengedit pengumuman' });
           }
           return await updateAnnouncement(req, res, user, ip, ua);
         }
         if (req.method === 'PATCH') {
-          if (!requireRole(user, 'super_admin', 'admin')) {
-            return res.status(403).json({ error: 'Forbidden: Hanya super admin atau admin' });
+          if (!requireRole(user, 'admin', 'super_admin')) {
+            return res.status(403).json({ error: 'Forbidden: Hanya admin atau super admin' });
           }
           return await togglePin(req, res, user, ip, ua);
         }
         if (req.method === 'DELETE') {
-          if (!requireRole(user, 'super_admin', 'admin')) {
-            return res.status(403).json({ error: 'Forbidden: Hanya super admin atau admin' });
+          if (!requireRole(user, 'admin', 'super_admin')) {
+            return res.status(403).json({ error: 'Forbidden: Hanya admin atau super admin' });
           }
           return await deleteAnnouncement(req, res, user, ip, ua);
         }

@@ -56,7 +56,7 @@
 <div class="an-bar"><div class="sb">
 <input type="text" id="srch" placeholder="Cari...">
 <select id="cf"><option value="">Semua</option><option>Umum</option><option>Kegiatan</option><option>Pendidikan</option><option>Organisasi</option><option>Kaderisasi</option><option>KOPRI</option><option>Lembaga</option><option>External</option></select>
-</div><button id="ab" class="cp" style="display:none"><i class="fas fa-plus"></i> Baru</button></div>
+</div><button id="ab" class="cp" style="display:none"><i class="fas fa-plus"></i> Tambah Pengumuman</button></div>
 <div id="ag" class="an-grid"></div>
 <div id="fm" class="mod"><div class="mc"><span class="mx">&times;</span><h3 id="ft">Pengumuman Baru</h3>
 <form id="ef"><input type="hidden" id="ei">
@@ -92,13 +92,19 @@ document.addEventListener('click',function(e){
     $('sidebar').classList.remove('open');
   }
 });
-var ER=['super_admin','admin','ketua_rayon','sekretaris'];var an=[],cu=null,csrfToken=null;
+var ADMIN_ROLES=['super_admin','admin'];var an=[],cu=null,csrfToken=null;
 function $(i){return document.getElementById(i)}
 function getCsrfToken(){return csrfToken||null;}
+function isAdmin(){
+  if(!cu)return false;
+  if(ADMIN_ROLES.indexOf(cu.role)>=0)return true;
+  if(cu.privilege==='super_admin'||cu.privilege==='admin')return true;
+  return false;
+}
 document.addEventListener('DOMContentLoaded',async function(){
   try{var r=await fetch('/api/auth/me',{credentials:'include'});var d=await r.json();
     if(!d.authenticated){window.location.href='../panel.html';return;}
-    cu=d.user;csrfToken=d.csrfToken||null;if(ER.indexOf(cu.role)>=0)$('ab').style.display='inline-flex';
+    cu=d.user;csrfToken=d.csrfToken||null;if(isAdmin())$('ab').style.display='inline-flex';
     var uname=cu.full_name||cu.username||'Kader';
     $('userName').textContent=uname;
     $('userRole').textContent=capRole(cu.role);
@@ -118,11 +124,21 @@ document.addEventListener('DOMContentLoaded',async function(){
   $('srch').oninput=function(){debounce(render,300);};$('cf').onchange=render;
   var mxs=document.querySelectorAll('.mx');for(var i=0;i<mxs.length;i++)mxs[i].onclick=function(){this.parentElement.parentElement.classList.remove('show');};
   window.onclick=function(e){if(e.target.classList.contains('mod'))e.target.classList.remove('show');};
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape')$('fm').classList.remove('show');
+  });
 });
 var dt=null;function debounce(fn,t){if(dt)clearTimeout(dt);dt=setTimeout(fn,t);}
 async function loadAnn(){
-  try{var r=await fetch('/api/announcements',{credentials:'include'});var d=await r.json();an=d.announcements||d||[];render();
-  }catch(e){$('ag').innerHTML='<div class="ne"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat</p></div>';}
+  $('ag').innerHTML='<div class="state spin"><i class="fas fa-spinner"></i><p>Memuat pengumuman...</p></div>';
+  var ok=false;
+  try{
+    var r=await fetch('/api/announcements',{credentials:'include'});
+    if(r.status===401||r.status===403){$('ag').innerHTML='<div class="ne"><i class="fas fa-exclamation-triangle"></i><p>Anda perlu login untuk melihat pengumuman.</p></div>';return;}
+    if(!r.ok){$('ag').innerHTML='<div class="ne"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat pengumuman.</p></div>';return;}
+    var d=await r.json();an=d.announcements||d||[];ok=true;
+  }catch(e){$('ag').innerHTML='<div class="ne"><i class="fas fa-exclamation-triangle"></i><p>Koneksi gagal. Periksa jaringan Anda.</p></div>';}
+  finally{if(ok)render();}
 }
 function render(){
   var q=$('srch').value.toLowerCase(),c=$('cf').value,f=an;
@@ -131,7 +147,7 @@ function render(){
   var p=f.filter(function(a){return a.is_pinned;}),np=f.filter(function(a){return!a.is_pinned;});
   p.sort(function(a,b){return new Date(b.created_at)-new Date(a.created_at);});
   np.sort(function(a,b){return new Date(b.created_at)-new Date(a.created_at);});
-  f=p.concat(np);var ia=ER.indexOf(cu.role)>=0,h='';
+  f=p.concat(np);var ia=isAdmin(),h='';
   if(f.length===0)h='<div class="ne"><i class="far fa-bullhorn"></i><p>Tidak ada pengumuman</p></div>';
   else for(var i=0;i<f.length;i++){
     var a=f[i],pi=a.is_pinned?' <i class="fas fa-thumbtack" style="color:#1a237e;font-size:.8rem"></i>':'';
@@ -158,30 +174,41 @@ function render(){
 }
 function editAnn(id){
   var a=null;for(var i=0;i<an.length;i++){if(an[i].id===id){a=an[i];break}}
-  if(!a)return;$('ei').value=a.id;$('et').value=a.title;$('ec').value=a.content;$('ecc').value=a.category;$('ep').checked=a.is_pinned;
+  if(!a)return;if(!isAdmin())return;
+  $('ei').value=a.id;$('et').value=a.title;$('ec').value=a.content;$('ecc').value=a.category;$('ep').checked=a.is_pinned;
   $('ft').textContent='Edit Pengumuman';$('fsb').textContent='Perbarui';$('fm').classList.add('show');
 }
-function openForm(){$('ei').value='';$('et').value='';$('ec').value='';$('ecc').value='Umum';$('ep').checked=false;$('ft').textContent='Pengumuman Baru';$('fsb').textContent='Simpan';$('fm').classList.add('show');}
+function openForm(){
+  if(!isAdmin())return;
+  $('ei').value='';$('et').value='';$('ec').value='';$('ecc').value='Umum';$('ep').checked=false;
+  $('ft').textContent='Pengumuman Baru';$('fsb').textContent='Simpan';$('fm').classList.add('show');
+}
+function resetAnnForm(){$('ei').value='';$('et').value='';$('ec').value='';$('ecc').value='Umum';$('ep').checked=false;}
 async function handleSubmit(e){
   e.preventDefault();var id=$('ei').value,data={title:$('et').value,content:$('ec').value,category:$('ecc').value,is_pinned:$('ep').checked};
+  if(!isAdmin()){toast('Anda tidak memiliki izin untuk menyimpan pengumuman','err');return;}
+  var btn=$('fsb'),orig=btn.innerHTML;btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
   try{var url='/api/announcements'+(id?'/'+id:''),method=id?'PUT':'POST';
     var headers={'Content-Type':'application/json'};var csrf=getCsrfToken();if(csrf)headers['X-CSRF-Token']=csrf;
     var r=await fetch(url,{method,headers,body:JSON.stringify(data),credentials:'include'});
-    if(r.ok){$('fm').classList.remove('show');toast(id?'Diperbarui':'Dibuat');await loadAnn();}else{var e2=await r.json();toast(e2.error||'Gagal','err');}
-  }catch(e){toast('Error', 'err');}
+    if(r.ok){$('fm').classList.remove('show');resetAnnForm();toast(id?'Pengumuman berhasil diperbarui.':'Pengumuman berhasil dibuat.');await loadAnn();}else{var e2=await r.json();toast(e2.error||'Gagal','err');}
+  }catch(e){toast('Terjadi kesalahan koneksi','err');}
+  finally{btn.disabled=false;btn.innerHTML=orig;}
 }
 async function toPin(id){
+  if(!isAdmin()){toast('Anda tidak memiliki izin untuk menyematkan pengumuman','err');return;}
   try{var headers={};var csrf=getCsrfToken();if(csrf)headers['X-CSRF-Token']=csrf;
     var r=await fetch('/api/announcements/'+id+'/pin',{method:'PATCH',headers:headers,credentials:'include'});var d=await r.json();
     if(r.ok){toast(d.message);await loadAnn();}else{toast(d.error||'Gagal','err');}
-  }catch(e){toast('Error','err');}
+  }catch(e){toast('Terjadi kesalahan koneksi','err');}
 }
 async function delAnn(id){
+  if(!isAdmin()){toast('Anda tidak memiliki izin untuk menghapus pengumuman','err');return;}
   if(!confirm('Hapus pengumuman ini?'))return;
   try{var headers={};var csrf=getCsrfToken();if(csrf)headers['X-CSRF-Token']=csrf;
     var r=await fetch('/api/announcements/'+id,{method:'DELETE',headers:headers,credentials:'include'});
-    if(r.ok){toast('Dihapus');await loadAnn();}else{var d=await r.json();toast(d.error||'Gagal','err');}
-  }catch(e){toast('Error','err');}
+    if(r.ok){toast('Pengumuman berhasil dihapus.');await loadAnn();}else{var d=await r.json();toast(d.error||'Gagal','err');}
+  }catch(e){toast('Terjadi kesalahan koneksi','err');}
 }
 function toast(m,t){var o=$('toast');o.textContent=m;o.className='toast'+(t==='err'?' err':'')+' show';setTimeout(function(){o.classList.remove('show');},3000);}
 </script>

@@ -37,6 +37,12 @@ Vercel-serverless app for managing kader of PMII Rayon Inklusif Justicia. Vanill
 - User `status`: `active | inactive | suspended | pending | rejected`. Only `active` can log in / access the panel.
 - Login rate limit: in-memory `lib/rateLimiter.js`, 5 attempts / 15 min per IP (per-process only — resets on cold start).
 
+## Feature access control (events & announcements)
+
+- **Events (`api/events.js`) and Announcements (`api/announcements.js`) are kader-panel-only features.** `GET` requires `requireAuth`; write ops are gated to `requireRole(user, 'admin', 'super_admin')` — that check honors both the `role` column and the `privilege` column, so e.g. `role=ketua_rayon` + `privilege=super_admin` (nizarfazari193) is allowed, while member/kader get 403.
+- Frontend mirrors this with an `isAdmin()` helper (checks role OR privilege) that shows/hides `+ Tambah` / Edit / Delete controls. **Do not rely on the frontend alone — backend 403 is the source of truth.**
+- Public landing page (`index.html`) has **no** Kalender or Pengumuman links and never calls `/api/events` or `/api/announcements`.
+
 ## Database
 
 - Neon PG. Migrations in `sql/` are **manual, additive, run in order**: `migration.sql`, then `migration-v2..v8` (latest is `migration-v8.sql`, registration/approval + privilege). Apply with `psql -d <DATABASE_URL> -f sql/<file>`.
@@ -45,9 +51,9 @@ Vercel-serverless app for managing kader of PMII Rayon Inklusif Justicia. Vanill
 
 ## Frontend
 
-- `public/js/app.js` is empty; real logic is inline `<script>` in `public/pages/*.html`. Landing page uses `public/assets/js/*.js` (`main.js`, `search.js`, `pagination*.js`, `kalender.js`).
-- `GET /api/events` and `GET /api/announcements` are **intentionally public** (no session) — the landing page announcements section and the public `public/pages/kalender.html` depend on this. Do not require auth on GET.
-- Public calendar stack: `pages/kalender.html` + `assets/js/kalender.js` + `assets/css/kalender.css` (fetch `/api/events?month=&year=`), wired into `index.html` and other public page navbars/footers.
+- `public/js/app.js` is empty; real logic is inline `<script>` in `public/pages/*.html`. Landing page uses `public/assets/js/*.js` (`main.js`, `search.js`, `pagination*.js`, etc.).
+- Public site has **no** Kalender/Pengumuman pages or links (they are kader-panel-only). Do not add public pages for `pages/kalender.html` or public announcements; do not call `/api/events` or `/api/announcements` from `public/index.html`.
+- Dashboard sidebars: Dashboard, Manajemen Pengguna, Event (calendar.html), Pengumuman (announcements.html), Pengaturan. **No Publikasi link** in dashboard sidebars.
 - Pages redirect unauthenticated users to `../panel.html`; `panel.html` is the login page (auto-redirects to `pages/dashboard.html` if already logged in).
 - `public/index.html` is the public landing page — do not auto-redirect it to the panel.
 

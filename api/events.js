@@ -16,17 +16,7 @@ module.exports = async (req, res) => {
     req.url = req.query.__path;
   }
 
-  // Public read access: GET is intentionally unauthenticated so the public
-  // calendar (pages/kalender.html) can display events without a session.
-  if (req.method === 'GET') {
-    try {
-      return await getEvents(req, res);
-    } catch (error) {
-      console.error('Events API error:', error);
-      return res.status(500).json({ error: 'Internal server error' });
-    }
-  }
-
+  // Calendar is a kader-panel feature. Only authenticated users may read events.
   const user = await requireAuth(req, res);
   if (!user) return;
   const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
@@ -34,6 +24,8 @@ module.exports = async (req, res) => {
 
   try {
     switch (req.method) {
+      case 'GET':
+        return await getEvents(req, res);
       case 'POST':
       case 'PUT':
       case 'DELETE':
@@ -41,20 +33,20 @@ module.exports = async (req, res) => {
           return res.status(403).json({ error: 'CSRF token tidak valid' });
         }
         if (req.method === 'POST') {
-          if (!requireRole(user, 'super_admin', 'admin', 'ketua_rayon', 'sekretaris')) {
-            return res.status(403).json({ error: 'Forbidden: Hanya pengurus inti yang dapat membuat event' });
+          if (!requireRole(user, 'admin', 'super_admin')) {
+            return res.status(403).json({ error: 'Forbidden: Hanya admin atau super admin yang dapat membuat event' });
           }
           return await createEvent(req, res, user, ip, userAgent);
         }
         if (req.method === 'PUT') {
-          if (!requireRole(user, 'super_admin', 'admin', 'ketua_rayon', 'sekretaris')) {
-            return res.status(403).json({ error: 'Forbidden: Hanya pengurus inti yang dapat mengedit event' });
+          if (!requireRole(user, 'admin', 'super_admin')) {
+            return res.status(403).json({ error: 'Forbidden: Hanya admin atau super admin yang dapat mengedit event' });
           }
           return await updateEvent(req, res, user, ip, userAgent);
         }
         if (req.method === 'DELETE') {
-          if (!requireRole(user, 'super_admin', 'admin')) {
-            return res.status(403).json({ error: 'Forbidden: Hanya super admin atau admin' });
+          if (!requireRole(user, 'admin', 'super_admin')) {
+            return res.status(403).json({ error: 'Forbidden: Hanya admin atau super admin yang dapat menghapus event' });
           }
           return await deleteEvent(req, res, user, ip, userAgent);
         }

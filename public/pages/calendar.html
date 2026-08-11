@@ -104,7 +104,7 @@
             <div class="fg"><label>Tanggal *</label><input type="date" id="evDate" required></div>
             <div class="fg"><label>Waktu</label><input type="time" id="evTime"></div>
           </div>
-          <div class="fa"><button type="submit" class="btn-pri" id="formSubmit"><i class="fas fa-save"></i> Simpan</button><button type="button" class="btn-cancel" id="formCancel">Batal</button></div>
+          <div class="fa"><button type="submit" class="btn-pri" id="formSubmit"><i class="fas fa-save"></i> Simpan Event</button><button type="button" class="btn-cancel" id="formCancel">Batal</button></div>
         </form></div></div>
 
       <div id="toast" class="toast"></div>
@@ -142,10 +142,18 @@ document.addEventListener('click',function(e){
 
 var MONTHS = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 var CAT_COLORS = {PMII:'#d32f2f',Rayon:'#1a237e',Komisariat:'#2e7d32',BEM:'#e65100',DPM:'#6a1b9a',Faculty:'#00695c',University:'#37474f',External:'#c62828'};
-var EDITOR_ROLES = ['super_admin','admin','ketua_rayon','sekretaris'];
+var ADMIN_ROLES = ['admin','super_admin'];
 var today = new Date(), curView = 'month', events = [], curUser = null, csrfToken = null;
 
 function getCsrfToken(){ return csrfToken || null; }
+
+/* Admin/read-only: role is admin/super_admin OR privilege is admin/super_admin */
+function isAdmin() {
+  if (!curUser) return false;
+  if (ADMIN_ROLES.indexOf(curUser.role) >= 0) return true;
+  if (curUser.privilege === 'super_admin' || curUser.privilege === 'admin') return true;
+  return false;
+}
 
 function toast(msg, type){
   var t=$('toast');
@@ -165,7 +173,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     $('userName').textContent = uname;
     $('userRole').textContent = capRole(curUser.role);
     $('userAvatar').textContent = initials(uname);
-    if (EDITOR_ROLES.indexOf(curUser.role) >= 0 || curUser.privilege === 'super_admin' || curUser.privilege === 'admin') {
+    if (isAdmin()) {
       document.getElementById('addBtn').style.display = 'inline-flex';
     }
     await loadEvents();
@@ -200,6 +208,12 @@ document.addEventListener('DOMContentLoaded', async function(){
   };
 
   window.onclick = function(e){ if (e.target.classList.contains('modal')) e.target.classList.remove('show'); };
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+      var open = document.querySelectorAll('.modal.show');
+      for (var i=0; i<open.length; i++) open[i].classList.remove('show');
+    }
+  });
 });
 
 function changeDate(delta) {
@@ -338,23 +352,28 @@ function showCalError(msg){
 async function loadEvents() {
   var el=document.querySelector('.cal-views');
   if(el) el.innerHTML='<div class="state spin"><i class="fas fa-spinner"></i><p>Memuat event...</p></div>';
+  var ok = false;
   try {
     var r = await fetch('/api/events', { credentials: 'include' });
     if (r.status === 401 || r.status === 403) {
-      window.location.href = '../panel.html';
+      showCalError('Anda perlu login untuk melihat event.');
       return;
     }
     if (!r.ok) { showCalError('Gagal memuat event. Silakan coba lagi.'); return; }
     var d = await r.json();
     events = Array.isArray(d) ? d : [];
-    showCalGrid();
-    render();
+    ok = true;
   } catch (err) {
     showCalError('Koneksi gagal. Periksa jaringan Anda.');
+  } finally {
+    if (ok) {
+      showCalGrid();
+      render();
+    }
   }
 }
 
-function openForm() {
+function resetForm() {
   document.getElementById('eventId').value = '';
   document.getElementById('evTitle').value = '';
   document.getElementById('evDesc').value = '';
@@ -363,8 +382,12 @@ function openForm() {
   document.getElementById('evLocation').value = '';
   document.getElementById('evDate').value = getDateStr(today);
   document.getElementById('evTime').value = '';
+}
+
+function openForm() {
+  resetForm();
   document.getElementById('formTitle').textContent = 'Tambah Event Baru';
-  document.getElementById('formSubmit').innerHTML = '<i class="fas fa-save"></i> Simpan';
+  document.getElementById('formSubmit').innerHTML = '<i class="fas fa-save"></i> Simpan Event';
   document.getElementById('formModal').classList.add('show');
 }
 
@@ -381,7 +404,7 @@ function editEvent(id) {
   document.getElementById('evDate').value = e.event_date;
   document.getElementById('evTime').value = e.event_time ? String(e.event_time).substring(0,5) : '';
   document.getElementById('formTitle').textContent = 'Edit Event';
-  document.getElementById('formSubmit').innerHTML = '<i class="fas fa-save"></i> Perbarui';
+  document.getElementById('formSubmit').innerHTML = '<i class="fas fa-save"></i> Perbarui Event';
   document.getElementById('detailModal').classList.remove('show');
   document.getElementById('formModal').classList.add('show');
 }
@@ -392,6 +415,7 @@ async function handleSubmit(e) {
   var data = {title: document.getElementById('evTitle').value.trim(), description: document.getElementById('evDesc').value, category: document.getElementById('evCategory').value, color: document.getElementById('evColor').value, location: document.getElementById('evLocation').value, event_date: document.getElementById('evDate').value, event_time: document.getElementById('evTime').value};
   if (!data.title) { toast('Judul event wajib diisi','err'); return; }
   if (!data.event_date) { toast('Tanggal event wajib diisi','err'); return; }
+  if (!isAdmin()) { toast('Anda tidak memiliki izin untuk menyimpan event','err'); return; }
   var btn=document.getElementById('formSubmit');
   var orig=btn.innerHTML;
   btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
@@ -407,13 +431,19 @@ async function handleSubmit(e) {
       toast((body && body.error) || 'Akses ditolak','err');
       return;
     }
-    if (resp.ok) { closeModal('formModal'); toast(id ? 'Event berhasil diperbarui' : 'Event berhasil ditambahkan'); await loadEvents(); }
+    if (resp.ok) {
+      closeModal('formModal');
+      resetForm();
+      toast(id ? 'Event berhasil diperbarui.' : 'Event berhasil ditambahkan.');
+      await loadEvents();
+    }
     else { toast((body && body.error) || 'Gagal menyimpan event','err'); }
   } catch (err) { toast('Koneksi gagal: ' + (err && err.message ? err.message : ''),'err'); }
   finally { btn.disabled=false; btn.innerHTML=orig; }
 }
 
 async function deleteEvent(id) {
+  if (!isAdmin()) { toast('Anda tidak memiliki izin untuk menghapus event','err'); return; }
   if (!confirm('Hapus event ini?')) return;
   try {
     var headers = {};
@@ -421,7 +451,7 @@ async function deleteEvent(id) {
     if (csrf) headers['X-CSRF-Token'] = csrf;
     var resp = await fetch('/api/events/' + id, { method: 'DELETE', headers: headers, credentials: 'include' });
     var body = null; try { body = await resp.json(); } catch(_){}
-    if (resp.ok) { closeModal('detailModal'); toast('Event berhasil dihapus'); await loadEvents(); }
+    if (resp.ok) { closeModal('detailModal'); toast('Event berhasil dihapus.'); await loadEvents(); }
     else { toast((body && body.error) || 'Gagal menghapus event','err'); }
   } catch (err) { toast('Koneksi gagal','err'); }
 }
@@ -434,7 +464,7 @@ function showDetail(id) {
   var dtParts = String(e.event_date).split('-');
   var ds = parseInt(dtParts[2],10) + ' ' + MONTHS[parseInt(dtParts[1],10)-1] + ' ' + dtParts[0];
   var t = e.event_time ? String(e.event_time).substring(0, 5) : '--:--';
-  var canEdit = (EDITOR_ROLES.indexOf(curUser.role) >= 0 || curUser.privilege === 'super_admin' || curUser.privilege === 'admin');
+  var canEdit = isAdmin();
   var h = '<div class="dh"><div class="dc" style="background:' + c + '"></div><h3>' + escapeHtml(e.title) + '</h3></div>';
   h += '<div class="db">';
   h += '<p><i class="fas fa-calendar-alt"></i> ' + ds + '</p>';

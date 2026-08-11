@@ -119,13 +119,13 @@ document.addEventListener('DOMContentLoaded',async function(){
     try{await fetch('/api/auth/logout',{method:'POST',headers:headers,credentials:'include'});}catch(e){}
     window.location.href='../panel.html';
   };
-  $('ab').onclick=openForm;$('fc').onclick=function(){$('fm').classList.remove('show');};
+  $('ab').onclick=openForm;$('fc').onclick=function(){cm('fm');};
   $('ef').onsubmit=handleSubmit;
   $('srch').oninput=function(){debounce(render,300);};$('cf').onchange=render;
-  var mxs=document.querySelectorAll('.mx');for(var i=0;i<mxs.length;i++)mxs[i].onclick=function(){this.parentElement.parentElement.classList.remove('show');};
-  window.onclick=function(e){if(e.target.classList.contains('mod'))e.target.classList.remove('show');};
+  var mxs=document.querySelectorAll('.mx');for(var i=0;i<mxs.length;i++)mxs[i].onclick=function(){cm('fm');};
+  window.onclick=function(e){if(e.target.classList.contains('mod'))cm('fm');};
   document.addEventListener('keydown',function(e){
-    if(e.key==='Escape')$('fm').classList.remove('show');
+    if(e.key==='Escape')cm('fm');
   });
 });
 var dt=null;function debounce(fn,t){if(dt)clearTimeout(dt);dt=setTimeout(fn,t);}
@@ -172,16 +172,19 @@ function render(){
   }
   $('ag').innerHTML=h;
 }
+function $A(i){return document.getElementById(i)}
+function om(id){var el=$A(id);if(el){el.classList.add('show');document.body.classList.add('modal-open');}}
+function cm(id){var el=$A(id);if(el)el.classList.remove('show');if(!document.querySelector('.mod.show')){document.body.classList.remove('modal-open');}}
 function editAnn(id){
   var a=null;for(var i=0;i<an.length;i++){if(an[i].id===id){a=an[i];break}}
   if(!a)return;if(!isAdmin())return;
   $('ei').value=a.id;$('et').value=a.title;$('ec').value=a.content;$('ecc').value=a.category;$('ep').checked=a.is_pinned;
-  $('ft').textContent='Edit Pengumuman';$('fsb').textContent='Perbarui';$('fm').classList.add('show');
+  $('ft').textContent='Edit Pengumuman';$('fsb').textContent='Perbarui';om('fm');
 }
 function openForm(){
   if(!isAdmin())return;
   $('ei').value='';$('et').value='';$('ec').value='';$('ecc').value='Umum';$('ep').checked=false;
-  $('ft').textContent='Pengumuman Baru';$('fsb').textContent='Simpan';$('fm').classList.add('show');
+  $('ft').textContent='Pengumuman Baru';$('fsb').textContent='Simpan';om('fm');
 }
 function resetAnnForm(){$('ei').value='';$('et').value='';$('ec').value='';$('ecc').value='Umum';$('ep').checked=false;}
 async function handleSubmit(e){
@@ -191,7 +194,7 @@ async function handleSubmit(e){
   try{var url='/api/announcements'+(id?'/'+id:''),method=id?'PUT':'POST';
     var headers={'Content-Type':'application/json'};var csrf=getCsrfToken();if(csrf)headers['X-CSRF-Token']=csrf;
     var r=await fetch(url,{method,headers,body:JSON.stringify(data),credentials:'include'});
-    if(r.ok){$('fm').classList.remove('show');resetAnnForm();toast(id?'Pengumuman berhasil diperbarui.':'Pengumuman berhasil dibuat.');await loadAnn();}else{var e2=await r.json();toast(e2.error||'Gagal','err');}
+    if(r.ok){cm('fm');resetAnnForm();toast(id?'Pengumuman berhasil diperbarui.':'Pengumuman berhasil dibuat.');await loadAnn();}else{var e2=await r.json();toast(e2.error||'Gagal','err');}
   }catch(e){toast('Terjadi kesalahan koneksi','err');}
   finally{btn.disabled=false;btn.innerHTML=orig;}
 }

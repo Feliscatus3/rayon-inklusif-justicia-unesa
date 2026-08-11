@@ -90,6 +90,11 @@
         <div id="dayView" class="mv dv" style="display:none"><h3 id="dayTitle">Agenda Hari Ini</h3><div id="dayList"></div></div>
       </div>
 
+      <div class="card up-card">
+        <div class="card-hd"><h3><i class="fas fa-calendar-day"></i> Event Mendatang</h3></div>
+        <div class="card-bd" id="eventList"><div class="noe"><i class="fas fa-spinner fa-spin"></i><p>Memuat event...</p></div></div>
+      </div>
+
       <div id="detailModal" class="modal"><div class="mc"><span class="mx">&times;</span><div id="detailContent"></div></div></div>
       <div id="formModal" class="modal"><div class="mc"><span class="mx">&times;</span><h3 id="formTitle">Tambah Event Baru</h3>
         <form id="eventForm"><input type="hidden" id="eventId">
@@ -259,6 +264,7 @@ function render() {
   if (curView === 'month') renderMonth();
   else if (curView === 'week') renderWeek();
   else renderDay();
+  renderEventList();
 }
 
 function showCalState(msg, iconCls){
@@ -369,20 +375,64 @@ async function loadEvents() {
     var r = await fetch('/api/events', { credentials: 'include' });
     if (r.status === 401 || r.status === 403) {
       showCalError('Anda perlu login untuk melihat event.');
+      var evl=document.getElementById('eventList');
+      if(evl) evl.innerHTML='<div class="noe"><i class="fas fa-lock"></i><p>Anda perlu login untuk melihat event.</p></div>';
       return;
     }
-    if (!r.ok) { showCalError('Gagal memuat event. Silakan coba lagi.'); return; }
+    if (!r.ok) {
+      showCalError('Gagal memuat event. Silakan coba lagi.');
+      var evl2=document.getElementById('eventList');
+      if(evl2) evl2.innerHTML='<div class="noe"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat event.</p></div>';
+      return;
+    }
     var d = await r.json();
     events = Array.isArray(d) ? d : [];
     ok = true;
   } catch (err) {
     showCalError('Koneksi gagal. Periksa jaringan Anda.');
+    var evl3=document.getElementById('eventList');
+    if(evl3) evl3.innerHTML='<div class="noe"><i class="fas fa-wifi"></i><p>Koneksi gagal. Periksa jaringan Anda.</p></div>';
   } finally {
     if (ok) {
       showCalGrid();
       render();
+      renderEventList();
     }
   }
+}
+
+function renderEventList() {
+  var list = document.getElementById('eventList');
+  if (!list) return;
+  var f = filteredEvents();
+  if (f.length === 0) {
+    list.innerHTML = '<div class="noe"><i class="far fa-calendar"></i><p>Belum ada event.</p></div>';
+    return;
+  }
+  var ts = getDateStr(new Date());
+  var upcoming = f.filter(function(e){ return String(e.event_date) >= ts; });
+  upcoming.sort(function(a, b) {
+    if (a.event_date === b.event_date) return (a.event_time || '00:00') > (b.event_time || '00:00') ? 1 : -1;
+    return a.event_date > b.event_date ? 1 : -1;
+  });
+  var shown = upcoming.slice(0, 6);
+  var h = '';
+  for (var j = 0; j < shown.length; j++) {
+    var e = shown[j];
+    var parts = String(e.event_date).split('-');
+    var ds = (parts.length === 3) ? (parseInt(parts[2],10) + ' ' + MONTHS[parseInt(parts[1],10)-1] + ' ' + parts[0]) : String(e.event_date);
+    var t = e.event_time ? String(e.event_time).substring(0, 5) : '--:--';
+    h += '<div class="up" onclick="showDetail(' + e.id + ')">';
+    h += '<div class="up-d"><span class="up-dt">' + ds + '</span><span class="up-t">' + t + '</span></div>';
+    h += '<div class="up-b"><h4>' + escapeHtml(e.title) + '</h4>';
+    h += '<p>' + escapeHtml(e.category) + (e.location ? ' &middot; ' + escapeHtml(e.location) : '') + '</p></div>';
+    h += '<span class="ec" style="background:' + getColor(e) + '">' + escapeHtml(e.category) + '</span>';
+    h += '</div>';
+  }
+  if (shown.length === 0) {
+    h = '<div class="noe"><i class="far fa-calendar-check"></i><p>Tidak ada event mendatang.</p></div>';
+  }
+  list.innerHTML = h;
 }
 
 function resetForm() {

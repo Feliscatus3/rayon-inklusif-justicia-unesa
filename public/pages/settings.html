@@ -195,9 +195,21 @@ a{text-decoration:none;color:inherit}
   .sidebar.open{transform:translateX(0);box-shadow:0 0 60px rgba(0,0,0,.5)}
   .main-area{margin-left:0;width:100%}
   .hamburger{display:inline-flex}
-  .topbar{padding:0 16px}
+  .topbar{padding:0 16px;gap:8px}
   .dash-content{padding:18px 16px}
   .u-info{display:none}
+  .card-hd{flex-direction:column;align-items:flex-start}
+  .save-bar{padding:14px 16px}
+  .save-bar .sb-info{min-width:100%}
+  .toggle-row{flex-wrap:wrap;gap:10px}
+  .media-row{flex-direction:column;align-items:stretch}
+  .media-controls{min-width:0}
+  .fg input,.fg textarea,.fg select{min-height:44px}
+}
+@media(max-width:480px){
+  .dash-content{padding:14px 12px}
+  .page-title{font-size:1.2rem}
+  .fg label{font-size:.76rem}
 }
 </style>
 </head>

@@ -154,8 +154,8 @@ function escapeHtml(value) {
         .replace(/'/g, '&#039;');
 }
 
-function om(id) { document.getElementById(id).classList.add('on'); }
-function cm(id) { document.getElementById(id).classList.remove('on'); }
+function om(id) { document.getElementById(id).classList.add('on'); document.body.classList.add('modal-open'); }
+function cm(id) { document.getElementById(id).classList.remove('on'); if (!document.querySelector('.modal-o.on')) { document.body.classList.remove('modal-open'); } }
 
 function st(msg, type) {
     var el = document.createElement('div');

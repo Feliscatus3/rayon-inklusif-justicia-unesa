@@ -132,12 +132,15 @@ document.addEventListener('click',function(e){
 });
 
 /* ===== Auth ===== */
+var _csrfToken=null;
+function getCsrfToken(){return _csrfToken||null;}
 async function initAuth(){
   try{
     var r=await fetch('/api/auth/me',{credentials:'include'});
     var d=await r.json();
     if(!d.authenticated){window.location.href='../panel.html';return;}
     var u=d.user;
+    _csrfToken=d.csrfToken||null;
     var name=u.full_name||u.username||'Kader';
     $('userName').textContent=name;
     $('userRole').textContent=capRole(u.role);
@@ -217,7 +220,7 @@ document.addEventListener('DOMContentLoaded',async function(){
   $('logoutBtn').addEventListener('click',async function(ev){
     ev.preventDefault();
     var headers={'Content-Type':'application/json'};
-    var csrf=(function(){var cs=document.cookie.split(';');for(var i=0;i<cs.length;i++){var c=cs[i].trim();if(c.indexOf('csrf_token=')===0){return c.substring('csrf_token='.length).split('.')[0];}}return null;})();
+    var csrf=getCsrfToken();
     if(csrf) headers['X-CSRF-Token']=csrf;
     try{await fetch('/api/auth/logout',{method:'POST',headers:headers,credentials:'include'});}catch(e){}
     window.location.href='../panel.html';

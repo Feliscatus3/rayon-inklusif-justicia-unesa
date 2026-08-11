@@ -24,7 +24,6 @@
       <div class="sidebar-label">Menu</div>
       <a class="sidebar-link" href="dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
       <a class="sidebar-link active" href="users.html"><i class="fas fa-users"></i> Manajemen Pengguna</a>
-      <a class="sidebar-link" href="publikasi-admin.html"><i class="fas fa-book-open"></i> Publikasi</a>
       <a class="sidebar-link" href="calendar.html"><i class="fas fa-calendar-days"></i> Event</a>
       <a class="sidebar-link" href="announcements.html"><i class="fas fa-bullhorn"></i> Pengumuman</a>
       <div class="sidebar-label">Lainnya</div>
@@ -167,17 +166,8 @@ function st(msg, type) {
     setTimeout(function(){ el.remove(); }, 3000);
 }
 
-function getCsrfToken() {
-    var cookies = document.cookie.split(';');
-    for (var i = 0; i < cookies.length; i++) {
-        var c = cookies[i].trim();
-        if (c.indexOf('csrf_token=') === 0) {
-            var val = c.substring('csrf_token='.length);
-            return val.split('.')[0];
-        }
-    }
-    return null;
-}
+var _csrfToken = null;
+function getCsrfToken() { return _csrfToken || null; }
 
 /* ===== Theme ===== */
 (function initTheme(){
@@ -327,7 +317,9 @@ async function sv(e) {
     var url = isE ? '/api/users/' + id : '/api/users';
     var method = isE ? 'PUT' : 'POST';
     try {
-        var r = await fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), credentials: 'include' });
+        var hdrs = { 'Content-Type': 'application/json' };
+        var _cs = getCsrfToken(); if (_cs) hdrs['X-CSRF-Token'] = _cs;
+        var r = await fetch(url, { method: method, headers: hdrs, body: JSON.stringify(body), credentials: 'include' });
         var d = await r.json();
         if (!r.ok) { st(d.error || 'Gagal', 'e'); return; }
         st(isE ? 'Pengguna diperbarui' : 'Pengguna dibuat', 's');
@@ -347,7 +339,9 @@ function opm(id, un) {
 
 async function hrp() {
     try {
-        var r = await fetch('/api/users/' + ptid + '/password', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: document.getElementById('np').value }), credentials: 'include' });
+        var hdrs = { 'Content-Type': 'application/json' };
+        var _cs = getCsrfToken(); if (_cs) hdrs['X-CSRF-Token'] = _cs;
+        var r = await fetch('/api/users/' + ptid + '/password', { method: 'PATCH', headers: hdrs, body: JSON.stringify({ password: document.getElementById('np').value }), credentials: 'include' });
         var d = await r.json();
         if (!r.ok) { st(d.error || 'Gagal', 'e'); return; }
         st('Password direset', 's');
@@ -359,7 +353,9 @@ async function hrp() {
 
 async function ts(id, status) {
     try {
-        var r = await fetch('/api/users/' + id + '/status', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: status }), credentials: 'include' });
+        var hdrs = { 'Content-Type': 'application/json' };
+        var _cs = getCsrfToken(); if (_cs) hdrs['X-CSRF-Token'] = _cs;
+        var r = await fetch('/api/users/' + id + '/status', { method: 'PATCH', headers: hdrs, body: JSON.stringify({ status: status }), credentials: 'include' });
         var d = await r.json();
         if (!r.ok) { st(d.error || 'Gagal', 'e'); return; }
         st(d.message, 's');
@@ -373,7 +369,9 @@ async function tr(id, role) {
     var newRole = role === 'admin' ? 'kader' : 'admin';
     if (!confirm('Ubah role menjadi ' + newRole + '?')) return;
     try {
-        var r = await fetch('/api/users/' + id + '/role', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: newRole }), credentials: 'include' });
+        var hdrs = { 'Content-Type': 'application/json' };
+        var _cs = getCsrfToken(); if (_cs) hdrs['X-CSRF-Token'] = _cs;
+        var r = await fetch('/api/users/' + id + '/role', { method: 'PATCH', headers: hdrs, body: JSON.stringify({ role: newRole }), credentials: 'include' });
         var d = await r.json();
         if (!r.ok) { st(d.error || 'Gagal', 'e'); return; }
         st(d.message, 's');
@@ -391,7 +389,9 @@ function odm(id, un) {
 
 async function cd() {
     try {
-        var r = await fetch('/api/users/' + dtid, { method: 'DELETE', credentials: 'include' });
+        var hdrs = {};
+        var _cs = getCsrfToken(); if (_cs) hdrs['X-CSRF-Token'] = _cs;
+        var r = await fetch('/api/users/' + dtid, { method: 'DELETE', headers: hdrs, credentials: 'include' });
         var d = await r.json();
         if (!r.ok) { st(d.error || 'Gagal', 'e'); return; }
         st(d.message, 's');
@@ -412,6 +412,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             return;
         }
         var u = d.user;
+        _csrfToken = d.csrfToken || null;
         var hasAdminPriv = u.privilege === 'admin' || u.privilege === 'super_admin' || u.role === 'admin' || u.role === 'super_admin';
         if (!hasAdminPriv) {
             window.location.href = '../panel.html';

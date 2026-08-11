@@ -134,6 +134,9 @@ You may customize content, images, and styles as you wish.
                 <a class="nav-link link-nav mx-lg-2" href="./pages/kegiatan.html">kegiatan</a>
               </li>
               <li class="nav-item">
+                <a class="nav-link link-nav mx-lg-2" href="./pages/kalender.html">kalender</a>
+              </li>
+              <li class="nav-item">
                 <a class="nav-link link-nav mx-lg-2" href="./pages/publikasi.html">publikasi</a>
               </li>
               <li class="nav-item ms-lg-2">
@@ -211,9 +214,21 @@ You may customize content, images, and styles as you wish.
             </div>
 
           </div>
+      </div>
+       </section>
+
+       <!-- PENGUMUMAN SECTION -->
+       <section class="py-5 bg-light" id="Pengumuman">
+        <div class="container">
+          <div class="text-center mb-4">
+            <h2 class="text-uppercase mb-3 fw-bold">Pengumuman</h2>
+            <p class="text-muted">Informasi dan pengumuman terbaru untuk seluruh kader.</p>
+          </div>
+          <div class="row g-4" id="pengumuman-list"></div>
         </div>
        </section>
-       
+       <!-- END PENGUMUMAN SECTION -->
+
       <!-- WHY JOIN US SECTION -->
       <section class="py-5 bg-dark text-capitalize text-white text-center">
         <div class="container">
@@ -606,6 +621,11 @@ You may customize content, images, and styles as you wish.
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link text-white link-footer" href="./pages/kalender.html">
+                            <i class="bi bi-calendar3 me-2"></i>Kalender
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link text-white link-footer" href="./pages/publikasi.html">
                             <i class="bi bi-book me-2"></i>Publikasi
                         </a>
@@ -678,5 +698,52 @@ You may customize content, images, and styles as you wish.
 <script src="./assets/js/sal.js"></script>
     <!-- Global Utilities (Back-to-Top, WhatsApp Float, Visitor Counter) -->
     <script src="./assets/js/main.js"></script>
+    <script>
+    /* ===== Public Pengumuman ===== */
+    (function () {
+      function esc(s) {
+        if (s === null || s === undefined) return '';
+        return String(s).replace(/[&<>"']/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+      }
+      function fmtDate(iso) {
+        try {
+          return new Date(iso).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' });
+        } catch (e) { return iso || ''; }
+      }
+      function render(list) {
+        var box = document.getElementById('pengumuman-list');
+        if (!box) return;
+        var h = '';
+        var shown = list.slice(0, 3);
+        if (shown.length === 0) {
+          box.innerHTML = '<div class="col-12 text-center text-muted py-4"><i class="bi bi-megaphone me-2"></i>Belum ada pengumuman.</div>';
+          return;
+        }
+        for (var i = 0; i < shown.length; i++) {
+          var a = shown[i];
+          var pin = a.is_pinned ? ' <i class="bi bi-pin-angle-fill" style="color:#0055A4"></i>' : '';
+          var ct = a.content && a.content.length > 160 ? a.content.substring(0, 160) + '...' : (a.content || '');
+          h += '<div class="col-md-4">';
+          h += '<div class="card h-100 border-0 shadow-sm">';
+          h += '<div class="card-body d-flex flex-column">';
+          h += '<div class="mb-2"><span class="badge text-bg-light border">' + esc(a.category) + '</span></div>';
+          h += '<h5 class="card-title">' + esc(a.title) + pin + '</h5>';
+          h += '<p class="card-text text-muted flex-grow-1 small">' + esc(ct) + '</p>';
+          h += '<div class="small text-muted"><i class="bi bi-calendar me-1"></i>' + fmtDate(a.created_at) + '</div>';
+          h += '</div></div></div>';
+        }
+        box.innerHTML = h;
+      }
+      fetch('/api/announcements?limit=3')
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          var list = d && d.announcements ? d.announcements : (Array.isArray(d) ? d : []);
+          render(list);
+        })
+        .catch(function () {});
+    })();
+    </script>
   </body>
 </html>

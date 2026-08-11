@@ -384,7 +384,6 @@ a{text-decoration:none;color:inherit}
       <div class="sidebar-label">Menu</div>
       <a class="sidebar-link active" href="dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
       <a class="sidebar-link" href="users.html"><i class="fas fa-users"></i> Manajemen Pengguna</a>
-      <a class="sidebar-link" href="publikasi-admin.html"><i class="fas fa-book-open"></i> Publikasi</a>
       <a class="sidebar-link" href="calendar.html"><i class="fas fa-calendar-days"></i> Event</a>
       <a class="sidebar-link" href="announcements.html"><i class="fas fa-bullhorn"></i> Pengumuman</a>
       <div class="sidebar-label">Lainnya</div>
@@ -646,6 +645,7 @@ async function loadUser(){
     var r=await fetch('/api/auth/me',{credentials:'include'});
     var d=await r.json();
     if(!d.authenticated){ window.location.href='../panel.html'; return null; }
+    _csrfToken=d.csrfToken||null;
     return d.user;
     }catch(e){
     window.location.href='../panel.html';
@@ -819,17 +819,8 @@ async function loadQuickInfo(){
 }
 
 /* ============ Logout ============ */
-function getCsrfToken(){
-  var cookies=document.cookie.split(';');
-  for(var i=0;i<cookies.length;i++){
-    var c=cookies[i].trim();
-    if(c.indexOf('csrf_token=')===0){
-      var val=c.substring('csrf_token='.length);
-      return val.split('.')[0];
-    }
-  }
-  return null;
-}
+var _csrfToken=null;
+function getCsrfToken(){return _csrfToken||null;}
 $('logoutBtn').addEventListener('click',async function(ev){
   ev.preventDefault();
   var headers={'Content-Type':'application/json'};

@@ -216,7 +216,6 @@ a{text-decoration:none;color:inherit}
       <div class="sidebar-label">Menu</div>
       <a class="sidebar-link" href="dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
       <a class="sidebar-link" href="users.html"><i class="fas fa-users"></i> Manajemen Pengguna</a>
-      <a class="sidebar-link" href="publikasi-admin.html"><i class="fas fa-book-open"></i> Publikasi</a>
       <a class="sidebar-link" href="calendar.html"><i class="fas fa-calendar-days"></i> Event</a>
       <a class="sidebar-link" href="announcements.html"><i class="fas fa-bullhorn"></i> Pengumuman</a>
       <div class="sidebar-label">Lainnya</div>
@@ -491,7 +490,9 @@ $('settingsForm').addEventListener('submit',async function(e){
     login_background:$('inBgUrl').value||null
   };
   try{
-    var r=await fetch('/api/settings',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),credentials:'include'});
+    var _h={'Content-Type':'application/json'};
+    var _cs=getCsrfToken();if(_cs)_h['X-CSRF-Token']=_cs;
+    var r=await fetch('/api/settings',{method:'PUT',headers:_h,body:JSON.stringify(payload),credentials:'include'});
     var d=await r.json();
     if(r.ok){
       toast(d.message||'Pengaturan berhasil disimpan');
@@ -512,17 +513,8 @@ $('settingsForm').addEventListener('submit',async function(e){
 });
 
 /* ===== Auth / logout ===== */
-function getCsrfToken(){
-  var cookies=document.cookie.split(';');
-  for(var i=0;i<cookies.length;i++){
-    var c=cookies[i].trim();
-    if(c.indexOf('csrf_token=')===0){
-      var val=c.substring('csrf_token='.length);
-      return val.split('.')[0];
-    }
-  }
-  return null;
-}
+var _csrfToken=null;
+function getCsrfToken(){return _csrfToken||null;}
 $('logoutBtn').addEventListener('click',async function(ev){
   ev.preventDefault();
   var headers={'Content-Type':'application/json'};
@@ -538,6 +530,7 @@ async function init(){
     var d=await r.json();
     if(!d.authenticated){window.location.href='../panel.html';return;}
     var u=d.user;
+    _csrfToken=d.csrfToken||null;
     var hasAdminPriv = u.privilege === 'admin' || u.privilege === 'super_admin' || u.role === 'admin' || u.role === 'super_admin';
     if(!hasAdminPriv){
       window.location.href='dashboard.html';return;

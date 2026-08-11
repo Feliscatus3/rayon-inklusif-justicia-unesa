@@ -23,7 +23,6 @@
       <div class="sidebar-label">Menu</div>
       <a class="sidebar-link" href="dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
       <a class="sidebar-link" href="users.html"><i class="fas fa-users"></i> Manajemen Pengguna</a>
-      <a class="sidebar-link" href="publikasi-admin.html"><i class="fas fa-book-open"></i> Publikasi</a>
       <a class="sidebar-link" href="calendar.html"><i class="fas fa-calendar-days"></i> Event</a>
       <a class="sidebar-link active" href="announcements.html"><i class="fas fa-bullhorn"></i> Pengumuman</a>
       <div class="sidebar-label">Lainnya</div>
@@ -93,23 +92,13 @@ document.addEventListener('click',function(e){
     $('sidebar').classList.remove('open');
   }
 });
-var ER=['super_admin','admin','ketua_rayon','sekretaris'];var an=[],cu=null;
+var ER=['super_admin','admin','ketua_rayon','sekretaris'];var an=[],cu=null,csrfToken=null;
 function $(i){return document.getElementById(i)}
-function getCsrfToken(){
-  var cookies=document.cookie.split(';');
-  for(var i=0;i<cookies.length;i++){
-    var c=cookies[i].trim();
-    if(c.indexOf('csrf_token=')===0){
-      var val=c.substring('csrf_token='.length);
-      return val.split('.')[0];
-    }
-  }
-  return null;
-}
+function getCsrfToken(){return csrfToken||null;}
 document.addEventListener('DOMContentLoaded',async function(){
   try{var r=await fetch('/api/auth/me',{credentials:'include'});var d=await r.json();
     if(!d.authenticated){window.location.href='../panel.html';return;}
-    cu=d.user;if(ER.indexOf(cu.role)>=0)$('ab').style.display='inline-flex';
+    cu=d.user;csrfToken=d.csrfToken||null;if(ER.indexOf(cu.role)>=0)$('ab').style.display='inline-flex';
     var uname=cu.full_name||cu.username||'Kader';
     $('userName').textContent=uname;
     $('userRole').textContent=capRole(cu.role);
@@ -162,6 +151,8 @@ function render(){
       h+='</div>';
     }
     h+='</div>';
+    h+='</div>';
+    h+='</div>';
   }
   $('ag').innerHTML=h;
 }
@@ -174,18 +165,21 @@ function openForm(){$('ei').value='';$('et').value='';$('ec').value='';$('ecc').
 async function handleSubmit(e){
   e.preventDefault();var id=$('ei').value,data={title:$('et').value,content:$('ec').value,category:$('ecc').value,is_pinned:$('ep').checked};
   try{var url='/api/announcements'+(id?'/'+id:''),method=id?'PUT':'POST';
-    var r=await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(data),credentials:'include'});
+    var headers={'Content-Type':'application/json'};var csrf=getCsrfToken();if(csrf)headers['X-CSRF-Token']=csrf;
+    var r=await fetch(url,{method,headers,body:JSON.stringify(data),credentials:'include'});
     if(r.ok){$('fm').classList.remove('show');toast(id?'Diperbarui':'Dibuat');await loadAnn();}else{var e2=await r.json();toast(e2.error||'Gagal','err');}
   }catch(e){toast('Error', 'err');}
 }
 async function toPin(id){
-  try{var r=await fetch('/api/announcements/'+id+'/pin',{method:'PATCH',credentials:'include'});var d=await r.json();
+  try{var headers={};var csrf=getCsrfToken();if(csrf)headers['X-CSRF-Token']=csrf;
+    var r=await fetch('/api/announcements/'+id+'/pin',{method:'PATCH',headers:headers,credentials:'include'});var d=await r.json();
     if(r.ok){toast(d.message);await loadAnn();}else{toast(d.error||'Gagal','err');}
   }catch(e){toast('Error','err');}
 }
 async function delAnn(id){
   if(!confirm('Hapus pengumuman ini?'))return;
-  try{var r=await fetch('/api/announcements/'+id,{method:'DELETE',credentials:'include'});
+  try{var headers={};var csrf=getCsrfToken();if(csrf)headers['X-CSRF-Token']=csrf;
+    var r=await fetch('/api/announcements/'+id,{method:'DELETE',headers:headers,credentials:'include'});
     if(r.ok){toast('Dihapus');await loadAnn();}else{var d=await r.json();toast(d.error||'Gagal','err');}
   }catch(e){toast('Error','err');}
 }

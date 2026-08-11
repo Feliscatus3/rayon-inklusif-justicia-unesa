@@ -22,11 +22,12 @@ Vercel-serverless app for managing kader of PMII Rayon Inklusif Justicia. Vanill
 - `api/admin`, `api/announcements`, etc. are **empty leftover directories** from consolidation — don't recreate the nested structure.
 - New API routes in `vercel.json` must be added before other rules if they share prefixes.
 
-## CSRF mismatch (known bug, don't "fix" one side only)
+## CSRF (resolved 2026-08-11)
 
 - Server-side, `api/announcements.js`, `api/events.js`, and logout in `api/auth.js` enforce `csrf.validateCsrf(req)` (`X-CSRF-Token` header + `csrf_token` cookie) on state changes.
-- The frontend (`public/pages/*.html`, `public/panel.html`) **never sends `X-CSRF-Token`** — only `credentials: 'include'`. So those POST/PUT/PATCH/DELETE calls return 403 from a real browser; pages swallow errors and redirect anyway.
-- If you enable CSRF on any endpoint, you must also wire the header on the calling page.
+- The CSRF cookie is **HttpOnly**, so `document.cookie` can never see it. `getCsrfToken()` on every dashboard page reads `csrfToken` from the `/api/auth/me` response body (auth.js returns it) and sends it as `X-CSRF-Token` on all POST/PUT/PATCH/DELETE calls.
+- **Do not** re-introduce the old cookie-parsing `getCsrfToken()` (always returned null → 403s).
+- If you enable CSRF on any endpoint, you must also wire the header on the calling page using the `/api/auth/me` token.
 
 ## Auth & roles
 
@@ -44,7 +45,9 @@ Vercel-serverless app for managing kader of PMII Rayon Inklusif Justicia. Vanill
 
 ## Frontend
 
-- `public/js/app.js` is empty; real logic is inline `<script>` in `public/pages/*.html`. Landing page uses `public/assets/js/*.js` (`main.js`, `search.js`, `pagination*.js`, etc.).
+- `public/js/app.js` is empty; real logic is inline `<script>` in `public/pages/*.html`. Landing page uses `public/assets/js/*.js` (`main.js`, `search.js`, `pagination*.js`, `kalender.js`).
+- `GET /api/events` and `GET /api/announcements` are **intentionally public** (no session) — the landing page announcements section and the public `public/pages/kalender.html` depend on this. Do not require auth on GET.
+- Public calendar stack: `pages/kalender.html` + `assets/js/kalender.js` + `assets/css/kalender.css` (fetch `/api/events?month=&year=`), wired into `index.html` and other public page navbars/footers.
 - Pages redirect unauthenticated users to `../panel.html`; `panel.html` is the login page (auto-redirects to `pages/dashboard.html` if already logged in).
 - `public/index.html` is the public landing page — do not auto-redirect it to the panel.
 

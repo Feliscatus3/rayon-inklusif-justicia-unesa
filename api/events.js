@@ -67,7 +67,7 @@ async function getEvents(req, res) {
 
   if (eventId) {
     const result = await query(
-      'SELECT e.*, u.full_name AS created_by_name, u.username AS created_by_username FROM events e JOIN users u ON e.created_by = u.id WHERE e.id = $1',
+      'SELECT e.*, to_char(e.event_date, \'YYYY-MM-DD\') AS event_date, u.full_name AS created_by_name, u.username AS created_by_username FROM events e JOIN users u ON e.created_by = u.id WHERE e.id = $1',
       [eventId]
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Event tidak ditemukan' });
@@ -80,7 +80,7 @@ async function getEvents(req, res) {
   const startDate = url.searchParams.get('start_date');
   const endDate = url.searchParams.get('end_date');
 
-  let sql = 'SELECT e.*, u.full_name AS created_by_name FROM events e JOIN users u ON e.created_by = u.id WHERE 1=1';
+  let sql = 'SELECT e.*, to_char(e.event_date, \'YYYY-MM-DD\') AS event_date, u.full_name AS created_by_name FROM events e JOIN users u ON e.created_by = u.id WHERE 1=1';
   let params = [];
   let i = 1;
 

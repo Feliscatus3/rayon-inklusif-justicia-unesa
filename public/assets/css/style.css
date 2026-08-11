@@ -25,7 +25,10 @@
   --radius: 14px;
   --radius-sm: 9px;
   --radius-xs: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
   --shadow: 0 1px 3px rgba(16, 24, 40, .06), 0 1px 2px rgba(16, 24, 40, .04);
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, .05);
   --shadow-md: 0 6px 18px rgba(16, 24, 40, .08);
   --shadow-lg: 0 12px 32px rgba(16, 24, 40, .12);
 
@@ -834,7 +837,7 @@ tbody tr:hover td { background: var(--surface-hover); }
 /* ============================================
    Modals
    ============================================ */
-.modal-o, .mod {
+.modal, .modal-o, .mod {
   display: none;
   position: fixed;
   inset: 0;
@@ -846,14 +849,15 @@ tbody tr:hover td { background: var(--surface-hover); }
   backdrop-filter: blur(3px);
 }
 
-.modal-o.on, .mod.show { display: flex; }
+.modal.show, .modal-o.on, .mod.show { display: flex; }
 
-.modal, .mc {
+.mc, .modal-o > .modal {
+  display: block;
   background: var(--surface);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   padding: 28px;
   width: 100%;
-  max-width: 520px;
+  max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
@@ -862,19 +866,23 @@ tbody tr:hover td { background: var(--surface-hover); }
   animation: modalIn .22s ease;
 }
 
+.modal-o > .modal { backdrop-filter: none; }
+
+body.modal-open { overflow: hidden; }
+
 @keyframes modalIn {
   from { opacity: 0; transform: translateY(14px) scale(.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.modal h2, .mc h3 {
+.modal-o > .modal h2, .mc h3 {
   margin: 0 0 8px;
   font-size: 1.15rem;
   color: var(--text);
   font-weight: 700;
 }
 
-.modal .sub { color: var(--text-muted); margin: 0 0 20px; font-size: .84rem; }
+.modal-o > .modal .sub { color: var(--text-muted); margin: 0 0 20px; font-size: .84rem; }
 
 .mx {
   position: absolute;
@@ -1476,7 +1484,7 @@ select.cf {
 @media (max-width: 480px) {
   .dash-content { padding: 14px 12px; }
   .page-title { font-size: 1.25rem; }
-  .modal, .mc { padding: 22px 18px; }
+  .modal-o > .modal, .mc { padding: 22px 18px; }
   .mhdr div { padding: 8px 4px; font-size: .72rem; }
   .an-grid { grid-template-columns: 1fr; }
   .table-wrap table { min-width: 640px; }

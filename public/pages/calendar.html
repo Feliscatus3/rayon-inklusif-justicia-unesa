@@ -80,7 +80,7 @@
             <option value="University">University</option>
             <option value="External">External</option>
           </select>
-          <button id="addBtn" class="btn-pri" style="display:none"><i class="fas fa-plus"></i> Tambah</button>
+          <button id="addBtn" class="btn-pri" style="display:none"><i class="fas fa-plus"></i> Tambah Event</button>
         </div>
       </div>
 
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', async function(){
   document.getElementById('eventForm').onsubmit = handleSubmit;
 
   var q = document.querySelectorAll('.mx');
-  for (var i=0; i<q.length; i++) q[i].onclick = function(){ this.closest('.modal').classList.remove('show'); };
+  for (var i=0; i<q.length; i++) q[i].onclick = function(){ closeModal(this.closest('.modal').id); };
 
   var vBtns = document.querySelectorAll('[data-view]');
   for (var i=0; i<vBtns.length; i++) vBtns[i].onclick = function(){
@@ -207,11 +207,11 @@ document.addEventListener('DOMContentLoaded', async function(){
     render();
   };
 
-  window.onclick = function(e){ if (e.target.classList.contains('modal')) e.target.classList.remove('show'); };
+  window.onclick = function(e){ if (e.target.classList.contains('modal')) closeModal(e.target.id); };
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape') {
       var open = document.querySelectorAll('.modal.show');
-      for (var i=0; i<open.length; i++) open[i].classList.remove('show');
+      for (var i=0; i<open.length; i++) closeModal(open[i].id);
     }
   });
 });
@@ -236,8 +236,20 @@ function getColor(e) {
   return e.color || CAT_COLORS[e.category] || '#1a237e';
 }
 
+function openModal(id) {
+  var el = document.getElementById(id);
+  if (el) {
+    el.classList.add('show');
+    document.body.classList.add('modal-open');
+  }
+}
+
 function closeModal(id) {
-  document.getElementById(id).classList.remove('show');
+  var el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+  if (!document.querySelector('.modal.show')) {
+    document.body.classList.remove('modal-open');
+  }
 }
 
 function render() {
@@ -388,7 +400,7 @@ function openForm() {
   resetForm();
   document.getElementById('formTitle').textContent = 'Tambah Event Baru';
   document.getElementById('formSubmit').innerHTML = '<i class="fas fa-save"></i> Simpan Event';
-  document.getElementById('formModal').classList.add('show');
+  openModal('formModal');
 }
 
 function editEvent(id) {
@@ -405,8 +417,8 @@ function editEvent(id) {
   document.getElementById('evTime').value = e.event_time ? String(e.event_time).substring(0,5) : '';
   document.getElementById('formTitle').textContent = 'Edit Event';
   document.getElementById('formSubmit').innerHTML = '<i class="fas fa-save"></i> Perbarui Event';
-  document.getElementById('detailModal').classList.remove('show');
-  document.getElementById('formModal').classList.add('show');
+  closeModal('detailModal');
+  openModal('formModal');
 }
 
 async function handleSubmit(e) {
@@ -478,7 +490,7 @@ function showDetail(id) {
     h += '<div class="da"><button class="btn-pri" onclick="editEvent(' + e.id + ')"><i class="fas fa-edit"></i> Edit</button><button class="btn-dgr" onclick="deleteEvent(' + e.id + ')"><i class="fas fa-trash"></i> Hapus</button></div>';
   }
   document.getElementById('detailContent').innerHTML = h;
-  document.getElementById('detailModal').classList.add('show');
+  openModal('detailModal');
 }
 </script>
 </body>

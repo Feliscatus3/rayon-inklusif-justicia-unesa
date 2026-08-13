@@ -124,7 +124,7 @@ module.exports = async (req, res) => {
     return res.status(404).json({ error: 'Endpoint tidak ditemukan' });
   } catch (error) {
     console.error('Savings API error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: error && error.message ? error.message : 'Internal server error' });
   }
 };
 

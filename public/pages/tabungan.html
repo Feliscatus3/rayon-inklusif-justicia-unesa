@@ -316,7 +316,7 @@
 <div id="mCat" class="mod"><div class="mc">
   <span class="mx">&times;</span>
   <h3 id="catTitle">Tambah Kategori</h3>
-  <form id="fCat">
+  <form id="fCatForm">
     <input type="hidden" id="catId">
     <div class="fg"><label>Nama Kategori *</label><input type="text" id="catName" placeholder="Tabungan Wajib"></div>
     <div class="fg"><label>Deskripsi</label><textarea id="catDesc" rows="2"></textarea></div>
@@ -345,6 +345,10 @@ function isAdmin(){
 function initials(n){if(!n)return'?';return n.trim().split(/\s+/).map(function(w){return w[0]}).join('').substring(0,2).toUpperCase();}
 function capRole(r){if(!r)return'-';return r.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()});}
 function toast(m,t){var o=byId('toast');o.textContent=m;o.className='toast'+(t==='err'?' err':'')+' show';clearTimeout(toast._t);toast._t=setTimeout(function(){o.classList.remove('show');},3500);}
+async function apiError(r){
+  try{var d=await r.json();if(d&&d.error)return d.error;return'HTTP '+r.status;}catch(e){}
+  try{var t=await r.text();return t?t.slice(0,300):('HTTP '+r.status);}catch(e){return'HTTP '+r.status;}
+}
 function nowDate(){var d=new Date();return d.toLocaleDateString('id-ID',{year:'numeric',month:'long',day:'numeric'});}
 function fmtDateTime(v){if(!v)return'-';var d=new Date(v);if(isNaN(d.getTime()))return'-';return d.toLocaleDateString('id-ID',{year:'numeric',month:'short',day:'numeric'})+' '+d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});}
 function statusBadge(s){if(s==='PAID')return'<span class="s-status s-ok">Berhasil</span>';if(s==='REJECTED')return'<span class="s-status s-rj">Ditolak</span>';return'<span class="s-status s-pd">Menunggu Verifikasi</span>';}
@@ -402,7 +406,7 @@ function initDom(){
   byId('qrisFile').addEventListener('change',function(e){previewFile(e,byId('qrisPrev'));});
   byId('btnSaveQris').onclick=saveQris;
   byId('btnAddCat').onclick=openCatForm;
-  byId('fCat').onsubmit=onSaveCat;
+  byId('fCatForm').onsubmit=onSaveCat;
   byId('btnConfirmReject').onclick=confirmReject;
   byId('btnCloseProofView').onclick=function(){cm('mProofView');};
   byId('cAmt').addEventListener('input',function(){

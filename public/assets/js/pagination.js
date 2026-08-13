@@ -1,5 +1,15 @@
 const beritaData = [
-    {
+  {
+    id: 0,
+    title: "Cakrawala Cendrawasih: PMII Rayon Inklusif Justicia Matangkan Persiapan Menyambut Mahasiswa Baru FH",
+    excerpt: "PMII Rayon Inklusif Justicia menggelar Cakrawala Cendrawasih di PC PMII Kota Surabaya sebagai persiapan menyambut mahasiswa baru Fakultas Hukum UNESA.",
+    date: "31 Juli 2026",
+    uploadDate: "2026-07-31",
+    image: "/assets/img/foto/cakrawala_2.webp",
+    link: "/berita/cakrawala-cendrawasih-persiapan-maba-fh-unesa.html",
+    featured: true
+  },
+  {
     id: 1,
     title: "Semakin Marak Kekerasan Seksual di Lingkungan Perguruan Tinggi Melalui Group Chat",
     excerpt: "Semakin Marak Kekerasan Seksual di Lingkungan Perguruan Tinggi Melalui Group Chat.",

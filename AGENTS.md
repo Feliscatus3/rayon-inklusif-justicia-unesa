@@ -17,7 +17,7 @@ Vercel-serverless app for managing kader of PMII Rayon Inklusif Justicia. Vanill
 
 ## API architecture (critical)
 
-- All endpoints are **9 consolidated top-level handlers** in `api/`: `admin.js`, `announcements.js`, `auth.js`, `events.js`, `health.js`, `kader.js`, `organization.js`, `settings.js`, `users.js`.
+- All endpoints are **10 consolidated top-level handlers** in `api/`: `admin.js`, `announcements.js`, `auth.js`, `events.js`, `health.js`, `kader.js`, `organization.js`, `savings.js`, `settings.js`, `users.js`.
 - `vercel.json` rewrites `/api/<resource>/*` to the handler with a `__path` query param; each handler does `req.url = req.query.__path` and dispatches on the pathname. **Preserve this pattern** when adding endpoints; the public contract stays `/api/<resource>/<sub>`.
 - `api/admin`, `api/announcements`, etc. are **empty leftover directories** from consolidation — don't recreate the nested structure.
 - New API routes in `vercel.json` must be added before other rules if they share prefixes.
@@ -43,6 +43,16 @@ Vercel-serverless app for managing kader of PMII Rayon Inklusif Justicia. Vanill
 - Frontend mirrors this with an `isAdmin()` helper (checks role OR privilege) that shows/hides `+ Tambah` / Edit / Delete controls. **Do not rely on the frontend alone — backend 403 is the source of truth.**
 - Public landing page (`index.html`) has **no** Kalender or Pengumuman links and never calls `/api/events` or `/api/announcements`.
 
+## Tabungan (savings) module
+
+- Single consolidated handler `api/savings.js` (10th function, still ≤ Vercel Hobby limit). Public contract: `/api/savings/<sub>` — summary, categories (CRUD/toggle), settings (QRIS + min amount), transactions (create/list/detail/proof/validate/reject), admin/stats, admin/transactions.
+- Migration `sql/migration-v9.sql` created `saving_categories`, `saving_transactions`, `savings_settings`. Money is **BIGINT integer rupiah** (never float). `users.id` is UUID; `saving_transactions.user_id` FKs to it.
+- **No filesystem/blob storage exists** — media is stored as base64 **data-URI TEXT** (same as `settings.site_logo`). Payment proof → `saving_transactions.proof_url` (data-URI). "Storage cleanup" on validation = `proof_url = NULL` inside the same atomic `UPDATE ... WHERE payment_status='PENDING'`.
+- `PAID` only set by admin validate (`requireRole(user,'admin','super_admin')`, honors `privilege`). Validation is idempotent: `UPDATE ... WHERE id=$1 AND payment_status='PENDING'` → second attempt matches 0 rows → 400. Saldo is always **computed** (`SUM(amount) WHERE payment_status='PAID'`), no balance cache, so double credit is impossible.
+- Members: create transaction (PENDING), upload proof (only own txns, status stays PENDING; REJECTED → re-upload goes back to PENDING and clears reason). No gateways — QRIS is just a display image; "Saya Sudah Bayar" only opens proof upload.
+- Categories soft-disabled with `is_active=false` (never deleted); disabled categories can't be used for new transactions but history keeps them.
+- CSRF required on all state changes (`csrf.validateCsrf`); frontend sends `X-CSRF-Token` read from `/api/auth/me`. Audit via `logAudit` (SAVING_* actions).
+
 ## Database
 
 - Neon PG. Migrations in `sql/` are **manual, additive, run in order**: `migration.sql`, then `migration-v2..v8` (latest is `migration-v8.sql`, registration/approval + privilege). Apply with `psql -d <DATABASE_URL> -f sql/<file>`.
@@ -53,7 +63,7 @@ Vercel-serverless app for managing kader of PMII Rayon Inklusif Justicia. Vanill
 
 - `public/js/app.js` is empty; real logic is inline `<script>` in `public/pages/*.html`. Landing page uses `public/assets/js/*.js` (`main.js`, `search.js`, `pagination*.js`, etc.).
 - Public site has **no** Kalender/Pengumuman pages or links (they are kader-panel-only). Do not add public pages for `pages/kalender.html` or public announcements; do not call `/api/events` or `/api/announcements` from `public/index.html`.
-- Dashboard sidebars: Dashboard, Manajemen Pengguna, Event (calendar.html), Pengumuman (announcements.html), Pengaturan. **No Publikasi link** in dashboard sidebars.
+- Dashboard sidebars: Dashboard, Manajemen Pengguna, Event (calendar.html), Pengumuman (announcements.html), Tabungan (tabungan.html), Pengaturan. **No Publikasi link** in dashboard sidebars.
 - Pages redirect unauthenticated users to `../panel.html`; `panel.html` is the login page (auto-redirects to `pages/dashboard.html` if already logged in).
 - `public/index.html` is the public landing page — do not auto-redirect it to the panel.
 

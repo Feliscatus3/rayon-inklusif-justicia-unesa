@@ -55,6 +55,10 @@
       "dest": "/api/events?__path=/api/events$1"
     },
     {
+      "src": "^/api/savings(.*)$",
+      "dest": "/api/savings?__path=/api/savings$1"
+    },
+    {
       "src": "^/api/users(.*)$",
       "dest": "/api/users?__path=/api/users$1"
     },

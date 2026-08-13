@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tabungan - Kader Panel PMII Justicia</title>
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/assets/css/announcement-popup.css">
+<style>
+/* ============= Tabungan ============= */
+.tb-wrap{display:grid;gap:18px}
+.bal-card{
+  background:linear-gradient(135deg,var(--primary,#1a237e),var(--primary-light,#3949ab));
+  color:#fff;border-radius:18px;padding:26px 28px;position:relative;overflow:hidden;
+  box-shadow:0 14px 30px rgba(26,35,126,.28);
+}
+.bal-card:before{content:'';position:absolute;right:-50px;top:-60px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.08)}
+.bal-card:after{content:'';position:absolute;right:60px;bottom:-90px;width:160px;height:160px;border-radius:50%;background:rgba(255,214,0,.15)}
+.bal-card .lbl{font-size:.78rem;letter-spacing:.6px;text-transform:uppercase;opacity:.85;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.bal-card .val{font-size:2.2rem;font-weight:800;line-height:1.1;letter-spacing:-.5px}
+.bal-card .valsmall{font-size:1.35rem;font-weight:700}
+.bal-meta{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;position:relative;z-index:1}
+.bal-meta span{background:rgba(255,255,255,.14);padding:4px 12px;border-radius:999px;font-size:.72rem;position:relative;z-index:1}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.cat-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow);transition:all .18s ease}
+.cat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.cat-card .cc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.cat-card .cc-ico{width:40px;height:40px;border-radius:12px;background:rgba(26,35,126,.1);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.cat-card .cc-name{font-size:.95rem;font-weight:700;color:var(--text);margin-top:12px}
+.cat-card .cc-val{font-size:1.3rem;font-weight:800;color:var(--text);margin-top:4px}
+.cat-card .cc-sub{font-size:.72rem;color:var(--text-light);margin-top:2px}
+.cat-card .tag-off{display:inline-block;font-size:.62rem;background:rgba(198,40,40,.1);color:#c62828;padding:2px 8px;border-radius:999px;font-weight:600}
+.cat-card .tag-on{display:inline-block;font-size:.62rem;background:rgba(46,125,50,.12);color:#2e7d32;padding:2px 8px;border-radius:999px;font-weight:600}
+.qt-img{display:block;width:100%;max-width:140px;height:auto;object-fit:contain;margin:22px auto 4px;border-radius:12px}
+.qt-img-lg{display:block;max-width:230px;width:auto;max-height:40vh;height:auto;object-fit:contain;margin:10px auto;border-radius:12px}
+.proof-img{display:block;width:100%;max-width:100%;max-height:70vh;height:auto;object-fit:contain;margin:8px auto;border-radius:10px}
+.tb-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+.tb-sec-title{font-size:1.02rem;font-weight:800;color:var(--text);margin:0 0 14px}
+.hist-item{display:flex;align-items:flex-start;gap:12px;padding:14px 4px;border-bottom:1px solid var(--border)}
+.hist-item:last-child{border-bottom:none}
+.hist-ico{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;background:var(--bg)}
+.hist-ico.ok{background:rgba(46,125,50,.12);color:#2e7d32}
+.hist-ico.pend{background:rgba(255,179,0,.14);color:#b26a00}
+.hist-ico.bad{background:rgba(198,40,40,.1);color:#c62828}
+.hist-info{flex:1;min-width:0}
+.hist-title{font-size:.85rem;font-weight:600;color:var(--text);display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.hist-meta{font-size:.72rem;color:var(--text-light);margin-top:3px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.hist-amt{font-weight:800;font-size:.9rem;color:var(--text);white-space:nowrap}
+.hist-amt.plus{color:#2e7d32}
+.hist-reason{font-size:.74rem;color:#c62828;margin-top:4px;white-space:pre-line}
+.s-status{display:inline-block;font-size:.62rem;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:.3px}
+.s-status.s-pd{background:rgba(255,179,0,.16);color:#b26a00}
+.s-status.s-ok{background:rgba(46,125,50,.14);color:#2e7d32}
+.s-status.s-rj{background:rgba(198,40,40,.12);color:#c62828}
+.list-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.list-actions button{font-size:.68rem;padding:5px 10px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:all .15s ease;background:var(--surface);color:var(--text)}
+.list-actions button:hover{background:var(--bg)}
+.list-actions button.act-ok{background:rgba(46,125,50,.12);color:#2e7d32;border-color:rgba(46,125,50,.3);font-weight:600}
+.list-actions button.act-no{background:rgba(198,40,40,.08);color:#c62828;border-color:rgba(198,40,40,.25);font-weight:600}
+.filter-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.filter-bar select,.filter-bar input{min-width:0;flex:1 1 140px;max-width:220px}
+/* Admin quarters */
+.q-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+.q-card .q-ico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-bottom:12px}
+.q-card .q-val{font-size:1.45rem;font-weight:800;color:var(--text);line-height:1.1}
+.q-card .q-lbl{font-size:.72rem;color:var(--text-light);margin-top:2px}
+.ic-p{background:rgba(26,35,126,.1);color:#1a237e}
+.ic-g{background:rgba(46,125,50,.12);color:#2e7d32}
+.ic-a{background:rgba(255,179,0,.16);color:#b26a00}
+.ic-b{background:rgba(0,121,107,.12);color:#00796b}
+.tb-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.tb-tabs button{border:1px solid var(--border);background:var(--surface);color:var(--text);padding:8px 14px;border-radius:999px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s ease}
+.tb-tabs button:hover{border-color:var(--primary-light)}
+.tb-tabs button.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.tb-panel{display:none}
+.tb-panel.show{display:block}
+.tb-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.tb-table th{text-align:left;padding:10px 12px;background:var(--bg);color:var(--text-light);font-size:.68rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border)}
+.tb-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+.tb-table .amt{font-weight:800;white-space:nowrap}
+.tb-table tr:hover td{background:var(--bg)}
+.cat-row{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--border)}
+.cat-row:last-child{border-bottom:none}
+.cat-row .c-name{font-weight:700;color:var(--text);font-size:.9rem;flex:1;min-width:0}
+.cat-row .c-desc{font-size:.72rem;color:var(--text-light);margin-top:2px}
+.avatar-chip{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.66rem;font-weight:700;margin-right:8px;flex-shrink:0}
+.mini-note{font-size:.7rem;color:var(--text-light);margin-top:6px}
+@media (max-width:900px){.tb-grid{grid-template-columns:1fr}}
+@media (max-width:600px){
+  .bal-card{padding:20px}
+  .bal-card .val{font-size:1.65rem}
+  .q-grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .tb-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .tb-table{min-width:640px}
+}
+</style>
+</head>
+<body>
+<div class="dash-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo" id="sbLogo"><i class="fas fa-piggy-bank"></i></div>
+      <div class="brand-text">
+        <h2 id="sbName">Kader Panel</h2>
+        <small id="sbOrg">PMII Justicia UNESA</small>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-label">Menu</div>
+      <a class="sidebar-link" href="dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a class="sidebar-link" href="users.html"><i class="fas fa-users"></i> Manajemen Pengguna</a>
+      <a class="sidebar-link" href="calendar.html"><i class="fas fa-calendar-days"></i> Event</a>
+      <a class="sidebar-link" href="announcements.html"><i class="fas fa-bullhorn"></i> Pengumuman</a>
+      <a class="sidebar-link active" href="tabungan.html"><i class="fas fa-piggy-bank"></i> Tabungan</a>
+      <div class="sidebar-label">Lainnya</div>
+      <a class="sidebar-link" href="settings.html"><i class="fas fa-cog"></i> Pengaturan</a>
+      <a class="sidebar-link" id="logoutBtn" href="#"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+    </nav>
+    <div class="sidebar-footer">PMII Rayon Justicia &copy; 2025</div>
+  </aside>
+  <div class="main-area">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+        <div class="topbar-title"><i class="fas fa-piggy-bank"></i> Tabungan</div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn theme-toggle" id="themeToggle" title="Ganti tema"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
+        <div class="topbar-user" id="userChip">
+          <div class="u-avatar" id="userAvatar">K</div>
+          <div class="u-info">
+            <div class="u-name" id="userName">Kader</div>
+            <div class="u-role" id="userRole">-</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="dash-content">
+      <div class="page-head">
+        <h1 class="page-title"><i class="fas fa-piggy-bank"></i> Tabungan</h1>
+        <p class="page-subtitle">Kelola simpanan tabungan anggota dan verifikasi pembayaran.</p>
+      </div>
+
+      <!-- Admin stat quarters -->
+      <div class="tb-wrap" id="adminStatsWrap" style="display:none">
+        <div class="q-grid">
+          <div class="q-card"><div class="q-ico ic-p"><i class="fas fa-wallet"></i></div><div class="q-val" id="asTotal">Rp0</div><div class="q-lbl">Total Saldo</div></div>
+          <div class="q-card"><div class="q-ico ic-g"><i class="fas fa-receipt"></i></div><div class="q-val" id="asTx">0</div><div class="q-lbl">Total Transaksi</div></div>
+          <div class="q-card"><div class="q-ico ic-a"><i class="fas fa-clock"></i></div><div class="q-val" id="asPending">0</div><div class="q-lbl">Menunggu Verifikasi</div></div>
+          <div class="q-card"><div class="q-ico ic-b"><i class="fas fa-arrow-trend-up"></i></div><div class="q-val" id="asToday">Rp0</div><div class="q-lbl">Tabungan Hari Ini</div></div>
+        </div>
+        <div class="card" id="adminCard" style="display:none">
+          <div class="card-hd"><h3><i class="fas fa-shield-halved"></i> Kelola Tabungan</h3></div>
+          <div class="card-bd">
+            <div class="tb-tabs">
+              <button data-panel="pVerify" class="on"><i class="fas fa-check-circle"></i> Verifikasi Pembayaran</button>
+              <button data-panel="pAll"><i class="fas fa-table-list"></i> Semua Transaksi</button>
+              <button data-panel="pCat"><i class="fas fa-tags"></i> Kategori</button>
+              <button data-panel="pQris"><i class="fas fa-qrcode"></i> Pengaturan QRIS</button>
+            </div>
+
+            <div id="pVerify" class="tb-panel show">
+              <div id="verifyList" class="mini-note">Memuat transaksi...</div>
+            </div>
+
+            <div id="pAll" class="tb-panel">
+              <div class="filter-bar">
+                <input type="text" id="fSearch" placeholder="Cari anggota / kode transaksi...">
+                <select id="fStatus"><option value="">Semua Status</option><option value="PENDING">PENDING</option><option value="PAID">PAID</option><option value="REJECTED">REJECTED</option></select>
+                <select id="fCat"><option value="">Semua Kategori</option></select>
+                <input type="date" id="fFrom" title="Dari tanggal">
+                <input type="date" id="fTo" title="Sampai tanggal">
+              </div>
+              <div class="tb-table-wrap"><table class="tb-table">
+                <thead><tr><th>Anggota</th><th>Kode</th><th>Kategori</th><th>Nominal</th><th>Status</th><th>Waktu</th><th>Divalidasi</th><th>Aksi</th></tr></thead>
+                <tbody id="allTbody"></tbody>
+              </table></div>
+            </div>
+
+            <div id="pCat" class="tb-panel">
+              <button class="cp" id="btnAddCat" style="margin-bottom:14px"><i class="fas fa-plus"></i> Tambah Kategori</button>
+              <div id="catList"></div>
+            </div>
+
+            <div id="pQris" class="tb-panel">
+              <div class="fg">
+                <label>Gambar QRIS Organisasi</label>
+                <div class="mini-note" style="margin-top:0">QRIS hanya sebagai media pembayaran. Verifikasi pembayaran tetap dilakukan admin terhadap bukti transfer.</div>
+                <img id="qrisPrev" class="qt-img-lg" alt="QRIS" style="display:none">
+                <input type="file" id="qrisFile" accept="image/jpeg,image/png,image/webp" style="margin-top:8px">
+                <span class="sub-txt">JPG/PNG/WebP, maks 2 MB. QRIS publik (bukan QRIS statis per transaksi).</span>
+              </div>
+              <div class="fg">
+                <label>Nama Tampilan QRIS</label>
+                <input type="text" id="qrisName" placeholder="Tabungan PMII Justicia">
+              </div>
+              <div class="fg">
+                <label>Nominal Minimal (Rp)</label>
+                <input type="number" id="qmin" min="0" placeholder="1000">
+                <span class="sub-txt">0 = tanpa batas minimal.</span>
+              </div>
+              <button class="cp" id="btnSaveQris"><i class="fas fa-save"></i> Simpan Pengaturan</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Member balance + history -->
+      <div class="tb-wrap" id="memberWrap">
+        <div class="bal-card">
+          <div class="lbl"><i class="fas fa-piggy-bank"></i> Tabungan Saya</div>
+          <div class="val" id="balTotal">Rp0</div>
+          <div class="bal-meta" id="balMeta"></div>
+        </div>
+        <div class="card">
+          <div class="card-hd">
+            <h3><i class="fas fa-coins"></i> Saldo per Kategori</h3>
+            <button class="cp" id="btnAdd"><i class="fas fa-plus"></i> Menabung</button>
+          </div>
+          <div class="card-bd"><div class="cat-grid" id="catGrid"></div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><h3><i class="fas fa-clock-rotate-left"></i> Riwayat Tabungan</h3></div>
+          <div class="card-bd">
+            <div class="filter-bar">
+              <select id="hStatus"><option value="">Semua</option><option value="PENDING">Pending</option><option value="PAID">Berhasil</option><option value="REJECTED">Ditolak</option></select>
+              <select id="hCat"><option value="">Semua Kategori</option></select>
+            </div>
+            <div id="histList" class="mini-note">Memuat riwayat...</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Modal: create transaction -->
+<div id="mCreate" class="mod"><div class="mc">
+  <span class="mx">&times;</span>
+  <h3>Menabung</h3>
+  <p class="sub">Pilih kategori dan masukkan nominal bebas.</p>
+  <form id="fCreate">
+    <div class="fg"><label>Kategori *</label><select id="cCat"></select></div>
+    <div class="fg"><label>Nominal (Rp) *</label><input type="text" id="cAmt" inputmode="numeric" placeholder="Contoh: 37500">
+      <span class="sub-txt" id="minNote"></span></div>
+    <div class="fa">
+      <button type="button" class="cc">Batal</button>
+      <button type="submit" class="cp" id="btnCreate"><i class="fas fa-arrow-right"></i> Lanjutkan Pembayaran</button>
+    </div>
+  </form>
+</div></div>
+
+<!-- Modal: QRIS payment -->
+<div id="mPay" class="mod"><div class="mc">
+  <span class="mx">&times;</span>
+  <h3>Pembayaran Tabungan</h3>
+  <div id="payInfo"></div>
+  <div id="payQris"></div>
+  <ol class="mini-note" style="padding-left:18px">
+    <li>Scan QRIS organisasi di bawah.</li>
+    <li>Bayar sesuai nominal transaksi.</li>
+    <li>Setelah berhasil, unggah bukti pembayaran.</li>
+    <li>Tunggu verifikasi admin.</li>
+  </ol>
+  <div class="fa">
+    <button type="button" class="cc">Tutup</button>
+    <button type="button" class="cp" id="btnIpaid"><i class="fas fa-check"></i> Saya Sudah Bayar</button>
+  </div>
+</div></div>
+
+<!-- Modal: upload proof -->
+<div id="mProof" class="mod"><div class="mc">
+  <span class="mx">&times;</span>
+  <h3>Upload Bukti Pembayaran</h3>
+  <p class="sub" id="proofTxInfo"></p>
+  <div class="fg">
+    <input type="file" id="proofFile" accept="image/jpeg,image/png,image/webp">
+    <span class="sub-txt">JPG/PNG/WebP, maks 2 MB. Status tetap PENDING sampai diverifikasi admin.</span>
+  </div>
+  <img id="proofPrev" class="proof-img" style="display:none" alt="Preview bukti">
+  <div class="fa">
+    <button type="button" class="cc">Batal</button>
+    <button type="button" class="cp" id="btnProofSend"><i class="fas fa-upload"></i> Kirim Bukti</button>
+  </div>
+</div></div>
+
+<!-- Modal: view proof (admin) -->
+<div id="mProofView" class="mod"><div class="mc" style="max-width:760px">
+  <span class="mx">&times;</span>
+  <h3>Bukti Pembayaran</h3>
+  <div id="proofViewBody"></div>
+  <div class="fa"><button type="button" class="cp" id="btnCloseProofView">Close</button></div>
+</div></div>
+
+<!-- Modal: reject reason -->
+<div id="mReject" class="mod"><div class="mc">
+  <span class="mx">&times;</span>
+  <h3>Tolak Pembayaran</h3>
+  <div class="fg">
+    <input type="hidden" id="rjId">
+    <label>Alasan Penolakan *</label>
+    <textarea id="rjReason" rows="3" placeholder="Contoh: bukti tidak sesuai nominal"></textarea>
+  </div>
+  <div class="fa">
+    <button type="button" class="cc">Batal</button>
+    <button type="button" class="cp" id="btnConfirmReject"><i class="fas fa-xmark"></i> Tolak</button>
+  </div>
+</div></div>
+
+<!-- Modal: category add/edit -->
+<div id="mCat" class="mod"><div class="mc">
+  <span class="mx">&times;</span>
+  <h3 id="catTitle">Tambah Kategori</h3>
+  <form id="fCat">
+    <input type="hidden" id="catId">
+    <div class="fg"><label>Nama Kategori *</label><input type="text" id="catName" placeholder="Tabungan Wajib"></div>
+    <div class="fg"><label>Deskripsi</label><textarea id="catDesc" rows="2"></textarea></div>
+    <div class="fa">
+      <button type="button" class="cc">Batal</button>
+      <button type="submit" class="cp"><i class="fas fa-save"></i> Simpan</button>
+    </div>
+  </form>
+</div></div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+var ADMIN_ROLES=['super_admin','admin'];
+var cu=null,csrfToken=null,settings=null,activeCats=[],allCats=[],currentTx=null,pendingProofId=null;
+function byId(i){return document.getElementById(i)}
+function esc(s){if(s===null||s===undefined)return'';return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function fmt(n){if(n===null||n===undefined||isNaN(n))return'Rp0';return'Rp'+String(n).toLocaleString('id-ID');}
+function getCsrfToken(){return csrfToken||null;}
+function isAdmin(){
+  if(!cu)return false;
+  if(ADMIN_ROLES.indexOf(cu.role)>=0)return true;
+  if(cu.privilege==='super_admin'||cu.privilege==='admin')return true;
+  return false;
+}
+function initials(n){if(!n)return'?';return n.trim().split(/\s+/).map(function(w){return w[0]}).join('').substring(0,2).toUpperCase();}
+function capRole(r){if(!r)return'-';return r.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()});}
+function toast(m,t){var o=byId('toast');o.textContent=m;o.className='toast'+(t==='err'?' err':'')+' show';clearTimeout(toast._t);toast._t=setTimeout(function(){o.classList.remove('show');},3500);}
+function nowDate(){var d=new Date();return d.toLocaleDateString('id-ID',{year:'numeric',month:'long',day:'numeric'});}
+function fmtDateTime(v){if(!v)return'-';var d=new Date(v);if(isNaN(d.getTime()))return'-';return d.toLocaleDateString('id-ID',{year:'numeric',month:'short',day:'numeric'})+' '+d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});}
+function statusBadge(s){if(s==='PAID')return'<span class="s-status s-ok">Berhasil</span>';if(s==='REJECTED')return'<span class="s-status s-rj">Ditolak</span>';return'<span class="s-status s-pd">Menunggu Verifikasi</span>';}
+function statusLabel(s){if(s==='PAID')return'Berhasil';if(s==='REJECTED')return'Ditolak';return'Menunggu Verifikasi';}
+
+/* ===== Theme + session + sidebar ===== */
+(function initTheme(){
+  var saved=localStorage.getItem('theme');
+  if(saved==='dark'||(!saved&&window.matchMedia('(prefers-color-scheme: dark)').matches)){
+    document.documentElement.setAttribute('data-theme','dark');
+  }
+})();
+byId('themeToggle').addEventListener('click',function(){
+  var dark=document.documentElement.getAttribute('data-theme')==='dark';
+  if(dark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme','light');}
+  else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('theme','dark');}
+});
+byId('hamburger').addEventListener('click',function(){byId('sidebar').classList.toggle('open');});
+document.addEventListener('click',function(e){
+  if(window.innerWidth<=768&&!e.target.closest('.sidebar')&&!e.target.closest('.hamburger')){
+    byId('sidebar').classList.remove('open');
+  }
+});
+
+/* ===== Auth ===== */
+document.addEventListener('DOMContentLoaded',async function(){
+  var r=await fetch('/api/auth/me',{credentials:'include'});
+  var d=await r.json();
+  if(!d.authenticated){window.location.href='../panel.html';return;}
+  cu=d.user;csrfToken=d.csrfToken||null;
+  var uname=cu.full_name||cu.username||'Kader';
+  byId('userName').textContent=uname;
+  byId('userRole').textContent=capRole(cu.role);
+  byId('userAvatar').textContent=initials(uname);
+  byId('logoutBtn').onclick=async function(ev){
+    ev.preventDefault();
+    var h={'Content-Type':'application/json'},cs=getCsrfToken();if(cs)h['X-CSRF-Token']=cs;
+    try{await fetch('/api/auth/logout',{method:'POST',headers:h,credentials:'include'});}catch(e){}
+    window.location.href='../panel.html';
+  };
+  initDom();
+  applyRoleViews();
+  await Promise.all([loadSettings(),loadCategories(),loadSummary(),loadHistory()]);
+  if(isAdmin()){loadAdminStats();loadVerify();}
+});
+
+/* ===== DOM wiring ===== */
+function initDom(){
+  byId('btnAdd').onclick=openCreate;
+  byId('btnCreate').onclick=null;
+  byId('fCreate').onsubmit=onCreate;
+  byId('btnIpaid').onclick=onIpaid;
+  byId('btnProofSend').onclick=onProofSend;
+  byId('proofFile').addEventListener('change',function(e){previewFile(e,byId('proofPrev'));});
+  byId('qrisFile').addEventListener('change',function(e){previewFile(e,byId('qrisPrev'));});
+  byId('btnSaveQris').onclick=saveQris;
+  byId('btnAddCat').onclick=openCatForm;
+  byId('fCat').onsubmit=onSaveCat;
+  byId('btnConfirmReject').onclick=confirmReject;
+  byId('btnCloseProofView').onclick=function(){cm('mProofView');};
+  byId('cAmt').addEventListener('input',function(){
+    this.value=this.value.replace(/[^\d]/g,'').slice(0,12);
+  });
+
+  var tabs=document.querySelectorAll('.tb-tabs button');
+  for(var i=0;i<tabs.length;i++)tabs[i].addEventListener('click',function(){
+    var t=document.querySelectorAll('.tb-tabs button');
+    for(var j=0;j<t.length;j++)t[j].classList.remove('on');
+    this.classList.add('on');
+    var panels=['pVerify','pAll','pCat','pQris'];
+    for(var k=0;k<panels.length;k++)byId(panels[k]).classList.remove('show');
+    byId(this.getAttribute('data-panel')).classList.add('show');
+  });
+
+  byId('hStatus').onchange=function(){loadHistory();};
+  byId('hCat').onchange=function(){loadHistory();};
+  byId('fStatus').onchange=function(){loadAllAdmin(0);};
+  byId('fCat').onchange=function(){loadAllAdmin(0);};
+  byId('fSearch').onchange=function(){loadAllAdmin(0);};
+  byId('fFrom').onchange=function(){loadAllAdmin(0);};
+  byId('fTo').onchange=function(){loadAllAdmin(0);};
+
+  var dels=[];var mxs=document.querySelectorAll('.mx');for(var i2=0;i2<mxs.length;i2++)mxs[i2].onclick=function(){var m=this.closest('.mod');if(m)cm(m.id);};
+  window.onclick=function(e){if(e.target.classList.contains('mod'))cm(e.target.id);};
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){var open=document.querySelector('.mod.show');if(open)cm(open.id);}});
+}
+function om(id){var el=byId(id);if(el){el.classList.add('show');document.body.classList.add('modal-open');}}
+function cm(id){var el=byId(id);if(el)el.classList.remove('show');if(!document.querySelector('.mod.show'))document.body.classList.remove('modal-open');}
+
+/* ===== Settings & categories ===== */
+async function loadSettings(){
+  try{
+    var r=await fetch('/api/savings/settings',{credentials:'include'});
+    if(!r.ok)return;
+    var d=await r.json();settings=d.settings||{};
+    byId('qmin').value=settings.min_amount!=null?settings.min_amount:1000;
+    byId('qrisName').value=settings.qris_display_name||'Tabungan PMII Justicia';
+    if(settings.qris_image){byId('qrisPrev').src=settings.qris_image;byId('qrisPrev').style.display='block';}
+  }catch(e){}
+}
+async function loadCategories(){
+  try{
+    var r=await fetch('/api/savings/categories',{credentials:'include'});
+    if(!r.ok)return;
+    var d=await r.json();allCats=d.categories||[];
+    activeCats=allCats.filter(function(c){return c.is_active;});
+    var sel=byId('cCat');sel.innerHTML='<option value="">Pilih kategori</option>';
+    for(var i=0;i<activeCats.length;i++){
+      var o=document.createElement('option');o.value=activeCats[i].id;o.textContent=activeCats[i].name;sel.appendChild(o);
+    }
+    if(isAdmin()){
+      var fc=byId('fCat');fc.innerHTML='<option value="">Semua Kategori</option>';
+      var hc=byId('hCat');hc.innerHTML='<option value="">Semua Kategori</option>';
+      for(var j=0;j<allCats.length;j++){
+        fc.insertAdjacentHTML('beforeend','<option value="'+allCats[j].id+'">'+esc(allCats[j].name)+'</option>');
+        hc.insertAdjacentHTML('beforeend','<option value="'+allCats[j].id+'">'+esc(allCats[j].name)+'</option>');
+      }
+      renderCatAdmin();
+    }else{
+      var hc2=byId('hCat');hc2.innerHTML='<option value="">Semua Kategori</option>';
+      for(var k=0;k<allCats.length;k++)hc2.insertAdjacentHTML('beforeend','<option value="'+allCats[k].id+'">'+esc(allCats[k].name)+'</option>');
+    }
+  }catch(e){}
+}
+
+/* ===== Summary (member) ===== */
+async function loadSummary(){
+  var el=byId('catGrid');
+  try{
+    var r=await fetch('/api/savings/summary',{credentials:'include'});
+    if(!r.ok)return;
+    var d=await r.json();var s=d.summary||{},cats=d.categories||[];
+    byId('balTotal').textContent=fmt(s.total);
+    byId('balMeta').innerHTML='<span><i class="fas fa-check-circle"></i> '+s.paid_count+' Berhasil</span>'+
+      '<span><i class="fas fa-clock"></i> '+s.pending_count+' Menunggu</span>'+
+      '<span><i class="fas fa-xmark-circle"></i> '+s.rejected_count+' Ditolak</span>';
+    if(cats.length===0){el.innerHTML='<div class="emp"><i class="fas fa-coins"></i><p>Belum ada kategori tabungan.</p></div>';return;}
+    var h='';
+    for(var i=0;i<cats.length;i++){
+      var c=cats[i];
+      h+='<div class="cat-card"><div class="cc-top"><div class="cc-ico"><i class="fas fa-piggy-bank"></i></div>'+
+        (c.is_active?'<span class="tag-on">AKTIF</span>':'<span class="tag-off">NONAKTIF</span>')+'</div>'+
+        '<div class="cc-name">'+esc(c.name)+'</div>'+
+        '<div class="cc-val">'+fmt(c.total)+'</div>'+
+        '<div class="cc-sub">'+c.paid_tx+' transaksi berhasil</div></div>';
+    }
+    el.innerHTML=h;
+  }catch(e){}
+}
+
+/* ===== History (member) ===== */
+async function loadHistory(){
+  var el=byId('histList');
+  var q=[];var hs=byId('hStatus').value;if(hs)q.push('status='+encodeURIComponent(hs));
+  var hc=byId('hCat').value;if(hc)q.push('category='+encodeURIComponent(hc));
+  try{
+    var r=await fetch('/api/savings/transactions'+(q.length?'?'+q.join('&'):''),{credentials:'include'});
+    if(!r.ok)throw 0;
+    var d=await r.json();var txs=d.transactions||[];
+    if(txs.length===0){el.innerHTML='<div class="emp"><i class="fas fa-clock-rotate-left"></i><p>Tidak ada riwayat tabungan.</p></div>';return;}
+    var h='';
+    for(var i=0;i<txs.length;i++){
+      var t=txs[i];
+      var ico=t.payment_status==='PAID'?'ok':(t.payment_status==='REJECTED'?'bad':'pend');
+      var face=t.payment_status==='PAID'?'fa-check':(t.payment_status==='REJECTED'?'fa-xmark':'fa-clock');
+      h+='<div class="hist-item"><div class="hist-ico '+ico+'"><i class="fas '+face+'"></i></div>'+
+        '<div class="hist-info">'+
+        '<div class="hist-title">'+esc(t.category_name)+' '+statusBadge(t.payment_status)+'</div>'+
+        '<div class="hist-meta"><span>'+fmtDateTime(t.created_at)+'</span><span>'+esc(t.transaction_code)+'</span></div>'+
+        (t.payment_status==='REJECTED'&&t.rejection_reason?'<div class="hist-reason"><i class="fas fa-circle-info"></i> Alasan: '+esc(t.rejection_reason)+'</div>':'')+
+        '<div class="list-actions">'+
+          ((t.payment_status==='PENDING'||t.payment_status==='REJECTED')?'<button onclick="openProof('+t.id+')"><i class="fas fa-upload"></i> '+(t.payment_status==='REJECTED'?'Kirim Bukti Baru':'Upload Bukti')+'</button>':'')+
+          (t.payment_status==='REJECTED'&&t.proof_url?'<button onclick="viewProof('+t.id+')"><i class="fas fa-image"></i> Lihat Bukti</button>':'')+
+        '</div>'+
+        '</div>'+
+        '<div class="hist-amt '+(t.payment_status==='PAID'?'plus':'')+'">'+(t.payment_status==='PAID'?'+':'')+fmt(t.amount)+'</div>'+
+      '</div>';
+    }
+    el.innerHTML=h;
+  }catch(e){el.innerHTML='<div class="emp"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat riwayat.</p></div>';}
+}
+
+/* ===== Create transaction ===== */
+function openCreate(){
+  if(activeCats.length===0){toast('Belum ada kategori tabungan aktif.','err');return;}
+  byId('cCat').value='';byId('cAmt').value='';
+  var min=settings&&settings.min_amount?settings.min_amount:0;
+  byId('minNote').textContent=min>0?('Minimal nominal Rp'+min.toLocaleString('id-ID')+'. Isi nominal bebas (misal 37500).'):'Isi nominal bebas. Contoh: 1000, 10000, 37500, dst.';
+  om('mCreate');
+}
+async function onCreate(e){
+  e.preventDefault();
+  var cat=byId('cCat').value;var amt=parseInt(byId('cAmt').value,10);
+  if(!cat){toast('Pilih kategori tabungan.','err');return;}
+  if(!Number.isInteger(amt)||amt<=0){toast('Nominal harus angka lebih besar dari 0.','err');return;}
+  var h={'Content-Type':'application/json'},cs=getCsrfToken();if(cs)h['X-CSRF-Token']=cs;
+  var btn=byId('btnCreate'),orig=btn.innerHTML;btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Memproses...';
+  try{
+    var r=await fetch('/api/savings/transactions',{method:'POST',headers:h,body:JSON.stringify({category_id:parseInt(cat,10),amount:amt,payment_method:'QRIS'}),credentials:'include'});
+    var d=await r.json();
+    if(!r.ok){toast(d.error||'Gagal membuat transaksi','err');return;}
+    currentTx=d.transaction;
+    cm('mCreate');
+    renderPayModal(currentTx);
+    om('mPay');
+    loadSummary();loadHistory();
+  }catch(e){toast('Terjadi kesalahan koneksi','err');}
+  finally{btn.disabled=false;btn.innerHTML=orig;}
+}
+
+/* ===== QRIS payment modal ===== */
+function renderPayModal(tx){
+  var info=byId('payInfo');
+  var catName=tx.category_name?esc(tx.category_name):'';
+  info.innerHTML='<div class="hist-item" style="padding:6px 0"><div class="hist-info">'+
+    '<div class="hist-title">Kategori: '+catName+'</div>'+
+    '<div class="hist-meta"><span>Kode: '+esc(tx.transaction_code)+'</span></div></div>'+
+    '<div class="hist-amt plus" style="font-size:1.25rem">'+fmt(tx.amount)+'</div></div>';
+  var q=byId('payQris');
+  if(settings&&settings.qris_image){
+    q.innerHTML='<img class="qt-img-lg" src="'+esc(settings.qris_image)+'" alt="QRIS organisasi">'+
+      '<div class="mini-note" style="text-align:center">'+esc(settings.qris_display_name||'')+'</div>';
+  }else{
+    q.innerHTML='<div class="emp" style="min-height:90px"><i class="fas fa-qrcode"></i><p>QRIS belum diatur oleh admin. Hubungi bendahara untuk informasi pembayaran.</p></div>';
+  }
+  byId('proofTxInfo').textContent='Transaksi '+tx.transaction_code+' - '+fmt(tx.amount);
+}
+function onIpaid(){
+  if(!currentTx){return;}
+  om('mProof');byId('proofFile').value='';byId('proofPrev').style.display='none';
+}
+
+/* ===== Proof upload ===== */
+function openProof(id){
+  var h={'Content-Type':'application/json'};
+  fetch('/api/savings/transactions/'+id,{headers:h,credentials:'include'}).then(function(r){return r.json();}).then(function(d){
+    if(!d.transaction){toast('Transaksi tidak ditemukan','err');return;}
+    currentTx=d.transaction;
+    byId('proofTxInfo').textContent='Transaksi '+d.transaction.transaction_code+' - '+fmt(d.transaction.amount);
+    byId('proofFile').value='';byId('proofPrev').style.display='none';
+    om('mProof');
+  }).catch(function(){toast('Gagal memuat transaksi','err');});
+}
+function previewFile(e,img){
+  var f=e.target.files&&e.target.files[0];if(!f){img.style.display='none';return;}
+  if(['image/jpeg','image/png','image/webp'].indexOf(f.type)<0){toast('Format harus JPG/PNG/WebP','err');e.target.value='';img.style.display='none';return;}
+  if(f.size>2*1024*1024){toast('Ukuran file maksimal 2 MB','err');e.target.value='';img.style.display='none';return;}
+  var rd=new FileReader();
+  rd.onload=function(){img.src=rd.result;img.style.display='block';};
+  rd.readAsDataURL(f);
+}
+async function onProofSend(){
+  var f=byId('proofFile').files[0];if(!f){toast('Pilih file bukti terlebih dahulu.','err');return;}
+  if(['image/jpeg','image/png','image/webp'].indexOf(f.type)<0){toast('Format harus JPG/PNG/WebP','err');return;}
+  if(f.size>2*1024*1024){toast('Ukuran file maksimal 2 MB','err');return;}
+  var dataUrl=await new Promise(function(res){var r=new FileReader();r.onload=function(){res(r.result);};r.readAsDataURL(f);});
+  if(!dataUrl)return;
+  var h={'Content-Type':'application/json'},cs=getCsrfToken();if(cs)h['X-CSRF-Token']=cs;
+  var btn=byId('btnProofSend'),orig=btn.innerHTML;btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+  try{
+    var r=await fetch('/api/savings/transactions/'+currentTx.id+'/proof',{method:'POST',headers:h,body:JSON.stringify({proof:dataUrl}),credentials:'include'});
+    var d=await r.json();
+    if(!r.ok){toast(d.error||'Gagal mengirim bukti','err');return;}
+    cm('mProof');cm('mPay');currentTx=null;
+    toast('Bukti pembayaran berhasil dikirim. Menunggu verifikasi admin.');
+    loadSummary();loadHistory();
+  }catch(e){toast('Terjadi kesalahan koneksi','err');}
+  finally{btn.disabled=false;btn.innerHTML=orig;}
+}
+
+/* ===== Admin stats & verify ===== */
+async function loadAdminStats(){
+  try{
+    var r=await fetch('/api/savings/admin/stats',{credentials:'include'});
+    if(!r.ok)return;
+    var d=await r.json(),s=d.stats||{};
+    byId('asTotal').textContent=fmt(s.total_saldo);
+    byId('asTx').textContent=s.total_tx||0;
+    byId('asPending').textContent=s.pending_tx||0;
+    byId('asToday').textContent=fmt(s.today_amount);
+  }catch(e){}
+}
+async function loadVerify(){
+  var el=byId('verifyList');
+  try{
+    var r=await fetch('/api/savings/transactions?scope=all&status=PENDING',{credentials:'include'});
+    if(!r.ok)throw 0;
+    var d=await r.json();var txs=d.transactions||[];
+    if(txs.length===0){el.innerHTML='<div class="emp"><i class="fas fa-check-double"></i><p>Tidak ada pembayaran menunggu verifikasi.</p></div>';return;}
+    var h='';
+    for(var i=0;i<txs.length;i++){
+      var t=txs[i];
+      h+='<div class="hist-item"><div class="hist-info">'+
+        '<div class="hist-title"><span class="avatar-chip">'+esc(initials(t.user_name||t.user_username||'?'))+'</span>'+esc(t.user_name||t.user_username)+' '+statusBadge(t.payment_status)+'</div>'+
+        '<div class="hist-meta"><span>'+esc(t.category_name)+'</span><span>'+fmtDateTime(t.created_at)+'</span><span>'+esc(t.transaction_code)+'</span></div>'+
+        '<div class="list-actions">'+
+          '<button onclick="viewProof('+t.id+')"><i class="fas fa-image"></i> Lihat Bukti</button>'+
+          '<button class="act-ok" onclick="validateTx('+t.id+')"><i class="fas fa-check"></i> Validasi</button>'+
+          '<button class="act-no" onclick="openReject('+t.id+')"><i class="fas fa-xmark"></i> Tolak</button>'+
+        '</div></div>'+
+        '<div class="hist-amt">'+fmt(t.amount)+'</div>';
+    }
+    el.innerHTML=h;
+  }catch(e){el.innerHTML='<div class="emp"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat verifikasi.</p></div>';}
+}
+async function validateTx(id){
+  if(!confirm('Validasi pembayaran ini? Saldo anggota akan bertambah.'))return;
+  var h={'Content-Type':'application/json'},cs=getCsrfToken();if(cs)h['X-CSRF-Token']=cs;
+  try{
+    var r=await fetch('/api/savings/transactions/'+id+'/validate',{method:'POST',headers:h,credentials:'include'});
+    var d=await r.json();
+    if(!r.ok){toast(d.error||'Gagal memvalidasi','err');return;}
+    toast('Pembayaran divalidasi. Saldo anggota bertambah.');
+    loadAdminStats();loadVerify();loadAllAdmin(0);
+  }catch(e){toast('Terjadi kesalahan koneksi','err');}
+}
+function openReject(id){
+  byId('rjId').value=id;byId('rjReason').value='';
+  om('mReject');
+}
+async function confirmReject(){
+  var id=byId('rjId').value;var reason=byId('rjReason').value.trim();
+  if(!reason){toast('Alasan penolakan wajib diisi.','err');return;}
+  var h={'Content-Type':'application/json'},cs=getCsrfToken();if(cs)h['X-CSRF-Token']=cs;
+  try{
+    var r=await fetch('/api/savings/transactions/'+id+'/reject',{method:'POST',headers:h,body:JSON.stringify({reason:reason}),credentials:'include'});
+    var d=await r.json();
+    if(!r.ok){toast(d.error||'Gagal menolak','err');return;}
+    cm('mReject');
+    toast('Pembayaran ditolak.');
+    loadAdminStats();loadVerify();loadAllAdmin(0);
+  }catch(e){toast('Terjadi kesalahan koneksi','err');}
+}
+
+/* ===== Admin: view proof ===== */
+async function viewProof(id){
+  try{
+    var r=await fetch('/api/savings/transactions/'+id,{credentials:'include'});
+    var d=await r.json();
+    if(!r.ok){toast(d.error||'Gagal memuat','err');return;}
+    var t=d.transaction;
+    if(!t.proof_url){
+      toast('Bukti belum diunggah atau sudah dihapus setelah validasi.','err');
+      return;
+    }
+    byId('proofViewBody').innerHTML=
+      '<div class="hist-title" style="margin-bottom:8px">'+esc(t.user_name)+' — '+esc(t.category_name)+' — '+fmt(t.amount)+'</div>'+
+      '<img class="proof-img" src="'+esc(t.proof_url)+'" alt="Bukti pembayaran">';
+    om('mProofView');
+  }catch(e){toast('Terjadi kesalahan koneksi','err');}
+}
+
+/* ===== Admin: all transactions ===== */
+async function loadAllAdmin(page){
+  var tbody=byId('allTbody');
+  var q=[];var s=byId('fSearch').value.trim();if(s)q.push('search='+encodeURIComponent(s));
+  var st=byId('fStatus').value;if(st)q.push('status='+encodeURIComponent(st));
+  var fc=byId('fCat').value;if(fc)q.push('category='+encodeURIComponent(fc));
+  var ff=byId('fFrom').value;if(ff)q.push('from='+encodeURIComponent(ff));
+  var ft=byId('fTo').value;if(ft)q.push('to='+encodeURIComponent(ft));
+  q.push('limit=100');
+  try{
+    var r=await fetch('/api/savings/admin/transactions'+(q.length?'?'+q.join('&'):''),{credentials:'include'});
+    if(!r.ok)throw 0;
+    var d=await r.json();var txs=d.transactions||[];
+    if(txs.length===0){tbody.innerHTML='<tr><td colspan="8"><div class="emp"><i class="fas fa-inbox"></i><p>Tidak ada transaksi.</p></div></td></tr>';return;}
+    var h='';
+    for(var i=0;i<txs.length;i++){
+      var t=txs[i];
+      var acts='';
+      if(t.payment_status==='PENDING'){
+        acts='<button class="act-ok" onclick="validateTx('+t.id+')"><i class="fas fa-check"></i> Validasi</button>'+
+          '<button class="act-no" onclick="openReject('+t.id+')"><i class="fas fa-xmark"></i> Tolak</button>'+
+          (t.proof_url?'<button onclick="viewProof('+t.id+')"><i class="fas fa-image"></i></button>':'');
+      }else if(t.proof_url){
+        acts='<button onclick="viewProof('+t.id+')"><i class="fas fa-image"></i> Bukti</button>';
+      }
+      h+='<tr><td><span class="avatar-chip">'+esc(initials(t.user_name||'?'))+'</span>'+esc(t.user_name||t.user_username)+'</td>'+
+        '<td>'+esc(t.transaction_code)+'</td>'+
+        '<td>'+esc(t.category_name)+'</td>'+
+        '<td class="amt">'+fmt(t.amount)+'</td>'+
+        '<td>'+statusBadge(t.payment_status)+'</td>'+
+        '<td>'+fmtDateTime(t.created_at)+'</td>'+
+        '<td>'+(t.verified_by_name?esc(t.verified_by_name):'-')+'</td>'+
+        '<td>'+acts+'</td></tr>';
+    }
+    tbody.innerHTML=h;
+  }catch(e){tbody.innerHTML='<tr><td colspan="8"><div class="emp"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat transaksi.</p></div></td></tr>';}
+}
+
+/* ===== Admin: categories ===== */
+function renderCatAdmin(){
+  var el=byId('catList');
+  if(allCats.length===0){el.innerHTML='<div class="emp"><i class="fas fa-tags"></i><p>Belum ada kategori.</p></div>';return;}
+  var h='';
+  for(var i=0;i<allCats.length;i++){
+    var c=allCats[i];
+    h+='<div class="cat-row">'+
+      '<div class="c-name">'+esc(c.name)+(c.description?'<div class="c-desc">'+esc(c.description)+'</div>':'')+'</div>'+
+      (c.is_active?'<span class="tag-on">AKTIF</span>':'<span class="tag-off">NONAKTIF</span>')+
+      '<div class="list-actions">'+
+        '<button onclick="editCat('+c.id+')"><i class="fas fa-edit"></i> Edit</button>'+
+        '<button '+(c.is_active?'':'')+' onclick="toggleCat('+c.id+')"><i class="fas '+(c.is_active?'fa-eye-slash':'fa-eye')+'"></i> '+(c.is_active?'Nonaktifkan':'Aktifkan')+'</button>'+
+      '</div></div>';
+  }
+  el.innerHTML=h;
+}
+function loadCatOptionsAdmin(){renderCatAdmin();}
+function openCatForm(){
+  byId('catTitle').textContent='Tambah Kategori';
+  byId('catId').value='';byId('catName').value='';byId('catDesc').value='';
+  om('mCat');
+}
+function editCat(id){
+  var c=null;for(var i=0;i<allCats.length;i++)if(allCats[i].id===id)c=allCats[i];
+  if(!c)return;
+  byId('catTitle').textContent='Edit Kategori';
+  byId('catId').value=c.id;byId('catName').value=c.name;byId('catDesc').value=c.description||'';
+  om('mCat');
+}
+async function onSaveCat(e){
+  e.preventDefault();
+  var id=byId('catId').value;var name=byId('catName').value.trim();
+  if(!name){toast('Nama kategori wajib diisi.','err');return;}
+  var h={'Content-Type':'application/json'},cs=getCsrfToken();if(cs)h['X-CSRF-Token']=cs;
+  var body=JSON.stringify({name:name,description:byId('catDesc').value});
+  try{
+    var r=await fetch('/api/savings/categories'+(id?'/'+id:''),{method:id?'PUT':'POST',headers:h,body:body,credentials:'include'});
+    var d=await r.json();
+    if(!r.ok){toast(d.error||'Gagal menyimpan kategori','err');return;}
+    cm('mCat');
+    toast(d.message||'Kategori disimpan.');
+    await loadCategories();
+  }catch(e){toast('Terjadi kesalahan koneksi','err');}
+}
+async function toggleCat(id){
+  var h={'Content-Type':'application/json'},cs=getCsrfToken();if(cs)h['X-CSRF-Token']=cs;
+  try{
+    var r=await fetch('/api/savings/categories/'+id+'/toggle',{method:'PATCH',headers:h,credentials:'include'});
+    var d=await r.json();
+    if(!r.ok){toast(d.error||'Gagal','err');return;}
+    toast(d.message||'Status kategori diubah.');
+    await loadCategories();
+  }catch(e){toast('Terjadi kesalahan koneksi','err');}
+}
+
+/* ===== Admin: QRIS settings ===== */
+async function saveQris(){
+  var cs=getCsrfToken();var h={'Content-Type':'application/json'};if(cs)h['X-CSRF-Token']=cs;
+  var qrisImage=settings&&settings.qris_image?settings.qris_image:null;
+  var f=byId('qrisFile').files[0];
+  if(f){
+    if(['image/jpeg','image/png','image/webp'].indexOf(f.type)<0){toast('Format QRIS harus JPG/PNG/WebP','err');return;}
+    if(f.size>2*1024*1024){toast('Ukuran QRIS maksimal 2 MB','err');return;}
+    qrisImage=await new Promise(function(res){var r=new FileReader();r.onload=function(){res(r.result);};r.readAsDataURL(f);});
+  }
+  var min=parseInt(byId('qmin').value,10);if(isNaN(min)||min<0)min=0;
+  var body=JSON.stringify({qris_image:qrisImage,qris_display_name:byId('qrisName').value,min_amount:min});
+  try{
+    var r=await fetch('/api/savings/settings',{method:'PUT',headers:h,body:body,credentials:'include'});
+    var d=await r.json();
+    if(!r.ok){toast(d.error||'Gagal menyimpan pengaturan','err');return;}
+    settings=d.settings;
+    toast('Pengaturan tabungan disimpan.');
+    loadSettings();
+  }catch(e){toast('Terjadi kesalahan koneksi','err');}
+}
+
+/* ===== Visibility per role (backend 403 is the real gate) ===== */
+function applyRoleViews(){
+  var admin=isAdmin();
+  byId('adminStatsWrap').style.display=admin?'':'none';
+  byId('adminCard').style.display=admin?'':'none';
+}
+</script>
+<script src="/assets/js/announcement-popup.js"></script>
+</body>
+</html>

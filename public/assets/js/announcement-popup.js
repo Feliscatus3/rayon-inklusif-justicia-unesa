@@ -149,20 +149,27 @@
   }
 
   function seenIds() {
+    if (!userId) return [];
     try {
       var raw = localStorage.getItem(SEEN_PREFIX + userId);
       var arr = raw ? JSON.parse(raw) : [];
-      return Array.isArray(arr) ? arr : [];
+      if (!Array.isArray(arr)) return [];
+      // Normalize to numbers so string/number id comparisons never mismatch.
+      return arr.map(Number).filter(function (n) { return !isNaN(n); });
     } catch (e) {
       return [];
     }
   }
 
   function markSeen(id) {
+    if (!userId || id == null) return;
+    id = Number(id);
     try {
       var arr = seenIds();
-      if (arr.indexOf(id) < 0) arr.push(id);
-      localStorage.setItem(SEEN_PREFIX + userId, JSON.stringify(arr));
+      if (arr.indexOf(id) < 0) {
+        arr.push(id);
+        localStorage.setItem(SEEN_PREFIX + userId, JSON.stringify(arr));
+      }
     } catch (e) { /* storage unavailable — ignore */ }
   }
 
@@ -316,7 +323,7 @@
         var list = (d && (d.announcements || (Array.isArray(d) ? d : null))) || [];
         var seen = seenIds();
         queue = list.filter(function (a) {
-          return a && a.id != null && seen.indexOf(a.id) < 0;
+          return a && a.id != null && seen.indexOf(Number(a.id)) < 0;
         });
         queue.sort(function (a, b) {
           var ta = new Date(a.created_at).getTime() || 0;

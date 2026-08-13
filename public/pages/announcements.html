@@ -62,6 +62,8 @@
 <div id="fm" class="mod"><div class="mc"><span class="mx">&times;</span><h3 id="ft">Pengumuman Baru</h3>
 <form id="ef"><input type="hidden" id="ei">
 <div class="fg"><label>Judul *</label><input type="text" id="et" required></div>
+<div class="fg" id="imgPrevWrap" style="display:none"><label>Gambar Saat Ini</label><div id="imgPrev"></div><span class="sub-txt">Gambar akan dipertahankan kecuali Anda mengubah URL di bawah.</span></div>
+<div class="fg"><label>Gambar (URL)</label><input type="text" id="eimg" placeholder="https://... atau /assets/img/... (opsional)"><span class="sub-txt">Kosongkan untuk memakai gambar yang sudah ada (edit) / tanpa gambar (baru).</span></div>
 <div class="fg"><label>Konten *</label><textarea id="ec" rows="6" required></textarea></div>
 <div class="fg"><label>Kategori</label><select id="ecc"><option>Umum</option><option>Kegiatan</option><option>Pendidikan</option><option>Organisasi</option><option>Kaderisasi</option><option>KOPRI</option><option>Lembaga</option><option>External</option></select></div>
 <div class="fg"><label><input type="checkbox" id="ep"> Pin pengumuman</label></div>
@@ -176,20 +178,51 @@ function render(){
 function $A(i){return document.getElementById(i)}
 function om(id){var el=$A(id);if(el){el.classList.add('show');document.body.classList.add('modal-open');}}
 function cm(id){var el=$A(id);if(el)el.classList.remove('show');if(!document.querySelector('.mod.show')){document.body.classList.remove('modal-open');}}
+function extractImg(html){
+  if(!html)return{src:'',body:html||''};
+  var tmp=document.createElement('div');tmp.innerHTML=html;
+  var img=tmp.querySelector('img');
+  if(!img)return{src:'',body:html};
+  var src=img.getAttribute('src')||'';
+  if(img.parentNode)img.parentNode.removeChild(img);
+  return{src:src,body:tmp.innerHTML};
+}
+function showImgPreview(src){
+  var w=$A('imgPrevWrap'),p=$A('imgPrev');
+  if(!src){w.style.display='none';p.innerHTML='';return;}
+  p.innerHTML='<img src="'+(src).replace(/"/g,'&quot;')+'" alt="preview" style="max-width:100%;max-height:180px;border-radius:10px;border:1px solid var(--border,#e4e8ef)">';
+  w.style.display='block';
+}
 function editAnn(id){
   var a=null;for(var i=0;i<an.length;i++){if(an[i].id===id){a=an[i];break}}
   if(!a)return;if(!isAdmin())return;
-  $('ei').value=a.id;$('et').value=a.title;$('ec').value=a.content;$('ecc').value=a.category;$('ep').checked=a.is_pinned;
+  var ex=extractImg(a.content||'');
+  $('ei').value=a.id;$('et').value=a.title;
+  $('ec').value=a.content||'';
+  $('ecc').value=a.category;$('ep').checked=a.is_pinned;
+  $('eimg').value=ex.src||'';showImgPreview(ex.src);
   $('ft').textContent='Edit Pengumuman';$('fsb').textContent='Perbarui';om('fm');
 }
 function openForm(){
   if(!isAdmin())return;
-  $('ei').value='';$('et').value='';$('ec').value='';$('ecc').value='Umum';$('ep').checked=false;
+  $('ei').value='';$('et').value='';$('ec').value='';$('ecc').value='Umum';$('ep').checked=false;$('eimg').value='';showImgPreview('');
   $('ft').textContent='Pengumuman Baru';$('fsb').textContent='Simpan';om('fm');
 }
-function resetAnnForm(){$('ei').value='';$('et').value='';$('ec').value='';$('ecc').value='Umum';$('ep').checked=false;}
+function resetAnnForm(){$('ei').value='';$('et').value='';$('ec').value='';$('ecc').value='Umum';$('ep').checked=false;$('eimg').value='';showImgPreview('');}
+function buildContent(){
+  var content=$('ec').value;
+  var imgUrl=$('eimg').value.trim();
+  if(!imgUrl)return content;
+  var hasImg=content.indexOf('<img')>=0;
+  if(hasImg){
+    var tmp=document.createElement('div');tmp.innerHTML=content;
+    var img=tmp.querySelector('img');
+    if(img){img.setAttribute('src',imgUrl);return tmp.innerHTML;}
+  }
+  return '<img src="'+imgUrl.replace(/"/g,'&quot;')+'" alt=""><p></p>'+content;
+}
 async function handleSubmit(e){
-  e.preventDefault();var id=$('ei').value,data={title:$('et').value,content:$('ec').value,category:$('ecc').value,is_pinned:$('ep').checked};
+  e.preventDefault();var id=$('ei').value,data={title:$('et').value,content:buildContent(),category:$('ecc').value,is_pinned:$('ep').checked};
   if(!isAdmin()){toast('Anda tidak memiliki izin untuk menyimpan pengumuman','err');return;}
   var btn=$('fsb'),orig=btn.innerHTML;btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
   try{var url='/api/announcements'+(id?'/'+id:''),method=id?'PUT':'POST';

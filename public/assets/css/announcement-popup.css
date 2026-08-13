@@ -27,9 +27,11 @@
 .announcement-popup-dialog {
   position: relative;
   z-index: 1;
-  width: min(560px, calc(100vw - 24px));
+  width: min(620px, calc(100vw - 24px));
   max-height: calc(100vh - 24px);
-  overflow-y: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   background: var(--surface, var(--bg-card, #ffffff));
   color: var(--text, #1c2333);
   border: 1px solid var(--border, #e4e8ef);
@@ -46,13 +48,9 @@
   to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-.announcement-popup-dialog::-webkit-scrollbar { width: 8px; }
-.announcement-popup-dialog::-webkit-scrollbar-thumb { background: var(--border, #d3d9e4); border-radius: 8px; }
-
 /* --- Header --- */
 .announcement-popup-header {
-  position: sticky;
-  top: 0;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -93,16 +91,24 @@
 .announcement-popup-close:hover { background: rgba(255, 255, 255, 0.3); transform: rotate(90deg); }
 
 /* --- Body --- */
-.announcement-popup-body { padding: 18px 20px 8px; }
+.announcement-popup-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px 8px;
+}
 
 .announcement-popup-img {
   display: block;
-  width: 100%;
-  height: auto;
+  width: auto;
   max-width: 100%;
+  max-height: 45vh;
+  height: auto;
   object-fit: contain;
   border-radius: var(--radius-sm, 10px);
-  margin: 0 0 16px;
+  margin: 0 auto 16px;
 }
 
 .announcement-popup-title {
@@ -168,7 +174,15 @@
   border-radius: 0 8px 8px 0;
   color: var(--text-muted, #64748b);
 }
-.announcement-popup-content img { max-width: 100%; height: auto; border-radius: 8px; }
+.announcement-popup-content img {
+  max-width: 100%;
+  max-height: 45vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  border-radius: 8px;
+}
 .announcement-popup-content pre { overflow-x: auto; background: var(--surface-hover, #f5f6fa); padding: 10px; border-radius: 8px; }
 .announcement-popup-content code { background: var(--surface-hover, #f5f6fa); padding: 1px 5px; border-radius: 4px; font-size: 0.84em; }
 .announcement-popup-content table { max-width: 100%; border-collapse: collapse; }
@@ -180,6 +194,7 @@
   padding: 12px 20px 18px;
   display: flex;
   justify-content: flex-end;
+  flex-shrink: 0;
 }
 
 .announcement-popup-btn {
@@ -211,5 +226,6 @@ body.announcement-popup-open { overflow: hidden; }
   .announcement-popup-header { padding: 14px 16px; }
   .announcement-popup-body { padding: 16px 16px 6px; }
   .announcement-popup-title { font-size: 1.12rem; }
+  .announcement-popup-img, .announcement-popup-content img { max-height: 40vh; }
   .announcement-popup-footer { padding: 10px 16px 16px; }
 }

@@ -1350,7 +1350,9 @@ select.cf {
 .an-t { font-size: 1.02rem; font-weight: 700; margin: 0; flex: 1; color: var(--text); }
 
 .an-b { padding: 12px 20px 16px; flex: 1; }
+.an-img{display:block;width:100%;max-width:100%;height:auto;object-fit:contain;border-radius:10px;margin:0 0 12px;border:1px solid var(--border)}
 .an-c { font-size: .9rem; line-height: 1.6; margin-bottom: 12px; white-space: pre-line; color: var(--text-muted); }
+.an-c img{max-width:100%;height:auto;object-fit:contain;display:block;border-radius:8px}
 
 .an-m { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: .8rem; color: var(--text-light); }
 

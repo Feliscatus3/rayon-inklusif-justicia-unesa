@@ -275,7 +275,8 @@ a{text-decoration:none;color:inherit}
 [data-theme="dark"] .ai-title .pin-tag{color:var(--accent);background:rgba(255,214,0,.12)}
 .ai-meta{font-size:.71rem;color:var(--text2);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .ai-meta .cat-tag{background:var(--bg);padding:1px 8px;border-radius:20px;font-size:.64rem;font-weight:600;color:var(--text2)}
-.ai-desc{font-size:.75rem;color:var(--text3);margin-top:4px;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.ai-img{display:block;width:100%;max-width:100%;height:auto;object-fit:contain;border-radius:10px;border:1px solid var(--border);margin-top:8px}
+.ai-desc{font-size:.78rem;color:var(--text3);margin-top:6px;display:block;white-space:normal;overflow:visible;line-height:1.5}
 
 /* ---------- Event items ---------- */
 .ei{padding:12px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:center;transition:all var(--transition)}
@@ -694,6 +695,20 @@ async function loadStats(){
     return null;
   }
 }
+function extractAnnImage(html){
+  if(!html)return{src:'',text:''};
+  var t=document.createElement('template');t.innerHTML=String(html);
+  var img=t.content.querySelector('img'),src='';
+  if(img)src=img.getAttribute('src')||'';
+  var text=(t.content.textContent||'').replace(/\s+/g,' ').trim();
+  return{src:src,text:text};
+}
+function absSrc(u){
+  if(!u)return u;
+  u=String(u).trim();
+  if(/^(https?:)?\/\//i.test(u)||u.charAt(0)==='/'||u.charAt(0)==='#'||u.indexOf('mailto:')===0||u.indexOf('data:image/')===0)return u;
+  return window.location.origin+'/'+u;
+}
 async function loadAnnouncements(){
   var el=$('annList');
   try{
@@ -711,15 +726,16 @@ async function loadAnnouncements(){
       var a=items[i];
       var pinned=!!a.is_pinned;
       var title=escapeHtml(a.title||a.judul||'Pengumuman');
-      var desc=escapeHtml(a.content||a.deskripsi||'');
       var created=a.created_at?timeAgo(a.created_at):'';
       var cat=escapeHtml(a.category||'Umum');
+      var im=extractAnnImage(a.content||a.deskripsi||'');
       h+='<div class="ai">'+
         '<div class="ai-icon'+(pinned?' pinned':'')+'"><i class="fas fa-'+(pinned?'thumbtack':'bullhorn')+'"></i></div>'+
         '<div class="ai-info">'+
           '<div class="ai-title">'+title+(pinned?'<span class="pin-tag">PINNED</span>':'')+'</div>'+
           '<div class="ai-meta"><span class="cat-tag">'+cat+'</span><span>'+created+'</span></div>'+
-          (desc?'<div class="ai-desc">'+desc+'</div>':'')+
+          (im.src?'<img class="ai-img" src="'+escapeHtml(absSrc(im.src))+'" alt="'+title+'">':'')+
+          (im.text?'<div class="ai-desc">'+escapeHtml(im.text)+'</div>':'')+
         '</div>'+
       '</div>';
     }

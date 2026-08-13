@@ -143,6 +143,13 @@ async function loadAnn(){
   }catch(e){$('ag').innerHTML='<div class="ne"><i class="fas fa-exclamation-triangle"></i><p>Koneksi gagal. Periksa jaringan Anda.</p></div>';}
   finally{if(ok)render();}
 }
+function esc(s){if(s===null||s===undefined)return'';return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function absSrc(u){
+  if(!u)return u;
+  u=String(u).trim();
+  if(/^(https?:)?\/\//i.test(u)||u.charAt(0)==='/'||u.charAt(0)==='#'||u.indexOf('mailto:')===0||u.indexOf('data:image/')===0)return u;
+  return window.location.origin+'/'+u;
+}
 function render(){
   var q=$('srch').value.toLowerCase(),c=$('cf').value,f=an;
   if(q)f=f.filter(function(a){return a.title.toLowerCase().indexOf(q)>=0||(a.content||'').toLowerCase().indexOf(q)>=0;});
@@ -154,13 +161,17 @@ function render(){
   if(f.length===0)h='<div class="ne"><i class="far fa-bullhorn"></i><p>Tidak ada pengumuman</p></div>';
   else for(var i=0;i<f.length;i++){
     var a=f[i],pi=a.is_pinned?' <i class="fas fa-thumbtack" style="color:#1a237e;font-size:.8rem"></i>':'';
-    var ct=a.content&&a.content.length>200?a.content.substring(0,200)+'...':(a.content||'');
+    var im=extractImg(a.content||'');
+    var txt=(im.body||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+    var ct=txt.length>200?txt.substring(0,200)+'...':txt;
     var ds=new Date(a.created_at).toLocaleDateString('id-ID',{year:'numeric',month:'short',day:'numeric'});
     h+='<div class="an-card'+(a.is_pinned?' pin':'')+'">';
-    h+='<div class="an-h"><h3 class="an-t">'+a.title+pi+'</h3><div class="an-m"><span class="cat">'+a.category+'</span></div>';
-    h+='<div class="an-b"><div class="an-c">'+ct+'</div>';
-    h+='<div class="an-m"><i class="far fa-user"></i> '+(a.created_by_name||'Admin')+' <i class="far fa-clock"></i> '+ds;
-    if(a.pdf_url)h+=' <a href="'+a.pdf_url+'" target="_blank" style="margin-left:auto;color:#1a237e;font-size:.8rem"><i class="fas fa-file-pdf"></i> '+(a.pdf_name||'PDF')+'</a>';
+    h+='<div class="an-h"><h3 class="an-t">'+esc(a.title)+pi+'</h3><div class="an-m"><span class="cat">'+esc(a.category)+'</span></div>';
+    h+='<div class="an-b">';
+    if(im.src)h+='<img class="an-img" src="'+esc(absSrc(im.src))+'" alt="'+esc(a.title)+'">';
+    if(ct)h+='<div class="an-c">'+esc(ct)+'</div>';
+    h+='<div class="an-m"><i class="far fa-user"></i> '+esc(a.created_by_name||'Admin')+' <i class="far fa-clock"></i> '+ds;
+    if(a.pdf_url)h+=' <a href="'+esc(a.pdf_url)+'" target="_blank" style="margin-left:auto;color:#1a237e;font-size:.8rem"><i class="fas fa-file-pdf"></i> '+esc(a.pdf_name||'PDF')+'</a>';
     h+='</div>';
     if(ia){
       h+='<div class="an-f">';

@@ -64,7 +64,7 @@
 <div class="fg"><label>Judul *</label><input type="text" id="et" required></div>
 <div class="fg" id="imgPrevWrap" style="display:none"><label>Gambar Saat Ini</label><div id="imgPrev"></div><span class="sub-txt">Gambar akan dipertahankan kecuali Anda mengubah URL di bawah.</span></div>
 <div class="fg"><label>Gambar (URL)</label><input type="text" id="eimg" placeholder="https://... atau /assets/img/... (opsional)"><span class="sub-txt">Kosongkan untuk memakai gambar yang sudah ada (edit) / tanpa gambar (baru).</span></div>
-<div class="fg"><label>Konten *</label><textarea id="ec" rows="6" required></textarea></div>
+<div class="fg"><label>Isi / Deskripsi</label><textarea id="ec" rows="6"></textarea></div>
 <div class="fg"><label>Kategori</label><select id="ecc"><option>Umum</option><option>Kegiatan</option><option>Pendidikan</option><option>Organisasi</option><option>Kaderisasi</option><option>KOPRI</option><option>Lembaga</option><option>External</option></select></div>
 <div class="fg"><label><input type="checkbox" id="ep"> Pin pengumuman</label></div>
 <div class="fa"><button type="submit" class="cp" id="fsb">Simpan</button><button type="button" class="cc" id="fc">Batal</button></div>
@@ -222,7 +222,10 @@ function buildContent(){
   return '<img src="'+imgUrl.replace(/"/g,'&quot;')+'" alt=""><p></p>'+content;
 }
 async function handleSubmit(e){
-  e.preventDefault();var id=$('ei').value,data={title:$('et').value,content:buildContent(),category:$('ecc').value,is_pinned:$('ep').checked};
+  e.preventDefault();var id=$('ei').value;
+  var title=$('et').value.trim();
+  if(!title){toast('Judul pengumuman wajib diisi.','err');return;}
+  var data={title:title,content:buildContent(),category:$('ecc').value,is_pinned:$('ep').checked};
   if(!isAdmin()){toast('Anda tidak memiliki izin untuk menyimpan pengumuman','err');return;}
   var btn=$('fsb'),orig=btn.innerHTML;btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
   try{var url='/api/announcements'+(id?'/'+id:''),method=id?'PUT':'POST';

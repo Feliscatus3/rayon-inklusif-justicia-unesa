@@ -120,7 +120,6 @@ async function createAnnouncement(req, res, user, ip, ua) {
 
   if (!title) return res.status(400).json({ error: 'Judul wajib diisi' });
   if (title.length > 255) return res.status(400).json({ error: 'Judul maksimal 255 karakter' });
-  if (!content) return res.status(400).json({ error: 'Konten wajib diisi' });
   if (!VALID_CATEGORIES.includes(category)) return res.status(400).json({ error: 'Kategori tidak valid' });
 
   let pinValue = isPinned;
@@ -160,7 +159,6 @@ async function updateAnnouncement(req, res, user, ip, ua) {
 
   if (!title) return res.status(400).json({ error: 'Judul wajib diisi' });
   if (title.length > 255) return res.status(400).json({ error: 'Judul maksimal 255 karakter' });
-  if (!content) return res.status(400).json({ error: 'Konten wajib diisi' });
   if (!VALID_CATEGORIES.includes(category)) return res.status(400).json({ error: 'Kategori tidak valid' });
 
   if (isPinned && !existing.rows[0].is_pinned) {

@@ -270,7 +270,9 @@
     h += '<span class="announcement-popup-date"><i class="far fa-calendar-alt"></i> '
       + escapeHtml(formatDate(ann.created_at)) + '</span>';
     h += '</div>';
-    h += '<div class="announcement-popup-content">' + cleanContent + '</div>';
+    if (cleanContent && cleanContent.trim()) {
+      h += '<div class="announcement-popup-content">' + cleanContent + '</div>';
+    }
     return h;
   }
 

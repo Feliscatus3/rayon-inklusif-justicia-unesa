@@ -52,6 +52,39 @@
   }
 
   /**
+   * Resolve an asset URL against the site origin so relative paths
+   * (e.g. "assets/img/foto/foo.webp") never 404 and never get dropped.
+   * Absolute URLs (https://…) and root-relative URLs (/assets/…) are kept as-is.
+   */
+  function resolveAssetUrl(src) {
+    if (!src) return src;
+    var v = String(src).replace(/[\u0000-\u001f\u007f\s]/g, '');
+    var lv = v.toLowerCase();
+    if (/^https?:/i.test(lv) || lv.indexOf('//') === 0 || lv.charAt(0) === '/' || lv.charAt(0) === '#'
+      || lv.indexOf('mailto:') === 0 || lv.indexOf('data:image/') === 0) {
+      return v;
+    }
+    return window.location.origin + '/' + v;
+  }
+
+  /**
+   * Given sanitized HTML, pull the first <img> out to be used as the popup's
+   * hero image. Returns { src, remaining } or null when there is no image.
+   */
+  function extractFirstImage(html) {
+    if (!html) return null;
+    var tpl = document.createElement('template');
+    tpl.innerHTML = html;
+    var img = tpl.content.querySelector('img');
+    if (!img) return null;
+    var src = img.getAttribute('src');
+    if (img.parentNode) img.parentNode.removeChild(img);
+    var holder = document.createElement('div');
+    holder.appendChild(tpl.content);
+    return { src: src, remaining: holder.innerHTML };
+  }
+
+  /**
    * Whitelist-based HTML sanitizer. Parses through a <template> (inert — no
    * scripts execute there), drops dangerous elements and attributes, unwraps
    * unknown tags and returns a cleaned HTML string.
@@ -95,6 +128,12 @@
           var v = attr.value.replace(/[\u0000-\u001f\u007f\s]/g, '').toLowerCase();
           var keep = URL_RE.test(v) || v.charAt(0) === '/' || v.charAt(0) === '#'
             || v.indexOf('mailto:') === 0 || v.indexOf('data:image/') === 0;
+          if (!keep && name === 'src') {
+            // Relative image path (e.g. assets/img/… or ../assets/img/…) — resolve
+            // against the app origin instead of dropping the image.
+            el.setAttribute('src', resolveAssetUrl(attr.value));
+            return;
+          }
           if (!keep) el.removeAttribute(attr.name);
         }
       });
@@ -194,8 +233,26 @@
 
   function renderBody(ann) {
     var h = '';
+    // Resolve the hero image the same way the API actually provides it:
+    // there is no dedicated image column on announcements, so the image lives
+    // inside the rich-text `content` as an <img> element.
+    var cleanContent = sanitizeHtml(ann.content || '');
+    var hero = extractFirstImage(cleanContent);
+    var heroSrc = '';
     if (ann.image_url) {
-      h += '<img class="announcement-popup-img" src="' + escapeHtml(ann.image_url)
+      heroSrc = ann.image_url;
+    } else if (ann.photo || ann.photo_url) {
+      heroSrc = ann.photo || ann.photo_url;
+    } else if (ann.thumbnail) {
+      heroSrc = ann.thumbnail;
+    } else if (ann.foto_url) {
+      heroSrc = ann.foto_url;
+    } else if (hero && hero.src) {
+      heroSrc = hero.src;
+      cleanContent = hero.remaining;
+    }
+    if (heroSrc) {
+      h += '<img class="announcement-popup-img" src="' + escapeHtml(resolveAssetUrl(heroSrc))
         + '" alt="' + escapeHtml(ann.title || 'Pengumuman') + '">';
     }
     h += '<h2 class="announcement-popup-title">' + escapeHtml(ann.title || '') + '</h2>';
@@ -206,7 +263,7 @@
     h += '<span class="announcement-popup-date"><i class="far fa-calendar-alt"></i> '
       + escapeHtml(formatDate(ann.created_at)) + '</span>';
     h += '</div>';
-    h += '<div class="announcement-popup-content">' + sanitizeHtml(ann.content || '') + '</div>';
+    h += '<div class="announcement-popup-content">' + cleanContent + '</div>';
     return h;
   }
 

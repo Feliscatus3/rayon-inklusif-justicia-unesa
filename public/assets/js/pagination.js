@@ -7,7 +7,7 @@ const beritaData = [
     uploadDate: "2026-07-31",
     image: "/assets/img/foto/cakrawala_2.webp",
     link: "/berita/cakrawala-cendrawasih-persiapan-maba-fh-unesa.html",
-    featured: true
+    featured: false
   },
   {
     id: 1,

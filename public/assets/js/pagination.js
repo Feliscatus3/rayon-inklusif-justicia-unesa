@@ -258,6 +258,16 @@ const beritaData = [
     image: "/assets/img/foto/HARMONI PERGERAKAN (2)_20260225_180800_0011.webp",
     link: "/berita/diskusi-panel-jejak-kartini-2024.html",
     featured: false
+  },
+  {
+    id: 26,
+    title: "Doa Kebangsaan Justicia: Mendoakan Negeri, Menjaga Kemerdekaan 81 Tahun Indonesia Berdaulat",
+    excerpt: "Doa Kebangsaan Justicia merupakan momentum refleksi dan doa bersama dalam rangka mendoakan negeri serta menjaga kemerdekaan Indonesia yang telah memasuki 81 tahun.",
+    date: "13 Agustus 2026",
+    uploadDate: "2026-08-13",
+    image: "/assets/img/foto/doa-kebangsaan.webp",
+    link: "/berita/doa-kebangsaan-justicia.html",
+    featured: false
   }
 ];
 
@@ -265,28 +275,28 @@ const beritaData = [
 let currentPage = 1;
 const itemsPerPage = 6;
 
-// Fungsi helper: urutkan berita berdasarkan ID
-function sortBeritaById(data) {
-  return [...data].sort((a, b) => a.id - b.id);
+// Fungsi helper: urutkan berita berdasarkan tanggal (terbaru dulu)
+function sortBeritaByDate(data) {
+  return [...data].sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
 }
 
-// Fungsi untuk mendapatkan berita non-featured - diurutkan berdasarkan ID
+// Fungsi untuk mendapatkan berita non-featured - diurutkan berdasarkan tanggal (terbaru dulu)
 function getNonFeaturedBerita() {
-  return sortBeritaById(
+  return sortBeritaByDate(
     beritaData.filter(berita => !berita.featured)
   );
 }
 
-// Fungsi untuk mendapatkan berita featured - diurutkan berdasarkan ID
+// Fungsi untuk mendapatkan berita featured - diurutkan berdasarkan tanggal (terbaru dulu)
 function getFeaturedBerita() {
-  return sortBeritaById(
+  return sortBeritaByDate(
     beritaData.filter(berita => berita.featured)
   );
 }
 
-// Fungsi untuk mendapatkan SEMUA berita - diurutkan berdasarkan ID
+// Fungsi untuk mendapatkan SEMUA berita - diurutkan berdasarkan tanggal (terbaru dulu)
 function getAllBerita() {
-  return sortBeritaById([...beritaData]);
+  return sortBeritaByDate([...beritaData]);
 }
 
 // ===== SLIDER (Kegiatan Terbaru) =====

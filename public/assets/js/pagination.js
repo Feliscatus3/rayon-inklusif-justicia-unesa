@@ -268,6 +268,16 @@ const beritaData = [
     image: "/assets/img/foto/doa-kebangsaan.webp",
     link: "/berita/doa-kebangsaan-justicia.html",
     featured: false
+  },
+  {
+  id: 28,
+  title: "Pojok Literasi Vol. 1: Satu Buku, Seribu Perspektif",
+  excerpt: "Pojok Literasi Vol. 1 PMII Rayon Inklusif Justicia UNESA menghadirkan ruang membaca, berdiskusi, dan bertukar perspektif dengan lebih dari 100 buku.",
+  date: "9 September 2026",
+  uploadDate: "2026-09-09",
+  image: "/assets/img/foto/pojok-literasi.webp",
+  link: "/berita/pojok-literasi-vol-1.html",
+  featured: true
   }
 ];
 

@@ -258,6 +258,26 @@ const beritaData = [
     image: "/assets/img/foto/HARMONI PERGERAKAN (2)_20260225_180800_0011.webp",
     link: "/berita/diskusi-panel-jejak-kartini-2024.html",
     featured: false
+  },
+  {
+    id: 26,
+    title: "Doa Kebangsaan Justicia: Mendoakan Negeri, Menjaga Kemerdekaan 81 Tahun Indonesia Berdaulat",
+    excerpt: "Doa Kebangsaan Justicia merupakan momentum refleksi dan doa bersama dalam rangka mendoakan negeri serta menjaga kemerdekaan Indonesia yang telah memasuki 81 tahun.",
+    date: "13 Agustus 2026",
+    uploadDate: "2026-08-13",
+    image: "/assets/img/foto/doa-kebangsaan.webp",
+    link: "/berita/doa-kebangsaan-justicia.html",
+    featured: false
+  },
+  {
+  id: 28,
+  title: "Pojok Literasi Vol. 1: Satu Buku, Seribu Perspektif",
+  excerpt: "Pojok Literasi Vol. 1 PMII Rayon Inklusif Justicia UNESA menghadirkan ruang membaca, berdiskusi, dan bertukar perspektif dengan lebih dari 100 buku.",
+  date: "9 September 2026",
+  uploadDate: "2026-09-09",
+  image: "/assets/img/foto/pojok-literasi.webp",
+  link: "/berita/pojok-literasi-vol-1.html",
+  featured: true
   }
 ];
 

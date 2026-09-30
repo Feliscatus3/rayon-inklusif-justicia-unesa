@@ -787,22 +787,31 @@
   <div class="modal-overlay" id="successModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-content">
       <div class="modal-icon"><i class="bi bi-check-lg"></i></div>
-      <h2 class="modal-title" id="modalTitle">Terima Kasih!</h2>
+      <h2 class="modal-title" id="modalTitle">Pendaftaran Berhasil!</h2>
       <p class="modal-message" id="modalMessage">
-        Pendaftaran Anda pada <strong>MAPABA II PMII Rayon "Inklusif" Justicia</strong> telah berhasil dikirim.
+        Terima kasih telah mendaftar di MAPABA II PMII Rayon 'Inklusif' Justicia.
         <br><br>
-        Tim kami akan memverifikasi data Anda dalam 1x24 jam.
-        Informasi selanjutnya akan dikirimkan melalui email.
+        Langkah selanjutnya, silakan menghubungi Contact Person (CP) panitia di bawah ini untuk mengonfirmasi pendaftaran dan mendapatkan link Grup WhatsApp Peserta.
       </p>
-      <div class="countdown-container" id="countdownContainer" style="margin: 24px 0; padding: 20px; background: var(--pmii-gold-light); border-radius: var(--radius); border: 1px solid var(--pmii-gold); display: none;">
-        <p style="margin: 0 0 12px; font-weight: 600; color: var(--pmii-navy);">Anda akan dialihkan ke Halaman Utama dalam:</p>
-        <div style="font-size: 3rem; font-weight: 800; color: var(--pmii-navy); font-variant-numeric: tabular-nums; line-height: 1; font-family: 'Inter', monospace;" id="countdownTimer">10</div>
-        <p style="margin: 8px 0 0; font-size: 0.85rem; color: var(--gray-500);">detik</p>
+      <p class="modal-note" style="margin: 16px 0 0; font-size: 0.85rem; color: var(--gray-500); line-height: 1.5;">
+        <i class="bi bi-info-circle-fill" style="margin-right: 6px;"></i>
+        Catatan: Harap lampirkan bukti/screenshot halaman ini atau sebutkan nama lengkap Anda saat menghubungi CP.
+      </p>
+      <div class="wa-buttons" style="display: flex; flex-direction: column; gap: 12px; margin-top: 24px;">
+        <a href="https://wa.me/6285606300496?text=Halo%20Sahabati%20Mita,%20saya%20sudah%20mengisi%20form%20pendaftaran%20MAPABA%20II%20PMII%20Rayon%20Inklusif%20Justicia.%20Mohon%20info%20link%20grup%20WhatsApp." 
+           target="_blank" rel="noopener noreferrer" 
+           class="wa-btn" style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 20px; font-size: 0.95rem; font-weight: 700; color: #fff; background: #25D366; border: none; border-radius: 12px; text-decoration: none; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);">
+          <i class="bi bi-whatsapp" style="font-size: 1.2rem;"></i>
+          <span>Chat Sahabati Mita (085606300496)</span>
+        </a>
+        <a href="https://wa.me/62881027649840?text=Halo%20Sahabati%20Jenar,%20saya%20sudah%20mengisi%20form%20pendaftaran%20MAPABA%20II%20PMII%20Rayon%20Inklusif%20Justicia.%20Mohon%20info%20link%20grup%20WhatsApp." 
+           target="_blank" rel="noopener noreferrer" 
+           class="wa-btn" style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 20px; font-size: 0.95rem; font-weight: 700; color: #fff; background: #25D366; border: none; border-radius: 12px; text-decoration: none; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);">
+          <i class="bi bi-whatsapp" style="font-size: 1.2rem;"></i>
+          <span>Chat Sahabati Jenar (0881027649840)</span>
+        </a>
       </div>
-      <div class="modal-actions" style="display: flex; flex-direction: column; gap: 12px;">
-        <button type="button" class="modal-btn" id="modalCloseBtn"><i class="bi bi-check-circle-fill"></i> Selesai</button>
-        <button type="button" class="modal-btn" id="redirectBtn" style="background: linear-gradient(135deg, var(--pmii-gold), var(--pmii-gold-dark)); color: var(--pmii-navy);"><i class="bi bi-house-fill"></i> Kembali ke Homepage Sekarang</button>
-      </div>
+      <button type="button" class="modal-btn" id="modalCloseBtn" style="margin-top: 16px;"><i class="bi bi-check-circle-fill"></i> Selesai</button>
     </div>
   </div>
 
@@ -1108,7 +1117,6 @@
         Object.keys(state.files).forEach(k => { state.files[k] = null; fileZones[k].input.value = ''; });
         Object.values(fileZones).forEach(z => { z.preview.classList.remove('show'); z.zone.style.display = 'flex'; if (z.isImage) { z.icon.src = ''; z.icon.style.display = 'none'; } else { z.iconContainer.innerHTML = '<i class="bi bi-file-earmark-pdf-fill"></i>'; z.iconContainer.style.display = 'flex'; } });
         successModal.classList.add('show');
-        startCountdown();
         showToast('Berhasil!', 'Pendaftaran MAPABA II berhasil dikirim', 'success');
 
       } catch (error) {
@@ -1121,66 +1129,9 @@
     });
 
     // Modal close
-    modalCloseBtn.addEventListener('click', () => {
-      clearCountdown();
-      successModal.classList.remove('show');
-    });
-    successModal.addEventListener('click', e => { 
-      if (e.target === successModal) {
-        clearCountdown();
-        successModal.classList.remove('show');
-      }
-    });
-    document.addEventListener('keydown', e => { 
-      if (e.key === 'Escape' && successModal.classList.contains('show')) {
-        clearCountdown();
-        successModal.classList.remove('show');
-      }
-    });
-
-    // Redirect button
-    const redirectBtn = document.getElementById('redirectBtn');
-    const countdownContainer = document.getElementById('countdownContainer');
-    const countdownTimer = document.getElementById('countdownTimer');
-    let countdownInterval = null;
-    let countdownSeconds = 10;
-
-    function startCountdown() {
-      countdownSeconds = 10;
-      countdownContainer.style.display = 'block';
-      countdownTimer.textContent = countdownSeconds;
-      
-      countdownInterval = setInterval(() => {
-        countdownSeconds--;
-        countdownTimer.textContent = countdownSeconds;
-        
-        if (countdownSeconds <= 0) {
-          clearInterval(countdownInterval);
-          countdownInterval = null;
-          redirectToHomepage();
-        }
-      }, 1000);
-    }
-
-    function clearCountdown() {
-      if (countdownInterval) {
-        clearInterval(countdownInterval);
-        countdownInterval = null;
-      }
-      countdownContainer.style.display = 'none';
-      countdownTimer.textContent = '10';
-    }
-
-    function redirectToHomepage() {
-      clearCountdown();
-      successModal.classList.remove('show');
-      // Redirect to profil page
-      window.location.href = '/pages/profil.html';
-    }
-
-    if (redirectBtn) {
-      redirectBtn.addEventListener('click', redirectToHomepage);
-    }
+    modalCloseBtn.addEventListener('click', () => successModal.classList.remove('show'));
+    successModal.addEventListener('click', e => { if (e.target === successModal) successModal.classList.remove('show'); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && successModal.classList.contains('show')) successModal.classList.remove('show'); });
 
     // ===== INIT: Populate Angkatan Dropdown =====
     (function initAngkatan() {

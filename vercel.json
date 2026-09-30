@@ -7,6 +7,10 @@
       "dest": "/index.html"
     },
     {
+      "src": "^/daftar-mapaba.html$",
+      "dest": "/daftar-mapaba.html"
+    },
+    {
       "src": "^/panel$",
       "dest": "/panel.html"
     },

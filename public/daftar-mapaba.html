@@ -939,9 +939,11 @@
         input.required = !file; // required only if no file stored
       };
 
-      // Click zone to trigger input
+      // Click zone to trigger input (only on direct user click, not on remove button)
       zone.addEventListener('click', (e) => {
-        if (e.target === zone || e.target.closest('.file-upload-zone') === zone) input.click();
+        if (!e.target.closest('.file-preview-remove')) {
+          input.click();
+        }
       });
       zone.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } });
 
@@ -1088,7 +1090,7 @@
         // Send to Google Apps Script
         const response = await fetch(CONFIG.GAS_WEBAPP_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
 
@@ -1172,8 +1174,8 @@
     function redirectToHomepage() {
       clearCountdown();
       successModal.classList.remove('show');
-      // Redirect to homepage - use relative path to index.html
-      window.location.href = '/';
+      // Redirect to profil page
+      window.location.href = '/pages/profil.html';
     }
 
     if (redirectBtn) {

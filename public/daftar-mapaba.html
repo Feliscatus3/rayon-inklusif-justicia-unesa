@@ -1137,7 +1137,8 @@
     (function initAngkatan() {
       const select = document.getElementById('angkatan');
       const currentYear = new Date().getFullYear();
-      for (let y = currentYear; y >= currentYear - 10; y--) {
+      const startYear = 2022;
+      for (let y = currentYear; y >= startYear; y--) {
         const opt = document.createElement('option');
         opt.value = y;
         opt.textContent = y;

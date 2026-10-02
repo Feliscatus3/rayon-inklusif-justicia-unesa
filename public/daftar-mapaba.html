@@ -926,27 +926,31 @@
       const allowedTypes = CONFIG.ALLOWED_TYPES[key];
 
       const updateZoneState = () => {
-        const file = state.files[key];
-        if (file) {
-          zone.style.display = 'none';
-          preview.classList.add('show');
-          nameEl.textContent = file.name;
-          sizeEl.textContent = formatBytes(file.size);
-          if (isImage) {
-            icon.src = URL.createObjectURL(file);
-            icon.style.display = 'block';
-          } else {
-            iconContainer.innerHTML = '<i class="bi bi-file-earmark-pdf-fill"></i>';
-            iconContainer.style.display = 'flex';
-          }
+      const file = state.files[key];
+      if (file) {
+        zone.style.display = 'none';
+        preview.classList.add('show');
+        nameEl.textContent = file.name;
+        sizeEl.textContent = formatBytes(file.size);
+        if (isImage) {
+          icon.src = URL.createObjectURL(file);
+          icon.style.display = 'block';
         } else {
-          zone.style.display = 'flex';
-          preview.classList.remove('show');
-          if (isImage) { icon.src = ''; icon.style.display = 'none'; }
-          else { iconContainer.innerHTML = '<i class="bi bi-file-earmark-pdf-fill"></i>'; iconContainer.style.display = 'flex'; }
+          iconContainer.innerHTML = '<i class="bi bi-file-earmark-pdf-fill"></i>';
+          iconContainer.style.display = 'flex';
         }
-        input.required = !file; // required only if no file stored
-      };
+      } else {
+        zone.style.display = 'flex';
+        preview.classList.remove('show');
+        if (isImage) { icon.src = ''; icon.style.display = 'none'; }
+        else { iconContainer.innerHTML = '<i class="bi bi-file-earmark-pdf-fill"></i>'; iconContainer.style.display = 'flex'; }
+      }
+      
+      // Hanya atur required jika dari awal input tersebut memang memiliki atribut required
+      if (key !== 'rekom') {
+        input.required = !file;
+      }
+    };
 
       // Click zone to trigger input (only on direct user click, not on remove button)
       zone.addEventListener('click', (e) => {

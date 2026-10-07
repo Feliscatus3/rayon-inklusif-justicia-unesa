@@ -676,16 +676,16 @@
 
           <div class="form-row">
             <div class="form-group full-width">
-              <label for="fotoFile"><span class="required">*</span> Upload Foto Formal 3x4 <span class="optional">(Format: JPG/PNG, Max 2MB)</span></label>
+              <label for="fotoFile"><span class="required">*</span> Upload Foto Formal 3x4 <span class="optional">(Format: JPG/PNG/PDF, Max 5MB)</span></label>
               <div class="file-upload">
                 <div class="file-upload-zone" id="fotoZone" tabindex="0" role="button" aria-label="Upload Foto Formal 3x4">
-                  <input type="file" class="file-upload-input" id="fotoFile" name="fotoFile" accept="image/jpeg,image/png" required>
+                  <input type="file" class="file-upload-input" id="fotoFile" name="fotoFile" accept="image/jpeg,image/png,application/pdf" required>
                   <i class="bi bi-image-fill"></i>
                   <p>Klik atau seret file Foto 3x4 ke sini</p>
-                  <span class="hint">JPG, PNG • Maksimal 2MB</span>
+                  <span class="hint">JPG, PNG, PDF • Maksimal 5MB</span>
                 </div>
                 <div class="file-preview" id="fotoPreview">
-                  <img id="fotoIcon" alt="Preview Foto 3x4">
+                  <div class="pdf-icon" id="fotoIcon"><i class="bi bi-file-earmark-image-fill"></i></div>
                   <div class="file-preview-info">
                     <div class="file-preview-name" id="fotoName"></div>
                     <div class="file-preview-size" id="fotoSize"></div>
@@ -730,16 +730,16 @@
 
           <div class="form-row">
             <div class="form-group full-width">
-              <label for="buktiFile"><span class="required">*</span> Upload Bukti Pembayaran <span class="optional">(Format: JPG/PNG, Max 5MB)</span></label>
+              <label for="buktiFile"><span class="required">*</span> Upload Bukti Pembayaran <span class="optional">(Format: JPG/PNG/PDF, Max 5MB)</span></label>
               <div class="file-upload">
                 <div class="file-upload-zone" id="buktiZone" tabindex="0" role="button" aria-label="Upload Bukti Pembayaran">
-                  <input type="file" class="file-upload-input" id="buktiFile" name="buktiFile" accept="image/jpeg,image/png" required>
+                  <input type="file" class="file-upload-input" id="buktiFile" name="buktiFile" accept="image/jpeg,image/png,application/pdf" required>
                   <i class="bi bi-receipt-fill"></i>
                   <p>Klik atau seret file Bukti Pembayaran ke sini</p>
-                  <span class="hint">JPG, PNG • Maksimal 5MB</span>
+                  <span class="hint">JPG, PNG, PDF • Maksimal 5MB</span>
                 </div>
                 <div class="file-preview" id="buktiPreview">
-                  <img id="buktiIcon" alt="Preview Bukti Pembayaran">
+                  <div class="pdf-icon" id="buktiIcon"><i class="bi bi-file-earmark-image-fill"></i></div>
                   <div class="file-preview-info">
                     <div class="file-preview-name" id="buktiName"></div>
                     <div class="file-preview-size" id="buktiSize"></div>
@@ -822,14 +822,14 @@
       MAX_FILE_SIZE: {
         ktm: 5 * 1024 * 1024,      // 5MB
         rekom: 5 * 1024 * 1024,    // 5MB
-        foto: 2 * 1024 * 1024,     // 2MB
+        foto: 5 * 1024 * 1024,     // 5MB (disesuaikan dengan KTM)
         bukti: 5 * 1024 * 1024     // 5MB
       },
       ALLOWED_TYPES: {
         ktm: ['image/jpeg', 'image/png', 'application/pdf'],
         rekom: ['image/jpeg', 'image/png', 'application/pdf'],
-        foto: ['image/jpeg', 'image/png'],
-        bukti: ['image/jpeg', 'image/png']
+        foto: ['image/jpeg', 'image/png', 'application/pdf'],  // sama dengan KTM
+        bukti: ['image/jpeg', 'image/png', 'application/pdf']  // sama dengan KTM
       }
     };
 
@@ -848,10 +848,10 @@
 
     // File upload zones
     const fileZones = {
-      ktm: { zone: document.getElementById('ktmZone'), input: document.getElementById('ktmFile'), preview: document.getElementById('ktmPreview'), nameEl: document.getElementById('ktmName'), sizeEl: document.getElementById('ktmSize'), icon: document.getElementById('ktmIcon'), iconContainer: document.getElementById('ktmIcon') },
-      rekom: { zone: document.getElementById('rekomZone'), input: document.getElementById('rekomFile'), preview: document.getElementById('rekomPreview'), nameEl: document.getElementById('rekomName'), sizeEl: document.getElementById('rekomSize'), icon: document.getElementById('rekomIcon'), iconContainer: document.getElementById('rekomIcon') },
-      foto: { zone: document.getElementById('fotoZone'), input: document.getElementById('fotoFile'), preview: document.getElementById('fotoPreview'), nameEl: document.getElementById('fotoName'), sizeEl: document.getElementById('fotoSize'), icon: document.getElementById('fotoIcon'), isImage: true },
-      bukti: { zone: document.getElementById('buktiZone'), input: document.getElementById('buktiFile'), preview: document.getElementById('buktiPreview'), nameEl: document.getElementById('buktiName'), sizeEl: document.getElementById('buktiSize'), icon: document.getElementById('buktiIcon'), isImage: true }
+      ktm: { zone: document.getElementById('ktmZone'), input: document.getElementById('ktmFile'), preview: document.getElementById('ktmPreview'), nameEl: document.getElementById('ktmName'), sizeEl: document.getElementById('ktmSize'), icon: document.getElementById('ktmIcon'), iconContainer: document.getElementById('ktmIcon'), isImage: false },
+      rekom: { zone: document.getElementById('rekomZone'), input: document.getElementById('rekomFile'), preview: document.getElementById('rekomPreview'), nameEl: document.getElementById('rekomName'), sizeEl: document.getElementById('rekomSize'), icon: document.getElementById('rekomIcon'), iconContainer: document.getElementById('rekomIcon'), isImage: false },
+      foto: { zone: document.getElementById('fotoZone'), input: document.getElementById('fotoFile'), preview: document.getElementById('fotoPreview'), nameEl: document.getElementById('fotoName'), sizeEl: document.getElementById('fotoSize'), icon: document.getElementById('fotoIcon'), iconContainer: document.getElementById('fotoIcon'), isImage: false },
+      bukti: { zone: document.getElementById('buktiZone'), input: document.getElementById('buktiFile'), preview: document.getElementById('buktiPreview'), nameEl: document.getElementById('buktiName'), sizeEl: document.getElementById('buktiSize'), icon: document.getElementById('buktiIcon'), iconContainer: document.getElementById('buktiIcon'), isImage: false }
     };
 
     // ===== UTILITIES =====

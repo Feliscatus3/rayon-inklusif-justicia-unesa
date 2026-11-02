@@ -50,6 +50,7 @@ a{text-decoration:none;color:inherit}
 
 .dash-layout{display:flex;min-height:100vh}
 
+/* Sidebar Responsive Styles */
 .sidebar{
   position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);
   background:var(--sidebar-bg);color:#fff;z-index:1000;
@@ -69,6 +70,7 @@ a{text-decoration:none;color:inherit}
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;backdrop-filter:blur(2px)}
 .sidebar-overlay.show{display:block}
 
+/* Main Content Layout */
 .main-area{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;width:calc(100% - var(--sidebar-w));transition:margin var(--transition),width var(--transition)}
 
 .topbar{background:var(--bg-card);height:var(--header-h);display:flex;align-items:center;padding:0 26px;gap:14px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:900}
@@ -91,8 +93,9 @@ a{text-decoration:none;color:inherit}
 .page-title{font-size:1.4rem;font-weight:800;display:flex;align-items:center;gap:12px}
 .page-subtitle{font-size:.84rem;color:var(--text2);margin-top:4px}
 
+/* Card & Frame Drive Styles */
 .card{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow);margin-bottom:24px}
-.card-hd{padding:17px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.card-hd{padding:17px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
 .card-hd h3{font-size:.9rem;font-weight:700;display:flex;align-items:center;gap:9px}
 .card-bd{padding:16px 20px}
 
@@ -107,6 +110,7 @@ a{text-decoration:none;color:inherit}
   align-items:center;
   gap:8px;
   transition:var(--transition);
+  white-space:nowrap;
 }
 .btn-drive:hover{opacity:.9;transform:translateY(-1px)}
 
@@ -121,48 +125,25 @@ a{text-decoration:none;color:inherit}
 }
 .drive-wrapper iframe{width:100%;height:100%;border:0}
 
-.mobile-drive-banner{
-  display:none;
-  background:linear-gradient(135deg, var(--primary), var(--primary-light));
-  color:#fff;
-  padding:20px;
-  border-radius:var(--radius);
-  text-align:center;
-  margin-bottom:20px;
-  box-shadow:var(--shadow);
-}
-.mobile-drive-banner h4{font-size:1rem;margin-bottom:6px}
-.mobile-drive-banner p{font-size:.78rem;opacity:.9;margin-bottom:14px}
-.mobile-drive-banner .btn-drive-mobile{
-  background:var(--accent);
-  color:#1a237e;
-  padding:10px 20px;
-  border-radius:30px;
-  font-weight:700;
-  font-size:.85rem;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  box-shadow:0 4px 12px rgba(0,0,0,.15);
-}
-
+/* Penyesuaian Responsif HP/Tablet */
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%)}
   .sidebar.open{transform:translateX(0);box-shadow:0 0 40px rgba(0,0,0,.4)}
   .main-area{margin-left:0;width:100%}
   .hamburger{display:inline-flex}
   .topbar{padding:0 16px}
+  .clock-wrap{display:none}
   .dash-content{padding:16px}
   .u-info{display:none}
   .card-hd{flex-direction:column;align-items:flex-start}
   .btn-drive{width:100%;justify-content:center}
-  .drive-wrapper{height:460px}
-  .mobile-drive-banner{display:block}
+  .drive-wrapper{height:520px}
 }
 </style>
 </head>
 <body>
 <div class="dash-layout">
+  <!-- Overlay Backdrop Sidebar Mobile -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
   <aside class="sidebar" id="sidebar">
@@ -220,18 +201,10 @@ a{text-decoration:none;color:inherit}
         <p class="page-subtitle">Arsip foto, media kit, dan berkas dokumentasi Rayon PMII Justicia.</p>
       </div>
 
-      <!-- Banner Akses Cepat Khusus Tampilan Mobile -->
-      <div class="mobile-drive-banner">
-        <h4><i class="fab fa-google-drive"></i> Akses Aplikasi Google Drive</h4>
-        <p>Gunakan aplikasi Google Drive di HP kamu untuk navigasi folder yang lebih cepat.</p>
-        <a href="https://drive.google.com/drive/folders/1Ltc_TQyQS-7-Xo0raUdbGfU7oCyttGVH?usp=sharing" target="_blank" class="btn-drive-mobile">
-          <i class="fas fa-external-link-alt"></i> Buka Folder di Drive
-        </a>
-      </div>
-
       <div class="card">
         <div class="card-hd">
           <h3><i class="fab fa-google-drive"></i> Google Drive Galeri Folder</h3>
+          <!-- Tombol tunggal Buka Drive yang otomatis menyesuaikan ukuran layar -->
           <a href="https://drive.google.com/drive/folders/1Ltc_TQyQS-7-Xo0raUdbGfU7oCyttGVH?usp=sharing" target="_blank" class="btn-drive">
             <i class="fas fa-external-link-alt"></i> Buka Drive Langsung
           </a>
@@ -276,7 +249,7 @@ function updClock(){
 setInterval(updClock,1000);
 updClock();
 
-// Sidebar Toggle Handler
+// Handler Toggle Sidebar Mobile
 function toggleSidebar(){
   $('sidebar').classList.toggle('open');
   $('sidebarOverlay').classList.toggle('show');

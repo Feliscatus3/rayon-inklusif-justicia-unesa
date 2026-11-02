@@ -4,21 +4,67 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Event - Kader Panel PMII Justicia</title>
-<link rel="stylesheet" href="/assets/css/style.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="/assets/css/announcement-popup.css">
+<style>
+:root{
+  --sidebar-w:264px;--header-h:66px;--primary:#1a237e;--primary-light:#3949ab;
+  --accent:#ffd600;--bg:#f1f3f7;--bg-card:#ffffff;--text:#1c2333;--text2:#64748b;
+  --text3:#94a3b8;--border:#e4e8ef;--shadow:0 1px 3px rgba(16,24,40,.06);
+  --shadow-lg:0 12px 32px rgba(16,24,40,.12);--radius:14px;--radius-sm:9px;
+  --transition:.28s ease;--sidebar-bg:linear-gradient(180deg,#141a4d 0%,#0d1238 55%,#090d2b 100%);
+}
+[data-theme="dark"]{
+  --primary:#7f8ff4;--primary-light:#a5b4fc;--accent:#ffd600;--bg:#0b0e17;
+  --bg-card:#141926;--text:#e8ecf4;--text2:#94a3b8;--text3:#64748b;--border:#242c42;
+  --shadow:0 1px 3px rgba(0,0,0,.4);--sidebar-bg:linear-gradient(180deg,#0d1130 0%,#090d26 55%,#060918 100%);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+.dash-layout{display:flex;min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:var(--sidebar-bg);color:#fff;z-index:1000;display:flex;flex-direction:column;transition:transform var(--transition)}
+.sidebar-brand{padding:20px;display:flex;align-items:center;gap:13px;border-bottom:1px solid rgba(255,255,255,.08)}
+.brand-logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#ffd600,#ffab00);display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:#1a237e;font-weight:800}
+.brand-text h2{font-size:.98rem;font-weight:700}.brand-text small{font-size:.68rem;opacity:.62;display:block}
+.sidebar-nav{padding:14px 0;flex:1;overflow-y:auto}
+.sidebar-label{padding:14px 22px 6px;font-size:.64rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.4)}
+.sidebar-link{display:flex;align-items:center;gap:13px;padding:10.5px 20px;color:rgba(255,255,255,.68);font-size:.85rem;font-weight:500;margin:2px 10px;border-radius:10px;transition:all var(--transition)}
+.sidebar-link i{width:20px;text-align:center}
+.sidebar-link:hover,.sidebar-link.active{background:rgba(255,255,255,.1);color:#ffd600}
+.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.08);font-size:.7rem;color:rgba(255,255,255,.4);text-align:center}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;backdrop-filter:blur(2px)}
+.sidebar-overlay.show{display:block}
+.main-area{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;width:calc(100% - var(--sidebar-w));transition:margin var(--transition),width var(--transition)}
+.topbar{background:var(--bg-card);height:var(--header-h);display:flex;align-items:center;padding:0 26px;gap:14px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:900}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-right{display:flex;align-items:center;gap:12px;margin-left:auto}
+.hamburger{display:none;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:8px;cursor:pointer;font-size:1rem}
+.topbar-title{font-size:.98rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.icon-btn{width:38px;height:38px;border-radius:11px;background:var(--bg);border:1px solid var(--border);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.theme-toggle .fa-sun{display:none}
+[data-theme="dark"] .theme-toggle .fa-moon{display:none}
+[data-theme="dark"] .theme-toggle .fa-sun{display:inline-block;color:var(--accent)}
+.topbar-user{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:12px}
+.u-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem}
+.dash-content{padding:26px;flex:1;max-width:1440px;margin:0 auto;width:100%}
+.page-head{margin-bottom:24px}.page-title{font-size:1.4rem;font-weight:800;display:flex;align-items:center;gap:12px}.page-subtitle{font-size:.84rem;color:var(--text2);margin-top:4px}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0);box-shadow:0 0 40px rgba(0,0,0,.4)}
+  .main-area{margin-left:0;width:100%}.hamburger{display:inline-flex}.topbar{padding:0 16px}.dash-content{padding:16px}.u-info{display:none}
+}
+</style>
 </head>
 <body>
 <div class="dash-layout">
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
-      <div class="brand-logo" id="sbLogo"><i class="fas fa-people-arrows"></i></div>
-      <div class="brand-text">
-        <h2 id="sbName">Kader Panel</h2>
-        <small id="sbOrg">PMII Justicia UNESA</small>
-      </div>
+      <div class="brand-logo"><i class="fas fa-people-arrows"></i></div>
+      <div class="brand-text"><h2>Kader Panel</h2><small>PMII Justicia UNESA</small></div>
     </div>
     <nav class="sidebar-nav">
       <div class="sidebar-label">Menu</div>
@@ -30,6 +76,7 @@
       <a class="sidebar-link" href="dokumentasi.html"><i class="fas fa-folder-open"></i> Dokumentasi</a>
       <div class="sidebar-label">Lainnya</div>
       <a class="sidebar-link" href="settings.html"><i class="fas fa-cog"></i> Pengaturan</a>
+      <div class="sidebar-label">Akun</div>
       <a class="sidebar-link" id="logoutBtn" href="#"><i class="fas fa-sign-out-alt"></i> Keluar</a>
     </nav>
     <div class="sidebar-footer">PMII Rayon Justicia &copy; 2025</div>
@@ -58,64 +105,6 @@
         <h1 class="page-title"><i class="fas fa-calendar-alt"></i> Kalender Event</h1>
         <p class="page-subtitle">Kelola agenda dan jadwal kegiatan Rayon PMII Justicia.</p>
       </div>
-
-      <div class="toolbar">
-        <div class="t-left">
-          <button id="prevBtn" class="btn-ico"><i class="fas fa-chevron-left"></i></button>
-          <h2 id="titleLabel">Januari 2025</h2>
-          <button id="nextBtn" class="btn-ico"><i class="fas fa-chevron-right"></i></button>
-          <button id="todayBtn" class="btn-tdy">Hari Ini</button>
-        </div>
-        <div class="t-right">
-          <div class="vsw">
-            <button class="active" data-view="month"><i class="fas fa-calendar"></i> Bulan</button>
-            <button data-view="week"><i class="fas fa-calendar-week"></i> Minggu</button>
-            <button data-view="day"><i class="fas fa-calendar-day"></i> Hari</button>
-          </div>
-          <select id="catFilter" class="cf">
-            <option value="">Semua Kategori</option>
-            <option value="PMII">PMII</option>
-            <option value="Rayon">Rayon</option>
-            <option value="Komisariat">Komisariat</option>
-            <option value="BEM">BEM</option>
-            <option value="DPM">DPM</option>
-            <option value="Faculty">Faculty</option>
-            <option value="University">University</option>
-            <option value="External">External</option>
-          </select>
-          <button id="addBtn" class="btn-pri" style="display:inline-flex"><i class="fas fa-plus"></i> Tambah Event</button>
-        </div>
-      </div>
-
-      <div class="cal-views">
-        <div id="monthView" class="mv"><div class="mgrid"><div class="mhdr"><div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div></div><div id="monthDays" class="mdays"></div></div></div>
-        <div id="weekView" class="mv" style="display:none"><div class="wgrid"><div id="weekBody" class="wg"></div></div></div>
-        <div id="dayView" class="mv dv" style="display:none"><h3 id="dayTitle">Agenda Hari Ini</h3><div id="dayList"></div></div>
-      </div>
-
-      <div class="card up-card">
-        <div class="card-hd"><h3><i class="fas fa-calendar-day"></i> Event Mendatang</h3></div>
-        <div class="card-bd" id="eventList"><div class="noe"><i class="fas fa-spinner fa-spin"></i><p>Memuat event...</p></div></div>
-      </div>
-
-      <div id="detailModal" class="modal"><div class="mc"><span class="mx">&times;</span><div id="detailContent"></div></div></div>
-      <div id="formModal" class="modal"><div class="mc"><span class="mx">&times;</span><h3 id="formTitle">Tambah Event Baru</h3>
-        <form id="eventForm"><input type="hidden" id="eventId">
-          <div class="fg"><label>Judul *</label><input type="text" id="evTitle" required></div>
-          <div class="fg"><label>Deskripsi</label><textarea id="evDesc" rows="3"></textarea></div>
-          <div class="fr">
-            <div class="fg"><label>Kategori</label><select id="evCategory"><option value="Rayon">Rayon</option><option value="PMII">PMII</option><option value="Komisariat">Komisariat</option><option value="BEM">BEM</option><option value="DPM">DPM</option><option value="Faculty">Faculty</option><option value="University">University</option><option value="External">External</option></select></div>
-            <div class="fg"><label>Warna</label><input type="color" id="evColor" value="#1a237e"></div>
-          </div>
-          <div class="fg"><label>Lokasi</label><input type="text" id="evLocation"></div>
-          <div class="fr">
-            <div class="fg"><label>Tanggal *</label><input type="date" id="evDate" required></div>
-            <div class="fg"><label>Waktu</label><input type="time" id="evTime"></div>
-          </div>
-          <div class="fa"><button type="submit" class="btn-pri" id="formSubmit"><i class="fas fa-save"></i> Simpan Event</button><button type="button" class="btn-cancel" id="formCancel">Batal</button></div>
-        </form></div></div>
-
-      <div id="toast" class="toast"></div>
     </main>
   </div>
 </div>
@@ -124,7 +113,6 @@
 function $(id){return document.getElementById(id)}
 function initials(n){if(!n)return '?';return n.trim().split(/\s+/).map(function(w){return w[0]}).join('').substring(0,2).toUpperCase();}
 function capRole(r){if(!r)return '-';return r.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()});}
-function escapeHtml(s){if(s===null||s===undefined) return '';return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 
 (function initTheme(){
   var saved=localStorage.getItem('theme');
@@ -137,229 +125,33 @@ $('themeToggle').addEventListener('click',function(){
   if(dark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme','light');}
   else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('theme','dark');}
 });
-$('hamburger').addEventListener('click',function(){ $('sidebar').classList.toggle('open'); });
 
-var MONTHS = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-var CAT_COLORS = {PMII:'#d32f2f',Rayon:'#1a237e',Komisariat:'#2e7d32',BEM:'#e65100',DPM:'#6a1b9a',Faculty:'#00695c',University:'#37474f',External:'#c62828'};
-var today = new Date(), curView = 'month', events = [], curUser = null, csrfToken = null;
+function toggleSidebar(){
+  $('sidebar').classList.toggle('open');
+  $('sidebarOverlay').classList.toggle('show');
+}
+$('hamburger').addEventListener('click', toggleSidebar);
+$('sidebarOverlay').addEventListener('click', toggleSidebar);
 
-function getCsrfToken(){ return csrfToken || null; }
-
-function toast(msg, type){
-  var t=$('toast');
-  t.textContent=msg;
-  t.className='toast'+(type==='err'?' err':'')+' show';
-  setTimeout(function(){ t.classList.remove('show'); }, 3500);
+async function loadUser(){
+  try{
+    var r=await fetch('/api/auth/me',{credentials:'include'});
+    var d=await r.json();
+    if(!d.authenticated){ window.location.href='../panel.html'; return; }
+    var u=d.user;
+    $('userName').textContent=u.full_name||u.username||'Kader';
+    $('userRole').textContent=capRole(u.role);
+    $('userAvatar').textContent=initials(u.full_name||u.username||'Kader');
+  }catch(e){ window.location.href='../panel.html'; }
 }
 
-document.addEventListener('DOMContentLoaded', async function(){
-  try {
-    var r = await fetch('/api/auth/me', {credentials:'include'});
-    var d = await r.json();
-    if (!d.authenticated) { window.location.href='../panel.html'; return; }
-    curUser = d.user;
-    csrfToken = d.csrfToken || null;
-    var uname = curUser.full_name || curUser.username || 'Kader';
-    $('userName').textContent = uname;
-    $('userRole').textContent = capRole(curUser.role);
-    $('userAvatar').textContent = initials(uname);
-    // Tombol Tambah Event selalu tampil untuk semua user terautentikasi
-    document.getElementById('addBtn').style.display = 'inline-flex';
-    await loadEvents();
-  } catch(e) { window.location.href='../panel.html'; return; }
+$('logoutBtn').onclick=async function(ev){
+  ev.preventDefault();
+  try{ await fetch('/api/auth/logout',{method:'POST',credentials:'include'}); }catch(e){}
+  window.location.href='../panel.html';
+};
 
-  document.getElementById('logoutBtn').onclick = async function(ev){
-    ev.preventDefault();
-    var headers={'Content-Type':'application/json'};
-    var csrf=getCsrfToken();
-    if(csrf) headers['X-CSRF-Token']=csrf;
-    try{ await fetch('/api/auth/logout',{method:'POST',headers:headers,credentials:'include'}); }catch(e){}
-    window.location.href='../panel.html';
-  };
-  document.getElementById('prevBtn').onclick = function(){ changeDate(-1); };
-  document.getElementById('nextBtn').onclick = function(){ changeDate(1); };
-  document.getElementById('todayBtn').onclick = function(){ today = new Date(); render(); };
-  document.getElementById('catFilter').onchange = function(){ render(); };
-  document.getElementById('addBtn').onclick = function(){ openForm(); };
-  document.getElementById('formCancel').onclick = function(){ closeModal('formModal'); };
-  document.getElementById('eventForm').onsubmit = handleSubmit;
-
-  var q = document.querySelectorAll('.mx');
-  for (var i=0; i<q.length; i++) q[i].onclick = function(){ closeModal(this.closest('.modal').id); };
-
-  var vBtns = document.querySelectorAll('[data-view]');
-  for (var i=0; i<vBtns.length; i++) vBtns[i].onclick = function(){
-    var all = document.querySelectorAll('[data-view]');
-    for (var j=0; j<all.length; j++) all[j].classList.remove('active');
-    this.classList.add('active');
-    curView = this.dataset.view;
-    render();
-  };
-});
-
-function changeDate(delta) {
-  if (curView === 'month') today.setMonth(today.getMonth() + delta);
-  else if (curView === 'week') today.setDate(today.getDate() + (7 * delta));
-  else today.setDate(today.getDate() + delta);
-  render();
-}
-function getDateStr(d) {
-  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-}
-function filteredEvents() {
-  var cat = document.getElementById('catFilter').value;
-  return cat ? events.filter(function(e){ return e.category === cat; }) : events;
-}
-function getColor(e) { return e.color || CAT_COLORS[e.category] || '#1a237e'; }
-
-function openModal(id) { document.getElementById(id).classList.add('show'); document.body.classList.add('modal-open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('show'); document.body.classList.remove('modal-open'); }
-
-function render() {
-  document.getElementById('monthView').style.display = (curView === 'month') ? 'block' : 'none';
-  document.getElementById('weekView').style.display = (curView === 'week') ? 'block' : 'none';
-  document.getElementById('dayView').style.display = (curView === 'day') ? 'block' : 'none';
-  if (curView === 'month') renderMonth();
-  else if (curView === 'week') renderWeek();
-  else renderDay();
-  renderEventList();
-}
-
-function renderMonth() {
-  var f = filteredEvents();
-  var y = today.getFullYear(), m = today.getMonth();
-  document.getElementById('titleLabel').textContent = MONTHS[m] + ' ' + y;
-  var fd = new Date(y, m, 1).getDay();
-  var dim = new Date(y, m + 1, 0).getDate();
-  var dip = new Date(y, m, 0).getDate();
-  var ts = getDateStr(new Date());
-  var h = '';
-  for (var i = fd - 1; i >= 0; i--) h += '<div class="cell om"><div class="num">' + (dip - i) + '</div></div>';
-  for (var d = 1; d <= dim; d++) {
-    var ds = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
-    var it = (ds === ts);
-    var de = f.filter(function(e) { return String(e.event_date) === ds; });
-    h += '<div class="cell' + (it ? ' today' : '') + '" onclick="goToDay(\'' + ds + '\')"><div class="num">' + d + '</div>';
-    for (var j = 0; j < Math.min(de.length, 3); j++) {
-      h += '<div class="chip" style="background:' + getColor(de[j]) + '" onclick="event.stopPropagation();showDetail(' + de[j].id + ')">' + escapeHtml(de[j].title) + '</div>';
-    }
-    h += '</div>';
-  }
-  document.getElementById('monthDays').innerHTML = h;
-}
-
-function renderWeek() {
-  var f = filteredEvents();
-  var ts = getDateStr(new Date());
-  var mon = new Date(today);
-  mon.setDate(mon.getDate() - ((mon.getDay() + 6) % 7));
-  document.getElementById('titleLabel').textContent = 'Minggu ' + MONTHS[mon.getMonth()] + ' ' + mon.getFullYear();
-  var dy = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-  var h = '';
-  for (var i = 0; i < 7; i++) {
-    var dt = new Date(mon); dt.setDate(mon.getDate() + i);
-    var ds = getDateStr(dt);
-    var de = f.filter(function(e) { return String(e.event_date) === ds; });
-    h += '<div class="wc"><div class="wl">' + dy[i] + ' ' + dt.getDate() + '</div>';
-    for (var j = 0; j < de.length; j++) {
-      h += '<div class="we" style="background:' + getColor(de[j]) + '" onclick="showDetail(' + de[j].id + ')">' + escapeHtml(de[j].title) + '</div>';
-    }
-    h += '</div>';
-  }
-  document.getElementById('weekBody').innerHTML = h;
-}
-
-function renderDay() {
-  var f = filteredEvents();
-  var ds = getDateStr(today);
-  document.getElementById('dayTitle').textContent = 'Agenda ' + today.getDate() + ' ' + MONTHS[today.getMonth()] + ' ' + today.getFullYear();
-  var de = f.filter(function(e) { return String(e.event_date) === ds; });
-  var h = '';
-  if (de.length === 0) h = '<div class="noe"><p>Tidak ada event pada tanggal ini</p></div>';
-  else {
-    for (var j = 0; j < de.length; j++) {
-      h += '<div class="de" onclick="showDetail(' + de[j].id + ')"><h4>' + escapeHtml(de[j].title) + '</h4></div>';
-    }
-  }
-  document.getElementById('dayList').innerHTML = h;
-}
-
-function goToDay(ds) {
-  today = new Date(ds + 'T00:00:00');
-  curView = 'day';
-  render();
-}
-
-async function loadEvents() {
-  try {
-    var r = await fetch('/api/events', { credentials: 'include' });
-    if (!r.ok) return;
-    var d = await r.json();
-    events = Array.isArray(d) ? d : [];
-    render();
-    renderEventList();
-  } catch (err) {}
-}
-
-function renderEventList() {
-  var list = document.getElementById('eventList');
-  if (!list) return;
-  var f = filteredEvents();
-  if (f.length === 0) { list.innerHTML = '<div class="noe"><p>Belum ada event.</p></div>'; return; }
-  var h = '';
-  for (var j = 0; j < Math.min(f.length, 5); j++) {
-    var e = f[j];
-    h += '<div class="up" onclick="showDetail(' + e.id + ')"><h4>' + escapeHtml(e.title) + '</h4></div>';
-  }
-  list.innerHTML = h;
-}
-
-function resetForm() {
-  document.getElementById('eventId').value = '';
-  document.getElementById('evTitle').value = '';
-  document.getElementById('evDesc').value = '';
-  document.getElementById('evLocation').value = '';
-  document.getElementById('evDate').value = getDateStr(today);
-}
-
-function openForm() { resetForm(); openModal('formModal'); }
-
-async function handleSubmit(e) {
-  e.preventDefault();
-  var id = document.getElementById('eventId').value;
-  var data = {
-    title: document.getElementById('evTitle').value.trim(),
-    description: document.getElementById('evDesc').value,
-    category: document.getElementById('evCategory').value,
-    color: document.getElementById('evColor').value,
-    location: document.getElementById('evLocation').value,
-    event_date: document.getElementById('evDate').value,
-    event_time: document.getElementById('evTime').value
-  };
-  if (!data.title || !data.event_date) { toast('Judul & Tanggal wajib diisi','err'); return; }
-
-  try {
-    var url = '/api/events' + (id ? '/' + id : '');
-    var method = id ? 'PUT' : 'POST';
-    var headers = { 'Content-Type': 'application/json' };
-    var csrf = getCsrfToken();
-    if (csrf) headers['X-CSRF-Token'] = csrf;
-    var resp = await fetch(url, { method: method, headers: headers, body: JSON.stringify(data), credentials: 'include' });
-    if (resp.ok) {
-      closeModal('formModal');
-      toast(id ? 'Event berhasil diperbarui.' : 'Event berhasil ditambahkan.');
-      await loadEvents();
-    } else { toast('Gagal menyimpan event','err'); }
-  } catch (err) { toast('Koneksi gagal','err'); }
-}
-
-function showDetail(id) {
-  var e = events.find(function(item){ return String(item.id) === String(id); });
-  if (!e) return;
-  var h = '<div class="dh"><h3>' + escapeHtml(e.title) + '</h3></div><div class="db"><p>' + escapeHtml(e.description||'') + '</p></div>';
-  document.getElementById('detailContent').innerHTML = h;
-  openModal('detailModal');
-}
+loadUser();
 </script>
 <script src="/assets/js/announcement-popup.js"></script>
 </body>

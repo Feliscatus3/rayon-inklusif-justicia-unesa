@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dokumentasi - Kader Panel PMII Justicia</title>
+<title>Dokumentasi Internal & Keamanan - Kader Panel PMII Justicia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -28,6 +28,11 @@
   --radius-sm:9px;
   --transition:.28s ease;
   --sidebar-bg:linear-gradient(180deg,#141a4d 0%,#0d1238 55%,#090d2b 100%);
+  --danger:#d32f2f;
+  --danger-bg:rgba(211,47,47,0.08);
+  --danger-border:rgba(211,47,47,0.3);
+  --warning:#ed6c02;
+  --warning-bg:rgba(237,108,2,0.08);
 }
 [data-theme="dark"]{
   --primary:#7f8ff4;
@@ -43,6 +48,11 @@
   --shadow:0 1px 3px rgba(0,0,0,.4),0 1px 2px rgba(0,0,0,.3);
   --shadow-lg:0 12px 32px rgba(0,0,0,.5);
   --sidebar-bg:linear-gradient(180deg,#0d1130 0%,#090d26 55%,#060918 100%);
+  --danger:#f44336;
+  --danger-bg:rgba(244,67,54,0.15);
+  --danger-border:rgba(244,67,54,0.4);
+  --warning:#ffa726;
+  --warning-bg:rgba(255,167,38,0.15);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
@@ -89,9 +99,86 @@ a{text-decoration:none;color:inherit}
 .u-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem}
 
 .dash-content{padding:26px;flex:1;max-width:1440px;margin:0 auto;width:100%}
-.page-head{margin-bottom:24px}
+.page-head{margin-bottom:20px}
 .page-title{font-size:1.4rem;font-weight:800;display:flex;align-items:center;gap:12px}
 .page-subtitle{font-size:.84rem;color:var(--text2);margin-top:4px}
+
+/* SECURITY ALERT BANNER */
+.security-alert-box{
+  background:var(--danger-bg);
+  border:1px solid var(--danger-border);
+  border-radius:var(--radius);
+  padding:18px 22px;
+  margin-bottom:24px;
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+  position:relative;
+  box-shadow:var(--shadow);
+}
+.security-alert-icon{
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  background:var(--danger);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.3rem;
+  flex-shrink:0;
+  animation:pulseDanger 2s infinite;
+}
+@keyframes pulseDanger{
+  0%{box-shadow:0 0 0 0 rgba(211,47,47,0.4)}
+  70%{box-shadow:0 0 0 10px rgba(211,47,47,0)}
+  100%{box-shadow:0 0 0 0 rgba(211,47,47,0)}
+}
+.security-alert-body{flex:1}
+.security-alert-head{
+  font-size:.95rem;
+  font-weight:800;
+  color:var(--danger);
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:6px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+.security-rules{
+  list-style:none;
+  font-size:.83rem;
+  color:var(--text);
+  line-height:1.55;
+  margin-top:8px;
+}
+.security-rules li{
+  position:relative;
+  padding-left:22px;
+  margin-bottom:6px;
+}
+.security-rules li::before{
+  content:'\f054';
+  font-family:'Font Awesome 6 Free';
+  font-weight:900;
+  position:absolute;
+  left:0;
+  top:1px;
+  font-size:.7rem;
+  color:var(--danger);
+}
+.security-rules strong{color:var(--danger)}
+.sec-badge{
+  background:var(--danger);
+  color:#fff;
+  font-size:.65rem;
+  padding:2px 7px;
+  border-radius:4px;
+  font-weight:700;
+  margin-left:6px;
+  vertical-align:middle;
+}
 
 /* Card & Frame Drive Styles */
 .card{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow);margin-bottom:24px}
@@ -125,6 +212,85 @@ a{text-decoration:none;color:inherit}
 }
 .drive-wrapper iframe{width:100%;height:100%;border:0}
 
+/* POPUP MODAL PROTOKOL KEAMANAN */
+.modal-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.7);
+  z-index:2000;
+  backdrop-filter:blur(4px);
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+}
+.modal-overlay.show{display:flex}
+.modal-sec-box{
+  background:var(--bg-card);
+  border-radius:var(--radius);
+  border:2px solid var(--danger);
+  max-width:540px;
+  width:100%;
+  padding:24px;
+  box-shadow:var(--shadow-lg);
+  position:relative;
+  animation:modalSlide .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes modalSlide{
+  from{transform:translateY(20px);opacity:0}
+  to{transform:translateY(0);opacity:1}
+}
+.modal-sec-header{
+  text-align:center;
+  padding-bottom:14px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:16px;
+}
+.modal-sec-header i{
+  font-size:2.8rem;
+  color:var(--danger);
+  margin-bottom:8px;
+}
+.modal-sec-header h2{
+  font-size:1.15rem;
+  font-weight:800;
+  color:var(--danger);
+  text-transform:uppercase;
+}
+.modal-sec-content{
+  font-size:.85rem;
+  color:var(--text);
+  line-height:1.6;
+  max-height:300px;
+  overflow-y:auto;
+  padding-right:8px;
+  margin-bottom:20px;
+}
+.modal-sec-content p{margin-bottom:10px}
+.modal-sec-content ul{margin-left:18px;margin-bottom:12px}
+.modal-sec-content li{margin-bottom:6px}
+.modal-sec-footer{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.btn-agree{
+  background:var(--danger);
+  color:#fff;
+  border:none;
+  padding:12px;
+  border-radius:var(--radius-sm);
+  font-weight:700;
+  font-size:.88rem;
+  cursor:pointer;
+  transition:var(--transition);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.btn-agree:hover{opacity:.9}
+
 /* Penyesuaian Responsif HP/Tablet */
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%)}
@@ -138,6 +304,7 @@ a{text-decoration:none;color:inherit}
   .card-hd{flex-direction:column;align-items:flex-start}
   .btn-drive{width:100%;justify-content:center}
   .drive-wrapper{height:520px}
+  .security-alert-box{flex-direction:column;gap:12px}
 }
 </style>
 </head>
@@ -198,13 +365,35 @@ a{text-decoration:none;color:inherit}
     <main class="dash-content">
       <div class="page-head">
         <h1 class="page-title"><i class="fas fa-images"></i> Galeri Dokumentasi Kegiatan</h1>
-        <p class="page-subtitle">Arsip foto, media kit, dan berkas dokumentasi Rayon PMII Justicia.</p>
+        <p class="page-subtitle">Arsip foto, media kit, dan berkas dokumentasi internal Rayon PMII Justicia.</p>
+      </div>
+
+      <!-- PERINGATAN KEAMANAN DOKUMENTASI RAHASIA -->
+      <div class="security-alert-box">
+        <div class="security-alert-icon">
+          <i class="fas fa-shield-cat"></i>
+        </div>
+        <div class="security-alert-body">
+          <div class="security-alert-head">
+            <i class="fas fa-exclamation-triangle"></i> Peringatan Kerahasiaan Tingkat Tinggi
+            <span class="sec-badge">HIGH SECURITY</span>
+          </div>
+          <p style="font-size:.84rem; font-weight:600;">Seluruh arsip dokumentasi di dalam folder ini dikategorikan sebagai <strong>Dokumentasi Rahasia Internal Organisasi</strong>. Setiap kader wajib mematuhi protokol publikasi berikut:</p>
+          <ul class="security-rules">
+            <li><strong>Foto Diri / Individu:</strong> Hanya foto pribadi (foto diri sendiri) yang diperbolehkan secara bebas untuk dipublikasikan ke media sosial/umum.</li>
+            <li><strong>Foto Bersama (Group):</strong> Wajib mengedit blur / menyamarkan wajah anggota lain yang berada dalam foto sebelum diunggah atau dipublikasikan.</li>
+            <li><strong>Foto Mabin (Majelis Pembina):</strong> <strong>DILARANG KERAS</strong> untuk di-post, di-share, atau dipublikasikan dalam bentuk apapun ke ruang publik.</li>
+            <li><strong>Penyebaran Link / Berkas:</strong> Setiap orang yang membagikan link Google Drive ini atau menyebarkan foto tanpa mengindahkan aturan akan <strong>dikenakan sanksi organisasi tegas</strong> sesuai dengan Form Pernyataan Integrity & Security Komitmen yang Anda tanda tangani saat <strong>MAPABA</strong>.</li>
+          </ul>
+          <button type="button" onclick="showSecModal()" style="margin-top:10px; background:none; border:none; color:var(--danger); font-size:.8rem; font-weight:700; cursor:pointer; text-decoration:underline;">
+            <i class="fas fa-file-contract"></i> Baca Ulang Pakta Integritas MAPABA
+          </button>
+        </div>
       </div>
 
       <div class="card">
         <div class="card-hd">
           <h3><i class="fab fa-google-drive"></i> Google Drive Galeri Folder</h3>
-          <!-- Tombol tunggal Buka Drive yang otomatis menyesuaikan ukuran layar -->
           <a href="https://drive.google.com/drive/folders/1Ltc_TQyQS-7-Xo0raUdbGfU7oCyttGVH?usp=sharing" target="_blank" class="btn-drive">
             <i class="fas fa-external-link-alt"></i> Buka Drive Langsung
           </a>
@@ -216,6 +405,32 @@ a{text-decoration:none;color:inherit}
         </div>
       </div>
     </main>
+  </div>
+</div>
+
+<!-- MODAL PROTOKOL KEAMANAN -->
+<div class="modal-overlay" id="secModal">
+  <div class="modal-sec-box">
+    <div class="modal-sec-header">
+      <i class="fas fa-user-shield"></i>
+      <h2>Protokol Keamanan & Privacy</h2>
+      <small style="color:var(--text2); font-weight:600;">Pakta Integritas Dokumentasi Rayon PMII Justicia</small>
+    </div>
+    <div class="modal-sec-content">
+      <p>Sahabat/i sekalian, demi menjaga marwah, keamanan, dan kerahasiaan struktural organisasi, perhatikan poin penandatanganan integritas awal MAPABA:</p>
+      <ul>
+        <li><strong>Dokumentasi Rahasia:</strong> Seluruh media dalam server/drive ini merupakan aset internal organisasi yang diproteksi.</li>
+        <li><strong>Publikasi Foto Diri:</strong> Diizinkan hanya untuk dokumentasi tunggal personal sahabat/i sendiri.</li>
+        <li><strong>Sensor Foto Bersama:</strong> Wajib melakukan blur/obscure pada wajah kader lain apabila dipublikasikan di media sosial pribadi.</li>
+        <li><strong>Sterilisasi Foto Mabin:</strong> Foto jajaran Majelis Pembina (Mabin) bersifat tertutup dan dilarang disebarluaskan.</li>
+        <li><strong>Sanksi Organisasi:</strong> Pelanggaran terhadap penyebaran tautan (share link) atau media tanpa izin akan diproses oleh Bidang Kaderisasi & Tim Internal sesuai regulasi awal penandatanganan MAPABA.</li>
+      </ul>
+    </div>
+    <div class="modal-sec-footer">
+      <button class="btn-agree" onclick="closeSecModal()">
+        <i class="fas fa-check-circle"></i> Saya Mengerti & Siap Mematuhi Sanksi
+      </button>
+    </div>
   </div>
 </div>
 
@@ -256,6 +471,20 @@ function toggleSidebar(){
 }
 $('hamburger').addEventListener('click', toggleSidebar);
 $('sidebarOverlay').addEventListener('click', toggleSidebar);
+
+// Modal Handler
+function showSecModal(){
+  $('secModal').classList.add('show');
+}
+function closeSecModal(){
+  $('secModal').classList.remove('show');
+  localStorage.setItem('sec_docs_agreed','true');
+}
+
+// Auto Popup jika belum pernah disetujui di device/browser ini
+if(!localStorage.getItem('sec_docs_agreed')){
+  setTimeout(showSecModal, 500);
+}
 
 async function loadUser(){
   try{

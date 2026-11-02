@@ -4,128 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manajemen Pengguna - Kader Panel PMII Justicia</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/assets/css/announcement-popup.css">
-  <style>
-  :root{
-    --sidebar-w:264px;--header-h:66px;--primary:#1a237e;--primary-light:#3949ab;
-    --accent:#ffd600;--bg:#f1f3f7;--bg-card:#ffffff;--text:#1c2333;--text2:#64748b;
-    --text3:#94a3b8;--border:#e4e8ef;--shadow:0 1px 3px rgba(16,24,40,.06);
-    --shadow-lg:0 12px 32px rgba(16,24,40,.12);--radius:14px;--radius-sm:9px;
-    --transition:.28s ease;--sidebar-bg:linear-gradient(180deg,#141a4d 0%,#0d1238 55%,#090d2b 100%);
-    --danger:#d32f2f;--success:#2e7d32;
-  }
-  [data-theme="dark"]{
-    --primary:#7f8ff4;--primary-light:#a5b4fc;--accent:#ffd600;--bg:#0b0e17;
-    --bg-card:#141926;--text:#e8ecf4;--text2:#94a3b8;--text3:#64748b;--border:#242c42;
-    --shadow:0 1px 3px rgba(0,0,0,.4);--sidebar-bg:linear-gradient(180deg,#0d1130 0%,#090d26 55%,#060918 100%);
-    --danger:#ef5350;--success:#4caf50;
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-  a{text-decoration:none;color:inherit}
-  
-  .dash-layout{display:flex;min-height:100vh}
-  .sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:var(--sidebar-bg);color:#fff;z-index:1000;display:flex;flex-direction:column;transition:transform var(--transition)}
-  .sidebar-brand{padding:20px;display:flex;align-items:center;gap:13px;border-bottom:1px solid rgba(255,255,255,.08)}
-  .brand-logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#ffd600,#ffab00);display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:#1a237e;font-weight:800}
-  .brand-text h2{font-size:.98rem;font-weight:700}.brand-text small{font-size:.68rem;opacity:.62;display:block}
-  .sidebar-nav{padding:14px 0;flex:1;overflow-y:auto}
-  .sidebar-label{padding:14px 22px 6px;font-size:.64rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.4)}
-  .sidebar-link{display:flex;align-items:center;gap:13px;padding:10.5px 20px;color:rgba(255,255,255,.68);font-size:.85rem;font-weight:500;margin:2px 10px;border-radius:10px;transition:all var(--transition)}
-  .sidebar-link i{width:20px;text-align:center}
-  .sidebar-link:hover,.sidebar-link.active{background:rgba(255,255,255,.1);color:#ffd600}
-  .sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.08);font-size:.7rem;color:rgba(255,255,255,.4);text-align:center}
-  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;backdrop-filter:blur(2px)}
-  .sidebar-overlay.show{display:block}
-  
-  .main-area{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;width:calc(100% - var(--sidebar-w));transition:margin var(--transition),width var(--transition)}
-  .topbar{background:var(--bg-card);height:var(--header-h);display:flex;align-items:center;padding:0 26px;gap:14px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:900}
-  .topbar-left{display:flex;align-items:center;gap:12px}
-  .topbar-right{display:flex;align-items:center;gap:12px;margin-left:auto}
-  .hamburger{display:none;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:8px;cursor:pointer;font-size:1rem}
-  .topbar-title{font-size:.98rem;font-weight:700;display:flex;align-items:center;gap:8px}
-  .icon-btn{width:38px;height:38px;border-radius:11px;background:var(--bg);border:1px solid var(--border);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center}
-  .theme-toggle .fa-sun{display:none}
-  [data-theme="dark"] .theme-toggle .fa-moon{display:none}
-  [data-theme="dark"] .theme-toggle .fa-sun{display:inline-block;color:var(--accent)}
-  .topbar-user{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:12px}
-  .u-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem}
-  
-  .dash-content{padding:26px;flex:1;max-width:1440px;margin:0 auto;width:100%}
-  .page-head{margin-bottom:24px}.page-title{font-size:1.4rem;font-weight:800;display:flex;align-items:center;gap:12px}.page-subtitle{font-size:.84rem;color:var(--text2);margin-top:4px}
-  .card{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow);margin-bottom:24px}
-  .card-hd{padding:17px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  .card-hd h3{font-size:.9rem;font-weight:700;display:flex;align-items:center;gap:9px}
-  
-  .table-wrap{overflow-x:auto}
-  table{width:100%;border-collapse:collapse;font-size:.84rem}
-  th,td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--border)}
-  th{background:var(--bg);font-weight:700;color:var(--text2);font-size:.75rem;text-transform:uppercase}
-  
-  .badge{padding:4px 8px;border-radius:20px;font-size:.7rem;font-weight:700;text-transform:uppercase}
-  .ba{background:rgba(46,125,50,.15);color:var(--success)}.bp{background:rgba(255,179,0,.15);color:#b26a00}.bi{background:rgba(100,116,139,.15);color:#64748b}.bd{background:rgba(211,47,47,.15);color:var(--danger)}
-  
-  .btn{padding:8px 14px;border-radius:8px;font-size:.8rem;font-weight:600;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity .2s ease}
-  .btn:hover{opacity:0.9}
-  .btn-pri{background:var(--primary);color:#fff}.btn-g{background:var(--success);color:#fff}.btn-danger{background:var(--danger);color:#fff}.btn-sec{background:var(--bg);border:1px solid var(--border);color:var(--text)}
-  .btn-sm{padding:5px 8px;font-size:.75rem}
-
-  /* MODALS SYSTEM */
-  .modal-o{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(3px);padding:16px}
-  .modal-o.on{display:flex}
-  .modal{background:var(--bg-card);padding:24px;border-radius:var(--radius);width:100%;max-width:500px;position:relative;box-shadow:var(--shadow-lg);border:1px solid var(--border);animation:popIn .2s cubic-bezier(0.175, 0.885, 0.32, 1.275)}
-  @keyframes popIn{from{transform:scale(0.92);opacity:0}to{transform:scale(1);opacity:1}}
-  .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;border-bottom:1px solid var(--border);padding-bottom:12px}
-  .modal-head h3{font-size:1.05rem;font-weight:700;display:flex;align-items:center;gap:8px}
-  .close-btn{background:none;border:none;color:var(--text2);font-size:1.2rem;cursor:pointer}
-  
-  .fg{margin-bottom:14px}
-  .fg label{display:block;font-size:.78rem;font-weight:600;margin-bottom:6px;color:var(--text2)}
-  .fg input,.fg select{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:.85rem;outline:none}
-  .fg input:focus,.fg select:focus{border-color:var(--primary-light)}
-  .fa{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
-
-  /* CUSTOM TOAST SYSTEM */
-  .toast-container{position:fixed;top:20px;right:20px;z-index:3000;display:flex;flex-direction:column;gap:10px;pointer-events:none}
-  .toast{pointer-events:auto;min-width:280px;padding:14px 18px;border-radius:10px;background:var(--bg-card);color:var(--text);box-shadow:var(--shadow-lg);border-left:5px solid var(--primary);display:flex;align-items:center;gap:12px;animation:slideIn .3s ease, fadeOut .3s 3.7s ease forwards}
-  .toast.success{border-left-color:var(--success)}
-  .toast.error{border-left-color:var(--danger)}
-  .toast.warning{border-left-color:var(--accent)}
-  .toast i{font-size:1.2rem}
-  .toast.success i{color:var(--success)}
-  .toast.error i{color:var(--danger)}
-  .toast.warning i{color:var(--accent)}
-  .toast-msg{font-size:.84rem;font-weight:500}
-  @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
-  @keyframes fadeOut{from{opacity:1}to{opacity:0}}
-
-  @media(max-width:768px){
-    .sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0);box-shadow:0 0 40px rgba(0,0,0,.4)}
-    .main-area{margin-left:0;width:100%}.hamburger{display:inline-flex}.topbar{padding:0 16px}.dash-content{padding:16px}.u-info{display:none}
-  }
-  </style>
 </head>
 <body>
 <div class="dash-layout">
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-  <!-- Sidebar -->
+  <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
-      <div class="brand-logo"><i class="fas fa-people-arrows"></i></div>
-      <div class="brand-text"><h2>Kader Panel</h2><small>PMII Justicia UNESA</small></div>
+      <div class="brand-logo" id="sbLogo"><i class="fas fa-people-arrows"></i></div>
+      <div class="brand-text">
+        <h2 id="sbName">Kader Panel</h2>
+        <small id="sbOrg">PMII Justicia UNESA</small>
+      </div>
     </div>
     <nav class="sidebar-nav">
       <div class="sidebar-label">Menu</div>
       <a class="sidebar-link" href="dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
-      <a class="sidebar-link active" href="users.html"><i class="fas fa-users"></i> Manajemen Pengguna</a>
+      <a class="sidebar-link" href="users.html"><i class="fas fa-users"></i> Manajemen Pengguna</a>
       <a class="sidebar-link" href="calendar.html"><i class="fas fa-calendar-days"></i> Event</a>
       <a class="sidebar-link" href="announcements.html"><i class="fas fa-bullhorn"></i> Pengumuman</a>
       <a class="sidebar-link" href="tabungan.html"><i class="fas fa-piggy-bank"></i> Tabungan</a>
-      <a class="sidebar-link" href="dokumentasi.html"><i class="fas fa-folder-open"></i> Dokumentasi</a>
+      <a class="sidebar-link active" href="dokumentasi.html"><i class="fas fa-folder-open"></i> Dokumentasi</a>
       <div class="sidebar-label">Lainnya</div>
       <a class="sidebar-link" href="settings.html"><i class="fas fa-cog"></i> Pengaturan</a>
       <div class="sidebar-label">Akun</div>
@@ -134,7 +37,7 @@
     <div class="sidebar-footer">PMII Rayon Justicia &copy; 2025</div>
   </aside>
 
-  <!-- Main Area -->
+  <!-- MAIN -->
   <div class="main-area">
     <header class="topbar">
       <div class="topbar-left">
@@ -155,379 +58,400 @@
 
     <main class="dash-content">
       <div class="page-head">
-        <h1 class="page-title"><i class="fas fa-users"></i> Kelola Kader & Anggota</h1>
-        <p class="page-subtitle">Kelola akun, status keaktifan, dan peran kader Rayon PMII Justicia.</p>
+        <h1 class="page-title"><i class="fas fa-users"></i> Daftar Pengguna</h1>
+        <p class="page-subtitle">Kelola akun, status, dan peran kader Rayon PMII Justicia.</p>
       </div>
+
       <div class="card">
         <div class="card-hd">
           <h3><i class="fas fa-list"></i> Data Pengguna</h3>
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-            <input type="text" id="si" placeholder="Cari kader / username..." style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:.84rem;">
+            <div class="sb">
+              <input type="text" id="si" placeholder="Cari username, nama, atau email...">
+              <button class="btn btn-pri" id="searchBtn"><i class="fas fa-search"></i></button>
+            </div>
+            <select id="statusFilter" class="filter-sel">
+              <option value="">Semua Status</option>
+              <option value="pending">Pending</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="suspended">Suspended</option>
+              <option value="rejected">Rejected</option>
+            </select>
             <button class="btn btn-g" id="addBtn"><i class="fas fa-plus"></i> Tambah Pengguna</button>
           </div>
         </div>
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>No.</th>
-                <th>Username</th>
-                <th>Nama Lengkap</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody id="tb">
-              <tr><td colspan="7" style="text-align:center;padding:25px"><i class="fas fa-spinner fa-spin"></i> Memuat data...</td></tr>
-            </tbody>
+            <thead><tr>
+              <th>No.</th><th>Username</th><th>Nama Lengkap</th><th>Email</th><th>Role</th><th>Privilege</th><th>Status</th><th>Aksi</th>
+            </tr></thead>
+            <tbody id="tb"><tr><td colspan="8" class="empty"><i class="fas fa-spinner fa-spin"></i><p>Memuat data...</p></td></tr></tbody>
           </table>
         </div>
+        <div class="pag" id="pc"></div>
       </div>
     </main>
   </div>
 </div>
 
-<!-- MODAL FORM USER (Tambah / Edit) -->
-<div class="modal-o" id="userModal">
-  <div class="modal">
-    <div class="modal-head">
-      <h3 id="modalTitle"><i class="fas fa-user-plus"></i> Tambah Pengguna</h3>
-      <button class="close-btn" onclick="closeUserModal()">&times;</button>
-    </div>
-    <form id="userForm">
-      <input type="hidden" id="userId">
-      <div class="fg">
-        <label for="fUsername">Username</label>
-        <input type="text" id="fUsername" required placeholder="Masukkan username">
-      </div>
-      <div class="fg">
-        <label for="fFullName">Nama Lengkap</label>
-        <input type="text" id="fFullName" required placeholder="Masukkan nama lengkap">
-      </div>
-      <div class="fg">
-        <label for="fEmail">Email</label>
-        <input type="email" id="fEmail" required placeholder="nama@email.com">
-      </div>
-      <div class="fg" id="pwdContainer">
-        <label for="fPassword">Password</label>
-        <input type="password" id="fPassword" placeholder="Biarkan kosong jika tidak diubah">
-      </div>
-      <div class="fg">
-        <label for="fRole">Peran (Role)</label>
-        <select id="fRole">
-          <option value="kader">Kader</option>
-          <option value="pengurus">Pengurus</option>
-          <option value="admin">Admin System</option>
-        </select>
-      </div>
-      <div class="fg">
-        <label for="fStatus">Status Akun</label>
-        <select id="fStatus">
-          <option value="active">Aktif</option>
-          <option value="inactive">Nonaktif</option>
-        </select>
-      </div>
-      <div class="fa">
-        <button type="button" class="btn btn-sec" onclick="closeUserModal()">Batal</button>
-        <button type="submit" class="btn btn-pri" id="saveUserBtn">Simpan</button>
-      </div>
-    </form>
-  </div>
-</div>
+<div class="tc" id="tc"></div>
 
-<!-- MODAL POPUP KONFIRMASI CUSTOM -->
-<div class="modal-o" id="confirmModal">
-  <div class="modal" style="max-width:400px;text-align:center">
-    <div style="font-size:3rem;color:var(--accent);margin-bottom:10px" id="confirmIcon">
-      <i class="fas fa-exclamation-circle"></i>
+<div class="modal-o" id="um"><div class="modal">
+  <h2 id="mt">Tambah Pengguna</h2>
+  <p class="sub" id="ms">Isi data untuk membuat akun baru.</p>
+  <form id="uf">
+    <input type="hidden" id="eid">
+    <div class="fg"><label>Username</label><input type="text" id="fu" required pattern="[a-zA-Z0-9_.-]{3,50}" title="3-50 karakter" placeholder="johndoe"></div>
+    <div class="fg" id="pg"><label>Password</label><input type="password" id="fp" minlength="6" placeholder="Min 6 karakter"><small>Kosongkan saat edit jika tidak ingin mengubah.</small></div>
+    <div class="fg"><label>Nama Lengkap</label><input type="text" id="ffn" required placeholder="John Doe"></div>
+    <div class="fg"><label>Email</label><input type="email" id="fe" required placeholder="john@example.com"></div>
+    <div class="fg"><label>No. Telepon</label><input type="text" id="fph" placeholder="08123456789"></div>
+    <div class="fg"><label>Role</label><select id="fr"><option value="kader">Kader</option><option value="admin">Admin</option></select></div>
+    <div class="fa">
+      <button type="button" class="btn btn-s" id="cancelBtn">Batal</button>
+      <button type="submit" class="btn btn-pri" id="sbtn"><i class="fas fa-save"></i> Simpan</button>
     </div>
-    <h3 style="font-size:1.1rem;margin-bottom:8px;" id="confirmTitle">Konfirmasi Action</h3>
-    <p style="font-size:.85rem;color:var(--text2);margin-bottom:20px;" id="confirmMessage">Apakah Anda yakin ingin melakukan tindakan ini?</p>
-    <div class="fa" style="justify-content:center">
-      <button class="btn btn-sec" id="confirmCancelBtn">Batal</button>
-      <button class="btn btn-danger" id="confirmOkBtn">Ya, Lanjutkan</button>
-    </div>
-  </div>
-</div>
+  </form>
+</div></div>
 
-<!-- TOAST CONTAINER -->
-<div class="toast-container" id="toastContainer"></div>
+<div class="modal-o" id="pm"><div class="modal">
+  <span class="mx" onclick="cm('pm')">&times;</span>
+  <h2><i class="fas fa-key" style="color:var(--warning)"></i> Reset Password</h2>
+  <p class="sub" id="pui">Reset password untuk pengguna.</p>
+  <div class="fg"><label>Password Baru</label><input type="password" id="np" minlength="6" placeholder="Min 6 karakter"></div>
+  <div class="fa">
+    <button class="btn btn-s" id="cancelPmBtn">Batal</button>
+    <button class="btn btn-w" id="resetBtn"><i class="fas fa-key"></i> Reset Password</button>
+  </div>
+</div></div>
+
+<div class="modal-o" id="dm"><div class="modal" style="text-align:center">
+  <div style="font-size:48px;color:var(--danger);margin-bottom:15px"><i class="fas fa-exclamation-triangle"></i></div>
+  <h2>Konfirmasi Hapus</h2>
+  <p style="color:var(--text-muted);font-size:14px" id="dui">Apakah Anda yakin ingin menghapus pengguna ini?</p>
+  <p style="color:var(--danger);font-size:13px">Tindakan ini tidak dapat dibatalkan.</p>
+  <div class="fa" style="justify-content:center">
+    <button class="btn btn-s" id="cancelDmBtn">Batal</button>
+    <button class="btn btn-r" id="deleteBtn"><i class="fas fa-trash"></i> Hapus</button>
+  </div>
+</div></div>
 
 <script>
-let usersCache = [];
+/* ===== Helpers ===== */
+function $(id){return document.getElementById(id)}
+function initials(n){if(!n)return '?';return n.trim().split(/\s+/).map(function(w){return w[0]}).join('').substring(0,2).toUpperCase();}
+function capRole(r){if(!r)return '-';return r.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()});}
+var cp = 1;
+var dtid = null;
+var ptid = null;
 
-function $(id){ return document.getElementById(id); }
-function initials(n){ if(!n) return '?'; return n.trim().split(/\s+/).map(w => w[0]).join('').substring(0,2).toUpperCase(); }
-function capRole(r){ if(!r) return '-'; return r.replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase()); }
-
-// TOAST NOTIFICATION SYSTEM
-function showToast(message, type = 'info') {
-  const container = $('toastContainer');
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  
-  let icon = 'fa-info-circle';
-  if(type === 'success') icon = 'fa-check-circle';
-  if(type === 'error') icon = 'fa-exclamation-triangle';
-  if(type === 'warning') icon = 'fa-exclamation-circle';
-  
-  toast.innerHTML = `<i class="fas ${icon}"></i><span class="toast-msg">${message}</span>`;
-  container.appendChild(toast);
-  
-  setTimeout(() => {
-    toast.remove();
-  }, 4000);
+function escapeHtml(value) {
+    if (value === null || value === undefined) {
+        return '';
+    }
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
 
-// CUSTOM POPUP CONFIRMATION SYSTEM
-function showConfirm({ title, message, icon, okText, type = 'danger' }, onConfirm) {
-  const modal = $('confirmModal');
-  $('confirmTitle').textContent = title || 'Konfirmasi';
-  $('confirmMessage').textContent = message || 'Apakah Anda yakin?';
-  
-  const iconEl = $('confirmIcon');
-  iconEl.className = '';
-  iconEl.innerHTML = `<i class="fas ${icon || 'fa-exclamation-circle'}"></i>`;
-  
-  const okBtn = $('confirmOkBtn');
-  okBtn.className = `btn btn-${type}`;
-  okBtn.textContent = okText || 'Ya';
-  
-  modal.classList.add('on');
-  
-  const handleOk = () => {
-    modal.classList.remove('on');
-    cleanup();
-    onConfirm();
-  };
-  
-  const handleCancel = () => {
-    modal.classList.remove('on');
-    cleanup();
-  };
-  
-  function cleanup() {
-    okBtn.removeEventListener('click', handleOk);
-    $('confirmCancelBtn').removeEventListener('click', handleCancel);
-  }
-  
-  okBtn.addEventListener('click', handleOk);
-  $('confirmCancelBtn').addEventListener('click', handleCancel);
+function om(id) { document.getElementById(id).classList.add('on'); document.body.classList.add('modal-open'); }
+function cm(id) { document.getElementById(id).classList.remove('on'); if (!document.querySelector('.modal-o.on')) { document.body.classList.remove('modal-open'); } }
+
+function st(msg, type) {
+    var el = document.createElement('div');
+    el.className = 'tt ' + (type === 'e' ? 'tt-e' : 'tt-s');
+    el.textContent = msg;
+    document.getElementById('tc').appendChild(el);
+    el.style.display = 'block';
+    setTimeout(function(){ el.remove(); }, 3000);
 }
 
-// INITIALIZE THEME & SIDEBAR
+var _csrfToken = null;
+function getCsrfToken() { return _csrfToken || null; }
+
+/* ===== Theme ===== */
 (function initTheme(){
-  var saved = localStorage.getItem('theme');
-  if(saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)){
+  var saved=localStorage.getItem('theme');
+  if(saved==='dark'||(!saved&&window.matchMedia('(prefers-color-scheme: dark)').matches)){
     document.documentElement.setAttribute('data-theme','dark');
   }
 })();
-
-$('themeToggle').addEventListener('click', function(){
-  var dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  if(dark){ document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme','light'); }
-  else{ document.documentElement.setAttribute('data-theme','dark'); localStorage.setItem('theme','dark'); }
+$('themeToggle').addEventListener('click',function(){
+  var dark=document.documentElement.getAttribute('data-theme')==='dark';
+  if(dark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme','light');}
+  else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('theme','dark');}
 });
 
-function toggleSidebar(){
-  $('sidebar').classList.toggle('open');
-  $('sidebarOverlay').classList.toggle('show');
-}
-$('hamburger').addEventListener('click', toggleSidebar);
-$('sidebarOverlay').addEventListener('click', toggleSidebar);
-
-// FETCH USERS FROM BACKEND
-async function fetchUsers() {
-  const tb = $('tb');
-  try {
-    const res = await fetch('/api/users', { credentials: 'include' });
-    if (!res.ok) throw new Error('Gagal memuat data dari server (' + res.status + ')');
-
-    const result = await res.json();
-    usersCache = result.data || result; // Penyesuaian skema API
-
-    renderUsers(usersCache);
-  } catch (err) {
-    console.error(err);
-    tb.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data: ${err.message}</td></tr>`;
-    showToast('Gagal memuat data pengguna', 'error');
-  }
-}
-
-// RENDER TABLE DATA
-function renderUsers(list) {
-  const tb = $('tb');
-  if (!Array.isArray(list) || list.length === 0) {
-    tb.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:25px;color:var(--text2)">Tidak ada data pengguna ditemukan.</td></tr>';
-    return;
-  }
-
-  tb.innerHTML = list.map((u, idx) => `
-    <tr>
-      <td>${idx + 1}</td>
-      <td><strong>${u.username || '-'}</strong></td>
-      <td>${u.full_name || '-'}</td>
-      <td>${u.email || '-'}</td>
-      <td><span class="badge bp">${capRole(u.role)}</span></td>
-      <td><span class="badge ${u.status === 'active' ? 'ba' : 'bd'}">${u.status === 'active' ? 'Aktif' : 'Nonaktif'}</span></td>
-      <td>
-        <button class="btn btn-sm btn-pri" onclick="editUser('${u.id || u._id}')" title="Edit"><i class="fas fa-edit"></i></button>
-        <button class="btn btn-sm btn-danger" onclick="deleteUser('${u.id || u._id}', '${u.full_name || u.username}')" title="Hapus"><i class="fas fa-trash"></i></button>
-      </td>
-    </tr>
-  `).join('');
-}
-
-// LIVE SEARCH FILTER
-$('si').addEventListener('input', function(e){
-  const val = e.target.value.toLowerCase();
-  const filtered = usersCache.filter(u => 
-    (u.username && u.username.toLowerCase().includes(val)) ||
-    (u.full_name && u.full_name.toLowerCase().includes(val)) ||
-    (u.email && u.email.toLowerCase().includes(val))
-  );
-  renderUsers(filtered);
-});
-
-// MODAL HANDLERS FOR ADD/EDIT USER
-function openUserModal(isEdit = false) {
-  $('modalTitle').innerHTML = isEdit ? '<i class="fas fa-user-edit"></i> Edit Pengguna' : '<i class="fas fa-user-plus"></i> Tambah Pengguna';
-  $('fPassword').required = !isEdit;
-  $('userModal').classList.add('on');
-}
-
-function closeUserModal() {
-  $('userModal').classList.remove('on');
-  $('userForm').reset();
-  $('userId').value = '';
-}
-
-$('addBtn').addEventListener('click', () => openUserModal(false));
-
-function editUser(id) {
-  const user = usersCache.find(u => (u.id || u._id) == id);
-  if(!user) return showToast('Data pengguna tidak ditemukan', 'error');
-
-  $('userId').value = user.id || user._id;
-  $('fUsername').value = user.username || '';
-  $('fFullName').value = user.full_name || '';
-  $('fEmail').value = user.email || '';
-  $('fRole').value = user.role || 'kader';
-  $('fStatus').value = user.status || 'active';
-  
-  openUserModal(true);
-}
-
-// FORM SUBMISSION (CREATE/UPDATE)
-$('userForm').addEventListener('submit', async function(e){
-  e.preventDefault();
-  const id = $('userId').value;
-  const isEdit = !!id;
-
-  const payload = {
-    username: $('fUsername').value.trim(),
-    full_name: $('fFullName').value.trim(),
-    email: $('fEmail').value.trim(),
-    role: $('fRole').value,
-    status: $('fStatus').value
-  };
-
-  const pass = $('fPassword').value;
-  if(pass) payload.password = pass;
-
-  const btn = $('saveUserBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-
-  try {
-    const url = isEdit ? `/api/users/${id}` : '/api/users';
-    const method = isEdit ? 'PUT' : 'POST';
-
-    const res = await fetch(url, {
-      method: method,
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(payload)
-    });
-
-    if(!res.ok) {
-      const errRes = await res.json().catch(() => ({}));
-      throw new Error(errRes.message || 'Gagal menyimpan perubahan');
-    }
-
-    showToast(`Berhasil ${isEdit ? 'memperbarui' : 'menambahkan'} pengguna!`, 'success');
-    closeUserModal();
-    fetchUsers();
-  } catch(err) {
-    showToast(err.message, 'error');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Simpan';
+/* ===== Hamburger ===== */
+$('hamburger').addEventListener('click',function(){ $('sidebar').classList.toggle('open'); });
+document.addEventListener('click',function(e){
+  if(window.innerWidth<=768 && !e.target.closest('.sidebar') && !e.target.closest('.hamburger')){
+    $('sidebar').classList.remove('open');
   }
 });
 
-// DELETE USER WITH CUSTOM CONFIRM POPUP
-function deleteUser(id, name) {
-  showConfirm({
-    title: 'Hapus Pengguna',
-    message: `Apakah Anda yakin ingin menghapus akun "${name}" secara permanen?`,
-    icon: 'fa-user-slash',
-    okText: 'Hapus',
-    type: 'danger'
-  }, async () => {
+async function load(page) {
+    if (page) cp = page;
+    var s = document.getElementById('si').value;
+    var statusFilter = document.getElementById('statusFilter').value;
+    var tb = document.getElementById('tb');
+    tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-spinner fa-spin"></i><p>Memuat data...</p></td></tr>';
     try {
-      const res = await fetch(`/api/users/${id}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
-      if(!res.ok) throw new Error('Gagal menghapus pengguna.');
-      
-      showToast(`Pengguna "${name}" telah berhasil dihapus`, 'success');
-      fetchUsers();
-    } catch(err) {
-      showToast(err.message, 'error');
+        var url = '/api/users?search=' + encodeURIComponent(s) + '&page=' + cp + '&limit=10';
+        if (statusFilter) url += '&status=' + encodeURIComponent(statusFilter);
+        var r = await fetch(url, { credentials: 'include' });
+        if (r.status === 401) {
+            tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-user-lock"></i><p>Sesi Anda telah berakhir. Silakan login kembali.</p></td></tr>';
+            setTimeout(function(){ window.location.href = '../panel.html'; }, 1200);
+            return;
+        }
+        if (r.status === 403) {
+            tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-ban"></i><p>Anda tidak memiliki akses ke data pengguna.</p></td></tr>';
+            return;
+        }
+        if (!r.ok) {
+            tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat data pengguna dari server.</p></td></tr>';
+            return;
+        }
+        var d = await r.json();
+        var users = d.users || [];
+        if (users.length === 0) {
+            tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-users"></i><p>Belum ada data pengguna.</p></td></tr>';
+            document.getElementById('pc').innerHTML = '';
+            return;
+        }
+        var h = '';
+        for (var i = 0; i < users.length; i++) {
+            var u = users[i];
+            var sc = 'b' + (u.status || 'unknown').charAt(0);
+            var rc = 'b' + (u.role || 'unknown').charAt(0);
+            var pr = u.privilege ? 'b' + u.privilege.charAt(0) : 'bkd';
+            var cr = u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' }) : '-';
+            h += '<tr>';
+            h += '<td>' + (((cp - 1) * 10) + i + 1) + '</td>';
+            h += '<td><strong>' + escapeHtml(u.username) + '</strong></td>';
+            h += '<td>' + escapeHtml(u.full_name || '-') + '</td>';
+            h += '<td>' + escapeHtml(u.email || '-') + '</td>';
+            h += '<td><span class="badge ' + rc + '">' + escapeHtml(u.role) + '</span></td>';
+            h += '<td><span class="badge ' + pr + '">' + escapeHtml(u.privilege || 'member') + '</span></td>';
+            h += '<td><span class="badge ' + sc + '">' + escapeHtml(u.status) + '</span></td>';
+            h += '<td><div class="act">';
+            h += '<button class="btn btn-p btn-sm" onclick="oem(\'' + u.id + '\')" title="Edit"><i class="fas fa-edit"></i></button>';
+            h += '<button class="btn btn-w btn-sm" onclick="opm(\'' + u.id + '\',\'' + escapeHtml(u.username) + '\')" title="Reset Password"><i class="fas fa-key"></i></button>';
+            if (u.status === 'active') {
+                h += '<button class="btn btn-s btn-sm" onclick="ts(\'' + u.id + '\',\'inactive\')" title="Nonaktifkan"><i class="fas fa-ban"></i></button>';
+            } else {
+                h += '<button class="btn btn-g btn-sm" onclick="ts(\'' + u.id + '\',\'active\')" title="Aktifkan"><i class="fas fa-check-circle"></i></button>';
+            }
+            h += '<button class="btn btn-i btn-sm" onclick="tr(\'' + u.id + '\',\'' + escapeHtml(u.role) + '\')" title="Ubah Role"><i class="fas fa-user-tag"></i></button>';
+            h += '<button class="btn btn-r btn-sm" onclick="odm(\'' + u.id + '\',\'' + escapeHtml(u.username) + '\')" title="Hapus"><i class="fas fa-trash"></i></button>';
+            h += '</div></td>';
+            h += '</tr>';
+        }
+        tb.innerHTML = h;
+        rp(d.pagination);
+    } catch (e) {
+        console.error('[USERS] error:', e);
+        tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-exclamation-triangle"></i><p>Gagal terhubung ke server.</p></td></tr>';
     }
-  });
 }
 
-// LOAD LOGGED IN USER SESSION
-async function loadUser(){
-  try{
-    var r = await fetch('/api/auth/me', { credentials: 'include' });
-    var d = await r.json();
-    if(!d.authenticated){ window.location.href = '../panel.html'; return; }
-    
-    var u = d.user;
-    $('userName').textContent = u.full_name || u.username || 'Kader';
-    $('userRole').textContent = capRole(u.role);
-    $('userAvatar').textContent = initials(u.full_name || u.username || 'Kader');
-
-    fetchUsers();
-  }catch(e){
-    window.location.href = '../panel.html';
-  }
+function rp(p) {
+    var el = document.getElementById('pc');
+    if (!p || p.totalPages <= 1) { el.innerHTML = ''; return; }
+    var h = '';
+    h += '<button ' + (p.page <= 1 ? 'disabled' : '') + ' onclick="load(' + (p.page - 1) + ')"><i class="fas fa-chevron-left"></i></button>';
+    h += '<span class="info">' + p.page + '/' + p.totalPages + ' (' + p.total + ')</span>';
+    h += '<button ' + (p.page >= p.totalPages ? 'disabled' : '') + ' onclick="load(' + (p.page + 1) + ')"><i class="fas fa-chevron-right"></i></button>';
+    el.innerHTML = h;
 }
 
-// LOGOUT WITH POPUP CONFIRMATION
-$('logoutBtn').onclick = function(ev){
-  ev.preventDefault();
-  showConfirm({
-    title: 'Keluar Panel',
-    message: 'Apakah Anda yakin ingin keluar dari sistem?',
-    icon: 'fa-sign-out-alt',
-    okText: 'Keluar',
-    type: 'pri'
-  }, async () => {
+function ocm() {
+    document.getElementById('mt').textContent = 'Tambah Pengguna Baru';
+    document.getElementById('ms').textContent = 'Isi data untuk membuat akun baru.';
+    document.getElementById('eid').value = '';
+    document.getElementById('uf').reset();
+    document.getElementById('pg').style.display = 'block';
+    document.getElementById('fp').required = true;
+    document.getElementById('sbtn').innerHTML = '<i class="fas fa-save"></i> Simpan';
+    om('um');
+}
+
+async function oem(id) {
     try {
-      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-    } catch(e) {}
-    window.location.href = '../panel.html';
-  });
-};
+        var r = await fetch('/api/users/' + id, { credentials: 'include' });
+        var d = await r.json();
+        if (!r.ok) { st(d.error || 'Gagal', 'e'); return; }
+        var u = d.user;
+        document.getElementById('mt').textContent = 'Edit Pengguna';
+        document.getElementById('ms').textContent = 'Edit data untuk @' + u.username;
+        document.getElementById('eid').value = u.id;
+        document.getElementById('fu').value = u.username;
+        document.getElementById('ffn').value = u.full_name || '';
+        document.getElementById('fe').value = u.email || '';
+        document.getElementById('fph').value = u.phone || '';
+        document.getElementById('fr').value = u.role;
+        document.getElementById('pg').style.display = 'block';
+        document.getElementById('fp').required = false;
+        document.getElementById('fp').value = '';
+        document.getElementById('sbtn').innerHTML = '<i class="fas fa-save"></i> Simpan Perubahan';
+        om('um');
+    } catch (e) {
+        st('Gagal memuat data', 'e');
+    }
+}
 
-loadUser();
+async function sv(e) {
+    e.preventDefault();
+    var id = document.getElementById('eid').value;
+    var isE = !!id;
+    var body = {
+        username: document.getElementById('fu').value,
+        password: document.getElementById('fp').value,
+        full_name: document.getElementById('ffn').value,
+        email: document.getElementById('fe').value,
+        phone: document.getElementById('fph').value,
+        role: document.getElementById('fr').value
+    };
+    if (!isE) body.password = body.password || '';
+    var url = isE ? '/api/users/' + id : '/api/users';
+    var method = isE ? 'PUT' : 'POST';
+    try {
+        var hdrs = { 'Content-Type': 'application/json' };
+        var _cs = getCsrfToken(); if (_cs) hdrs['X-CSRF-Token'] = _cs;
+        var r = await fetch(url, { method: method, headers: hdrs, body: JSON.stringify(body), credentials: 'include' });
+        var d = await r.json();
+        if (!r.ok) { st(d.error || 'Gagal', 'e'); return; }
+        st(isE ? 'Pengguna diperbarui' : 'Pengguna dibuat', 's');
+        cm('um');
+        load(cp);
+    } catch (e) {
+        st('Gagal menyimpan', 'e');
+    }
+}
+
+function opm(id, un) {
+    document.getElementById('pui').textContent = 'Reset password untuk @' + un;
+    document.getElementById('np').value = '';
+    om('pm');
+    ptid = id;
+}
+
+async function hrp() {
+    try {
+        var hdrs = { 'Content-Type': 'application/json' };
+        var _cs = getCsrfToken(); if (_cs) hdrs['X-CSRF-Token'] = _cs;
+        var r = await fetch('/api/users/' + ptid + '/password', { method: 'PATCH', headers: hdrs, body: JSON.stringify({ password: document.getElementById('np').value }), credentials: 'include' });
+        var d = await r.json();
+        if (!r.ok) { st(d.error || 'Gagal', 'e'); return; }
+        st('Password direset', 's');
+        cm('pm');
+    } catch (e) {
+        st('Gagal reset', 'e');
+    }
+}
+
+async function ts(id, status) {
+    try {
+        var hdrs = { 'Content-Type': 'application/json' };
+        var _cs = getCsrfToken(); if (_cs) hdrs['X-CSRF-Token'] = _cs;
+        var r = await fetch('/api/users/' + id + '/status', { method: 'PATCH', headers: hdrs, body: JSON.stringify({ status: status }), credentials: 'include' });
+        var d = await r.json();
+        if (!r.ok) { st(d.error || 'Gagal', 'e'); return; }
+        st(d.message, 's');
+        load(cp);
+    } catch (e) {
+        st('Gagal mengubah status', 'e');
+    }
+}
+
+async function tr(id, role) {
+    var newRole = role === 'admin' ? 'kader' : 'admin';
+    if (!confirm('Ubah role menjadi ' + newRole + '?')) return;
+    try {
+        var hdrs = { 'Content-Type': 'application/json' };
+        var _cs = getCsrfToken(); if (_cs) hdrs['X-CSRF-Token'] = _cs;
+        var r = await fetch('/api/users/' + id + '/role', { method: 'PATCH', headers: hdrs, body: JSON.stringify({ role: newRole }), credentials: 'include' });
+        var d = await r.json();
+        if (!r.ok) { st(d.error || 'Gagal', 'e'); return; }
+        st(d.message, 's');
+        load(cp);
+    } catch (e) {
+        st('Gagal mengubah role', 'e');
+    }
+}
+
+function odm(id, un) {
+    document.getElementById('dui').textContent = 'Apakah Anda yakin ingin menghapus @' + un + '?';
+    dtid = id;
+    om('dm');
+}
+
+async function cd() {
+    try {
+        var hdrs = {};
+        var _cs = getCsrfToken(); if (_cs) hdrs['X-CSRF-Token'] = _cs;
+        var r = await fetch('/api/users/' + dtid, { method: 'DELETE', headers: hdrs, credentials: 'include' });
+        var d = await r.json();
+        if (!r.ok) { st(d.error || 'Gagal', 'e'); return; }
+        st(d.message, 's');
+        cm('dm');
+        load(cp);
+    } catch (e) {
+        st('Gagal menghapus', 'e');
+    }
+}
+
+/* ---- Event wiring ---- */
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        var r = await fetch('/api/auth/me', { credentials: 'include' });
+        var d = await r.json();
+        if (r.status === 401 || !d.authenticated) {
+            window.location.href = '../panel.html';
+            return;
+        }
+        var u = d.user;
+        _csrfToken = d.csrfToken || null;
+        var hasAdminPriv = u.privilege === 'admin' || u.privilege === 'super_admin' || u.role === 'admin' || u.role === 'super_admin';
+        if (!hasAdminPriv) {
+            window.location.href = '../panel.html';
+            return;
+        }
+        var name = u.full_name || u.username || 'Kader';
+        $('userName').textContent = name;
+        $('userRole').textContent = capRole(u.role);
+        $('userAvatar').textContent = initials(name);
+        load(1);
+    } catch (e) {
+        window.location.href = '../panel.html';
+        return;
+    }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async function(ev) {
+    ev.preventDefault();
+    var headers = { 'Content-Type': 'application/json' };
+    var csrf = getCsrfToken();
+    if (csrf) headers['X-CSRF-Token'] = csrf;
+    try { await fetch('/api/auth/logout', { method: 'POST', headers: headers, credentials: 'include' }); } catch (e) {}
+    window.location.href = '../panel.html';
+});
+
+document.getElementById('searchBtn').addEventListener('click', function() { load(1); });
+document.getElementById('si').addEventListener('keypress', function(e) { if (e.key === 'Enter') load(1); });
+document.getElementById('statusFilter').addEventListener('change', function() { load(1); });
+document.getElementById('addBtn').addEventListener('click', ocm);
+document.getElementById('uf').addEventListener('submit', sv);
+document.getElementById('cancelBtn').addEventListener('click', function() { cm('um'); });
+document.getElementById('cancelPmBtn').addEventListener('click', function() { cm('pm'); });
+document.getElementById('resetBtn').addEventListener('click', hrp);
+document.getElementById('cancelDmBtn').addEventListener('click', function() { cm('dm'); });
+document.getElementById('deleteBtn').addEventListener('click', cd);
 </script>
 <script src="/assets/js/announcement-popup.js"></script>
 </body>

@@ -4,133 +4,80 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dokumentasi - Kader Panel PMII Justicia</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/assets/css/style.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="/assets/css/announcement-popup.css">
 <style>
-:root{
-  --sidebar-w:264px;
-  --header-h:66px;
-  --primary:#1a237e;
-  --primary-light:#3949ab;
-  --primary-dark:#000051;
-  --accent:#ffd600;
-  --bg:#f1f3f7;
-  --bg-card:#ffffff;
-  --text:#1c2333;
-  --text2:#64748b;
-  --text3:#94a3b8;
-  --border:#e4e8ef;
-  --shadow:0 1px 3px rgba(16,24,40,.06),0 1px 2px rgba(16,24,40,.04);
-  --shadow-lg:0 12px 32px rgba(16,24,40,.12);
-  --radius:14px;
-  --transition:.28s ease;
-  --sidebar-bg:linear-gradient(180deg,#141a4d 0%,#0d1238 55%,#090d2b 100%);
+/* Penyesuaian khusus halaman Dokumentasi */
+.card-hd-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
 }
-[data-theme="dark"]{
-  --primary:#7f8ff4;
-  --primary-light:#a5b4fc;
-  --primary-dark:#5c6bc0;
-  --accent:#ffd600;
-  --bg:#0b0e17;
-  --bg-card:#141926;
-  --text:#e8ecf4;
-  --text2:#94a3b8;
-  --text3:#64748b;
-  --border:#242c42;
-  --shadow:0 1px 3px rgba(0,0,0,.4),0 1px 2px rgba(0,0,0,.3);
-  --sidebar-bg:linear-gradient(180deg,#0d1130 0%,#090d26 55%,#060918 100%);
+.btn-drive {
+  background: var(--primary);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: .82rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition);
 }
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-a{text-decoration:none;color:inherit}
-
-.dash-layout{display:flex;min-height:100vh}
-.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:var(--sidebar-bg);color:#fff;z-index:1000;display:flex;flex-direction:column;transition:transform var(--transition)}
-.sidebar-brand{padding:20px;display:flex;align-items:center;gap:13px;border-bottom:1px solid rgba(255,255,255,.08)}
-.brand-logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#ffd600,#ffab00);display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:#1a237e;font-weight:800}
-.brand-text h2{font-size:.98rem;font-weight:700}
-.brand-text small{font-size:.68rem;opacity:.62;display:block}
-.sidebar-nav{padding:14px 0;flex:1}
-.sidebar-label{padding:14px 22px 6px;font-size:.64rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.4)}
-.sidebar-link{display:flex;align-items:center;gap:13px;padding:10.5px 20px;color:rgba(255,255,255,.68);font-size:.85rem;font-weight:500;margin:2px 10px;border-radius:10px;transition:all var(--transition)}
-.sidebar-link i{width:20px;text-align:center}
-.sidebar-link:hover,.sidebar-link.active{background:rgba(255,255,255,.1);color:#ffd600}
-.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.08);font-size:.7rem;color:rgba(255,255,255,.4);text-align:center}
-
-.main-area{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;width:calc(100% - var(--sidebar-w));transition:margin var(--transition),width var(--transition)}
-.topbar{background:var(--bg-card);height:var(--header-h);display:flex;align-items:center;padding:0 26px;gap:14px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:900}
-.topbar-left{display:flex;align-items:center;gap:12px}
-.topbar-right{display:flex;align-items:center;gap:12px;margin-left:auto}
-.hamburger{display:none;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:8px;cursor:pointer;font-size:1rem}
-.icon-btn{width:38px;height:38px;border-radius:11px;background:var(--bg);border:1px solid var(--border);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center}
-.theme-toggle .fa-sun{display:none}
-[data-theme="dark"] .theme-toggle .fa-moon{display:none}
-[data-theme="dark"] .theme-toggle .fa-sun{display:inline-block;color:var(--accent)}
-.topbar-user{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:12px}
-.u-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem}
-
-.dash-content{padding:26px;flex:1;max-width:1440px;margin:0 auto;width:100%}
-.page-head{margin-bottom:24px}
-.page-title{font-size:1.4rem;font-weight:800;display:flex;align-items:center;gap:12px}
-.page-subtitle{font-size:.84rem;color:var(--text2);margin-top:4px}
-
-/* Card & Responsive Actions Header */
-.card{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow);margin-bottom:24px}
-.card-hd{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.card-hd h3{font-size:.95rem;font-weight:700;display:flex;align-items:center;gap:10px}
-.btn-drive{background:var(--primary);color:#fff;padding:8px 16px;border-radius:8px;font-size:.82rem;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:var(--transition)}
-.btn-drive:hover{opacity:.9;transform:translateY(-1px)}
-
-.card-bd{padding:16px}
-
-/* Container Iframe & Mobile Helper */
-.drive-wrapper{width:100%;height:680px;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:var(--bg);position:relative}
-.drive-wrapper iframe{width:100%;height:100%;border:0}
-
-/* Mobile Quick Access Cards (Tampil di Layar Kecil) */
-.mobile-drive-banner{
-  display:none;
-  background:linear-gradient(135deg, var(--primary), var(--primary-light));
-  color:#fff;
-  padding:20px;
-  border-radius:12px;
-  text-align:center;
-  margin-bottom:16px;
+.btn-drive:hover {
+  opacity: .9;
+  transform: translateY(-1px);
 }
-.mobile-drive-banner h4{font-size:1rem;margin-bottom:6px}
-.mobile-drive-banner p{font-size:.78rem;opacity:.9;margin-bottom:14px}
-.mobile-drive-banner .btn-drive-mobile{
-  background:var(--accent);
-  color:#1a237e;
-  padding:10px 20px;
-  border-radius:30px;
-  font-weight:700;
-  font-size:.85rem;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  box-shadow:0 4px 12px rgba(0,0,0,.15);
+.drive-wrapper {
+  width: 100%;
+  height: 680px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  position: relative;
+}
+.drive-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.mobile-drive-banner {
+  display: none;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff;
+  padding: 20px;
+  border-radius: var(--radius);
+  text-align: center;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+.mobile-drive-banner h4 { font-size: 1rem; margin-bottom: 6px; }
+.mobile-drive-banner p { font-size: .78rem; opacity: .9; margin-bottom: 14px; }
+.mobile-drive-banner .btn-drive-mobile {
+  background: var(--accent);
+  color: #1a237e;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: .85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
 }
 
-/* Responsif Mobile Screen (< 768px) */
-@media(max-width:768px){
-  .sidebar{transform:translateX(-100%)}
-  .sidebar.open{transform:translateX(0);box-shadow:0 0 60px rgba(0,0,0,.5)}
-  .main-area{margin-left:0;width:100%}
-  .hamburger{display:inline-flex}
-  
-  .dash-content{padding:16px}
-  .page-title{font-size:1.2rem}
-  .topbar{padding:0 16px}
-  .u-info{display:none} /* Sembunyikan nama user di topbar mobile agar ringkas */
-
-  .card-hd{flex-direction:column;align-items:flex-start}
-  .btn-drive{width:100%;justify-content:center}
-  
-  .drive-wrapper{height:450px} /* Penyesuaian tinggi iframe untuk HP */
-  .mobile-drive-banner{display:block} /* Tampilkan banner khusus mobile */
+@media(max-width: 768px) {
+  .card-hd-flex { flex-direction: column; align-items: flex-start; }
+  .btn-drive { width: 100%; justify-content: center; }
+  .drive-wrapper { height: 460px; }
+  .mobile-drive-banner { display: block; }
 }
 </style>
 </head>
@@ -163,17 +110,25 @@ a{text-decoration:none;color:inherit}
   <div class="main-area">
     <header class="topbar">
       <div class="topbar-left">
-        <button class="hamburger" id="hamburger" aria-label="Toggle Navigation"><i class="fas fa-bars"></i></button>
-        <div class="topbar-title"><i class="fas fa-folder-open"></i> Dokumentasi & Galeri</div>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+        <div class="topbar-title"><i class="fas fa-folder-open"></i> Dokumentasi</div>
       </div>
       <div class="topbar-right">
-        <button class="icon-btn theme-toggle" id="themeToggle" title="Ganti Tema"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
-        <div class="topbar-user">
+        <div class="clock-wrap">
+          <i class="fas fa-clock clock-icon"></i>
+          <div class="clock-info">
+            <div class="clock-time" id="clockTime">--:--:--</div>
+            <div class="clock-date" id="clockDate">---, -- --- ----</div>
+          </div>
+        </div>
+        <button class="icon-btn theme-toggle" id="themeToggle" title="Ganti tema"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
+        <div class="topbar-user" id="userChip">
           <div class="u-avatar" id="userAvatar">K</div>
           <div class="u-info">
             <div class="u-name" id="userName">Kader</div>
             <div class="u-role" id="userRole">-</div>
           </div>
+          <i class="fas fa-chevron-down u-caret"></i>
         </div>
       </div>
     </header>
@@ -187,14 +142,14 @@ a{text-decoration:none;color:inherit}
       <!-- Banner Akses Cepat Khusus Tampilan Mobile -->
       <div class="mobile-drive-banner">
         <h4><i class="fab fa-google-drive"></i> Akses Aplikasi Google Drive</h4>
-        <p>Gunakan aplikasi Google Drive di smartphone kamu untuk performa galeri yang lebih cepat & responsif.</p>
+        <p>Gunakan aplikasi Google Drive di HP kamu untuk navigasi folder yang lebih cepat.</p>
         <a href="https://drive.google.com/drive/folders/1Ltc_TQyQS-7-Xo0raUdbGfU7oCyttGVH?usp=sharing" target="_blank" class="btn-drive-mobile">
           <i class="fas fa-external-link-alt"></i> Buka Folder di Drive
         </a>
       </div>
 
       <div class="card">
-        <div class="card-hd">
+        <div class="card-hd card-hd-flex">
           <h3><i class="fab fa-google-drive"></i> Google Drive Galeri Folder</h3>
           <a href="https://drive.google.com/drive/folders/1Ltc_TQyQS-7-Xo0raUdbGfU7oCyttGVH?usp=sharing" target="_blank" class="btn-drive">
             <i class="fas fa-external-link-alt"></i> Buka Drive Langsung
@@ -215,6 +170,9 @@ function $(id){return document.getElementById(id)}
 function initials(n){if(!n)return '?';return n.trim().split(/\s+/).map(function(w){return w[0]}).join('').substring(0,2).toUpperCase();}
 function capRole(r){if(!r)return '-';return r.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()});}
 
+var MONTHS=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+var DAYS=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+
 (function initTheme(){
   var saved=localStorage.getItem('theme');
   if(saved==='dark'||(!saved&&window.matchMedia('(prefers-color-scheme: dark)').matches)){
@@ -227,6 +185,15 @@ $('themeToggle').addEventListener('click',function(){
   if(dark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme','light');}
   else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('theme','dark');}
 });
+
+function updClock(){
+  var now=new Date();
+  var hh=new Intl.DateTimeFormat('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false,timeZone:'Asia/Jakarta'}).format(now);
+  $('clockTime').textContent=hh+' WIB';
+  $('clockDate').textContent=DAYS[now.getDay()]+', '+now.getDate()+' '+MONTHS[now.getMonth()]+' '+now.getFullYear();
+}
+setInterval(updClock,1000);
+updClock();
 
 $('hamburger').addEventListener('click',function(){ $('sidebar').classList.toggle('open'); });
 
@@ -251,5 +218,6 @@ $('logoutBtn').onclick=async function(ev){
 
 loadUser();
 </script>
+<script src="/assets/js/announcement-popup.js"></script>
 </body>
 </html>

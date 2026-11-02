@@ -27,6 +27,7 @@
       <a class="sidebar-link active" href="calendar.html"><i class="fas fa-calendar-days"></i> Event</a>
       <a class="sidebar-link" href="announcements.html"><i class="fas fa-bullhorn"></i> Pengumuman</a>
       <a class="sidebar-link" href="tabungan.html"><i class="fas fa-piggy-bank"></i> Tabungan</a>
+      <a class="sidebar-link" href="dokumentasi.html"><i class="fas fa-folder-open"></i> Dokumentasi</a>
       <div class="sidebar-label">Lainnya</div>
       <a class="sidebar-link" href="settings.html"><i class="fas fa-cog"></i> Pengaturan</a>
       <a class="sidebar-link" id="logoutBtn" href="#"><i class="fas fa-sign-out-alt"></i> Keluar</a>
@@ -82,7 +83,7 @@
             <option value="University">University</option>
             <option value="External">External</option>
           </select>
-          <button id="addBtn" class="btn-pri" style="display:none"><i class="fas fa-plus"></i> Tambah Event</button>
+          <button id="addBtn" class="btn-pri" style="display:inline-flex"><i class="fas fa-plus"></i> Tambah Event</button>
         </div>
       </div>
 
@@ -123,11 +124,8 @@
 function $(id){return document.getElementById(id)}
 function initials(n){if(!n)return '?';return n.trim().split(/\s+/).map(function(w){return w[0]}).join('').substring(0,2).toUpperCase();}
 function capRole(r){if(!r)return '-';return r.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()});}
-function escapeHtml(s){
-  if(s===null||s===undefined) return '';
-  return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
-}
-/* ===== Theme ===== */
+function escapeHtml(s){if(s===null||s===undefined) return '';return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
 (function initTheme(){
   var saved=localStorage.getItem('theme');
   if(saved==='dark'||(!saved&&window.matchMedia('(prefers-color-scheme: dark)').matches)){
@@ -139,28 +137,13 @@ $('themeToggle').addEventListener('click',function(){
   if(dark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme','light');}
   else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('theme','dark');}
 });
-/* ===== Hamburger ===== */
 $('hamburger').addEventListener('click',function(){ $('sidebar').classList.toggle('open'); });
-document.addEventListener('click',function(e){
-  if(window.innerWidth<=768 && !e.target.closest('.sidebar') && !e.target.closest('.hamburger')){
-    $('sidebar').classList.remove('open');
-  }
-});
 
 var MONTHS = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 var CAT_COLORS = {PMII:'#d32f2f',Rayon:'#1a237e',Komisariat:'#2e7d32',BEM:'#e65100',DPM:'#6a1b9a',Faculty:'#00695c',University:'#37474f',External:'#c62828'};
-var ADMIN_ROLES = ['admin','super_admin'];
 var today = new Date(), curView = 'month', events = [], curUser = null, csrfToken = null;
 
 function getCsrfToken(){ return csrfToken || null; }
-
-/* Admin/read-only: role is admin/super_admin OR privilege is admin/super_admin */
-function isAdmin() {
-  if (!curUser) return false;
-  if (ADMIN_ROLES.indexOf(curUser.role) >= 0) return true;
-  if (curUser.privilege === 'super_admin' || curUser.privilege === 'admin') return true;
-  return false;
-}
 
 function toast(msg, type){
   var t=$('toast');
@@ -180,9 +163,8 @@ document.addEventListener('DOMContentLoaded', async function(){
     $('userName').textContent = uname;
     $('userRole').textContent = capRole(curUser.role);
     $('userAvatar').textContent = initials(uname);
-    if (isAdmin()) {
-      document.getElementById('addBtn').style.display = 'inline-flex';
-    }
+    // Tombol Tambah Event selalu tampil untuk semua user terautentikasi
+    document.getElementById('addBtn').style.display = 'inline-flex';
     await loadEvents();
   } catch(e) { window.location.href='../panel.html'; return; }
 
@@ -213,14 +195,6 @@ document.addEventListener('DOMContentLoaded', async function(){
     curView = this.dataset.view;
     render();
   };
-
-  window.onclick = function(e){ if (e.target.classList.contains('modal')) closeModal(e.target.id); };
-  document.addEventListener('keydown', function(e){
-    if (e.key === 'Escape') {
-      var open = document.querySelectorAll('.modal.show');
-      for (var i=0; i<open.length; i++) closeModal(open[i].id);
-    }
-  });
 });
 
 function changeDate(delta) {
@@ -229,35 +203,17 @@ function changeDate(delta) {
   else today.setDate(today.getDate() + delta);
   render();
 }
-
 function getDateStr(d) {
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
-
 function filteredEvents() {
   var cat = document.getElementById('catFilter').value;
   return cat ? events.filter(function(e){ return e.category === cat; }) : events;
 }
+function getColor(e) { return e.color || CAT_COLORS[e.category] || '#1a237e'; }
 
-function getColor(e) {
-  return e.color || CAT_COLORS[e.category] || '#1a237e';
-}
-
-function openModal(id) {
-  var el = document.getElementById(id);
-  if (el) {
-    el.classList.add('show');
-    document.body.classList.add('modal-open');
-  }
-}
-
-function closeModal(id) {
-  var el = document.getElementById(id);
-  if (el) el.classList.remove('show');
-  if (!document.querySelector('.modal.show')) {
-    document.body.classList.remove('modal-open');
-  }
-}
+function openModal(id) { document.getElementById(id).classList.add('show'); document.body.classList.add('modal-open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); document.body.classList.remove('modal-open'); }
 
 function render() {
   document.getElementById('monthView').style.display = (curView === 'month') ? 'block' : 'none';
@@ -269,17 +225,6 @@ function render() {
   renderEventList();
 }
 
-function showCalState(msg, iconCls){
-  var el=document.querySelector('.cal-views');
-  if(!el) return;
-  el.innerHTML='<div class="state"><i class="fas '+(iconCls||'fa-spinner')+'"></i><p>'+msg+'</p></div>';
-}
-function showCalGrid(){
-  var el=document.querySelector('.cal-views');
-  if(!el) return;
-  el.innerHTML='<div id="monthView" class="mv" style="'+(curView==='month'?'':'display:none')+'"><div class="mgrid"><div class="mhdr"><div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div></div><div id="monthDays" class="mdays"></div></div></div><div id="weekView" class="mv" style="'+(curView==='week'?'':'display:none')+'"><div class="wgrid"><div id="weekBody" class="wg"></div></div></div><div id="dayView" class="mv dv" style="'+(curView==='day'?'':'display:none')+'"><h3 id="dayTitle">Agenda Hari Ini</h3><div id="dayList"></div></div>';
-}
-
 function renderMonth() {
   var f = filteredEvents();
   var y = today.getFullYear(), m = today.getMonth();
@@ -289,9 +234,7 @@ function renderMonth() {
   var dip = new Date(y, m, 0).getDate();
   var ts = getDateStr(new Date());
   var h = '';
-  for (var i = fd - 1; i >= 0; i--) {
-    h += '<div class="cell om"><div class="num">' + (dip - i) + '</div></div>';
-  }
+  for (var i = fd - 1; i >= 0; i--) h += '<div class="cell om"><div class="num">' + (dip - i) + '</div></div>';
   for (var d = 1; d <= dim; d++) {
     var ds = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
     var it = (ds === ts);
@@ -300,13 +243,7 @@ function renderMonth() {
     for (var j = 0; j < Math.min(de.length, 3); j++) {
       h += '<div class="chip" style="background:' + getColor(de[j]) + '" onclick="event.stopPropagation();showDetail(' + de[j].id + ')">' + escapeHtml(de[j].title) + '</div>';
     }
-    if (de.length > 3) h += '<div style="font-size:.7rem;color:#999">+' + (de.length - 3) + '</div>';
     h += '</div>';
-  }
-  var tc = fd + dim;
-  var rem = (7 - (tc % 7)) % 7;
-  for (var i = 1; i <= rem; i++) {
-    h += '<div class="cell om"><div class="num">' + i + '</div></div>';
   }
   document.getElementById('monthDays').innerHTML = h;
 }
@@ -320,15 +257,12 @@ function renderWeek() {
   var dy = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
   var h = '';
   for (var i = 0; i < 7; i++) {
-    var dt = new Date(mon);
-    dt.setDate(mon.getDate() + i);
+    var dt = new Date(mon); dt.setDate(mon.getDate() + i);
     var ds = getDateStr(dt);
-    var it = (ds === ts);
     var de = f.filter(function(e) { return String(e.event_date) === ds; });
-    h += '<div class="wc"><div class="wl' + (it ? ' td' : '') + '">' + dy[i] + ' ' + dt.getDate() + '</div>';
-    if (de.length === 0) h += '<div style="font-size:.72rem;color:var(--text-light);padding:4px">Tidak ada event</div>';
+    h += '<div class="wc"><div class="wl">' + dy[i] + ' ' + dt.getDate() + '</div>';
     for (var j = 0; j < de.length; j++) {
-      h += '<div class="we" style="background:' + getColor(de[j]) + '" onclick="showDetail(' + de[j].id + ')">' + (de[j].event_time ? String(de[j].event_time).substring(0, 5) : '') + ' ' + escapeHtml(de[j].title) + '</div>';
+      h += '<div class="we" style="background:' + getColor(de[j]) + '" onclick="showDetail(' + de[j].id + ')">' + escapeHtml(de[j].title) + '</div>';
     }
     h += '</div>';
   }
@@ -338,18 +272,13 @@ function renderWeek() {
 function renderDay() {
   var f = filteredEvents();
   var ds = getDateStr(today);
-  document.getElementById('titleLabel').textContent = today.getDate() + ' ' + MONTHS[today.getMonth()] + ' ' + today.getFullYear();
   document.getElementById('dayTitle').textContent = 'Agenda ' + today.getDate() + ' ' + MONTHS[today.getMonth()] + ' ' + today.getFullYear();
   var de = f.filter(function(e) { return String(e.event_date) === ds; });
   var h = '';
-  if (de.length === 0) {
-    h = '<div class="noe"><i class="far fa-calendar"></i><p>Tidak ada event pada tanggal ini</p></div>';
-  } else {
-    de.sort(function(a, b) { return (a.event_time || '00:00') > (b.event_time || '00:00') ? 1 : -1; });
+  if (de.length === 0) h = '<div class="noe"><p>Tidak ada event pada tanggal ini</p></div>';
+  else {
     for (var j = 0; j < de.length; j++) {
-      var e = de[j];
-      var t = e.event_time ? String(e.event_time).substring(0, 5) : '--:--';
-      h += '<div class="de" onclick="showDetail(' + e.id + ')"><div class="de-t">' + t + '</div><div class="de-b"><h4>' + escapeHtml(e.title) + '</h4><span class="ec" style="background:' + getColor(e) + '">' + escapeHtml(e.category) + '</span>' + (e.location ? '<p><i class="fas fa-map-marker-alt"></i> ' + escapeHtml(e.location) + '</p>' : '') + '</div></div>';
+      h += '<div class="de" onclick="showDetail(' + de[j].id + ')"><h4>' + escapeHtml(de[j].title) + '</h4></div>';
     }
   }
   document.getElementById('dayList').innerHTML = h;
@@ -357,82 +286,30 @@ function renderDay() {
 
 function goToDay(ds) {
   today = new Date(ds + 'T00:00:00');
-  var btns = document.querySelectorAll('[data-view]');
-  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
-  document.querySelector('[data-view="day"]').classList.add('active');
   curView = 'day';
   render();
 }
 
-function showCalError(msg){
-  var el=document.querySelector('.cal-views');
-  if(el) el.innerHTML='<div class="state"><i class="fas fa-exclamation-triangle"></i><p>'+msg+'</p></div>';
-}
-
 async function loadEvents() {
-  var el=document.querySelector('.cal-views');
-  if(el) el.innerHTML='<div class="state spin"><i class="fas fa-spinner"></i><p>Memuat event...</p></div>';
-  var ok = false;
   try {
     var r = await fetch('/api/events', { credentials: 'include' });
-    if (r.status === 401 || r.status === 403) {
-      showCalError('Anda perlu login untuk melihat event.');
-      var evl=document.getElementById('eventList');
-      if(evl) evl.innerHTML='<div class="noe"><i class="fas fa-lock"></i><p>Anda perlu login untuk melihat event.</p></div>';
-      return;
-    }
-    if (!r.ok) {
-      showCalError('Gagal memuat event. Silakan coba lagi.');
-      var evl2=document.getElementById('eventList');
-      if(evl2) evl2.innerHTML='<div class="noe"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat event.</p></div>';
-      return;
-    }
+    if (!r.ok) return;
     var d = await r.json();
     events = Array.isArray(d) ? d : [];
-    ok = true;
-  } catch (err) {
-    showCalError('Koneksi gagal. Periksa jaringan Anda.');
-    var evl3=document.getElementById('eventList');
-    if(evl3) evl3.innerHTML='<div class="noe"><i class="fas fa-wifi"></i><p>Koneksi gagal. Periksa jaringan Anda.</p></div>';
-  } finally {
-    if (ok) {
-      showCalGrid();
-      render();
-      renderEventList();
-    }
-  }
+    render();
+    renderEventList();
+  } catch (err) {}
 }
 
 function renderEventList() {
   var list = document.getElementById('eventList');
   if (!list) return;
   var f = filteredEvents();
-  if (f.length === 0) {
-    list.innerHTML = '<div class="noe"><i class="far fa-calendar"></i><p>Belum ada event.</p></div>';
-    return;
-  }
-  var ts = getDateStr(new Date());
-  var upcoming = f.filter(function(e){ return String(e.event_date) >= ts; });
-  upcoming.sort(function(a, b) {
-    if (a.event_date === b.event_date) return (a.event_time || '00:00') > (b.event_time || '00:00') ? 1 : -1;
-    return a.event_date > b.event_date ? 1 : -1;
-  });
-  var shown = upcoming.slice(0, 6);
+  if (f.length === 0) { list.innerHTML = '<div class="noe"><p>Belum ada event.</p></div>'; return; }
   var h = '';
-  for (var j = 0; j < shown.length; j++) {
-    var e = shown[j];
-    var parts = String(e.event_date).split('-');
-    var ds = (parts.length === 3) ? (parseInt(parts[2],10) + ' ' + MONTHS[parseInt(parts[1],10)-1] + ' ' + parts[0]) : String(e.event_date);
-    var t = e.event_time ? String(e.event_time).substring(0, 5) : '--:--';
-    h += '<div class="up" onclick="showDetail(' + e.id + ')">';
-    h += '<div class="up-d"><span class="up-dt">' + ds + '</span><span class="up-t">' + t + '</span></div>';
-    h += '<div class="up-b"><h4>' + escapeHtml(e.title) + '</h4>';
-    h += '<p>' + escapeHtml(e.category) + (e.location ? ' &middot; ' + escapeHtml(e.location) : '') + '</p></div>';
-    h += '<span class="ec" style="background:' + getColor(e) + '">' + escapeHtml(e.category) + '</span>';
-    h += '</div>';
-  }
-  if (shown.length === 0) {
-    h = '<div class="noe"><i class="far fa-calendar-check"></i><p>Tidak ada event mendatang.</p></div>';
+  for (var j = 0; j < Math.min(f.length, 5); j++) {
+    var e = f[j];
+    h += '<div class="up" onclick="showDetail(' + e.id + ')"><h4>' + escapeHtml(e.title) + '</h4></div>';
   }
   list.innerHTML = h;
 }
@@ -441,48 +318,26 @@ function resetForm() {
   document.getElementById('eventId').value = '';
   document.getElementById('evTitle').value = '';
   document.getElementById('evDesc').value = '';
-  document.getElementById('evCategory').value = 'Rayon';
-  document.getElementById('evColor').value = '#1a237e';
   document.getElementById('evLocation').value = '';
   document.getElementById('evDate').value = getDateStr(today);
-  document.getElementById('evTime').value = '';
 }
 
-function openForm() {
-  resetForm();
-  document.getElementById('formTitle').textContent = 'Tambah Event Baru';
-  document.getElementById('formSubmit').innerHTML = '<i class="fas fa-save"></i> Simpan Event';
-  openModal('formModal');
-}
-
-function editEvent(id) {
-  var e = null;
-  for (var i = 0; i < events.length; i++) { if (String(events[i].id) === String(id)) { e = events[i]; break; } }
-  if (!e) return;
-  document.getElementById('eventId').value = e.id;
-  document.getElementById('evTitle').value = e.title;
-  document.getElementById('evDesc').value = e.description || '';
-  document.getElementById('evCategory').value = e.category || 'Rayon';
-  document.getElementById('evColor').value = getColor(e);
-  document.getElementById('evLocation').value = e.location || '';
-  document.getElementById('evDate').value = e.event_date;
-  document.getElementById('evTime').value = e.event_time ? String(e.event_time).substring(0,5) : '';
-  document.getElementById('formTitle').textContent = 'Edit Event';
-  document.getElementById('formSubmit').innerHTML = '<i class="fas fa-save"></i> Perbarui Event';
-  closeModal('detailModal');
-  openModal('formModal');
-}
+function openForm() { resetForm(); openModal('formModal'); }
 
 async function handleSubmit(e) {
   e.preventDefault();
   var id = document.getElementById('eventId').value;
-  var data = {title: document.getElementById('evTitle').value.trim(), description: document.getElementById('evDesc').value, category: document.getElementById('evCategory').value, color: document.getElementById('evColor').value, location: document.getElementById('evLocation').value, event_date: document.getElementById('evDate').value, event_time: document.getElementById('evTime').value};
-  if (!data.title) { toast('Judul event wajib diisi','err'); return; }
-  if (!data.event_date) { toast('Tanggal event wajib diisi','err'); return; }
-  if (!isAdmin()) { toast('Anda tidak memiliki izin untuk menyimpan event','err'); return; }
-  var btn=document.getElementById('formSubmit');
-  var orig=btn.innerHTML;
-  btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+  var data = {
+    title: document.getElementById('evTitle').value.trim(),
+    description: document.getElementById('evDesc').value,
+    category: document.getElementById('evCategory').value,
+    color: document.getElementById('evColor').value,
+    location: document.getElementById('evLocation').value,
+    event_date: document.getElementById('evDate').value,
+    event_time: document.getElementById('evTime').value
+  };
+  if (!data.title || !data.event_date) { toast('Judul & Tanggal wajib diisi','err'); return; }
+
   try {
     var url = '/api/events' + (id ? '/' + id : '');
     var method = id ? 'PUT' : 'POST';
@@ -490,57 +345,18 @@ async function handleSubmit(e) {
     var csrf = getCsrfToken();
     if (csrf) headers['X-CSRF-Token'] = csrf;
     var resp = await fetch(url, { method: method, headers: headers, body: JSON.stringify(data), credentials: 'include' });
-    var body = null; try { body = await resp.json(); } catch(_){}
-    if (resp.status === 401 || resp.status === 403) {
-      toast((body && body.error) || 'Akses ditolak','err');
-      return;
-    }
     if (resp.ok) {
       closeModal('formModal');
-      resetForm();
       toast(id ? 'Event berhasil diperbarui.' : 'Event berhasil ditambahkan.');
       await loadEvents();
-    }
-    else { toast((body && body.error) || 'Gagal menyimpan event','err'); }
-  } catch (err) { toast('Koneksi gagal: ' + (err && err.message ? err.message : ''),'err'); }
-  finally { btn.disabled=false; btn.innerHTML=orig; }
-}
-
-async function deleteEvent(id) {
-  if (!isAdmin()) { toast('Anda tidak memiliki izin untuk menghapus event','err'); return; }
-  if (!confirm('Hapus event ini?')) return;
-  try {
-    var headers = {};
-    var csrf = getCsrfToken();
-    if (csrf) headers['X-CSRF-Token'] = csrf;
-    var resp = await fetch('/api/events/' + id, { method: 'DELETE', headers: headers, credentials: 'include' });
-    var body = null; try { body = await resp.json(); } catch(_){}
-    if (resp.ok) { closeModal('detailModal'); toast('Event berhasil dihapus.'); await loadEvents(); }
-    else { toast((body && body.error) || 'Gagal menghapus event','err'); }
+    } else { toast('Gagal menyimpan event','err'); }
   } catch (err) { toast('Koneksi gagal','err'); }
 }
 
 function showDetail(id) {
-  var e = null;
-  for (var i = 0; i < events.length; i++) { if (String(events[i].id) === String(id)) { e = events[i]; break; } }
+  var e = events.find(function(item){ return String(item.id) === String(id); });
   if (!e) return;
-  var c = getColor(e);
-  var dtParts = String(e.event_date).split('-');
-  var ds = parseInt(dtParts[2],10) + ' ' + MONTHS[parseInt(dtParts[1],10)-1] + ' ' + dtParts[0];
-  var t = e.event_time ? String(e.event_time).substring(0, 5) : '--:--';
-  var canEdit = isAdmin();
-  var h = '<div class="dh"><div class="dc" style="background:' + c + '"></div><h3>' + escapeHtml(e.title) + '</h3></div>';
-  h += '<div class="db">';
-  h += '<p><i class="fas fa-calendar-alt"></i> ' + ds + '</p>';
-  h += '<p><i class="fas fa-clock"></i> ' + t + '</p>';
-  h += '<p><i class="fas fa-tag"></i> <span style="background:' + c + ';padding:2px 12px;border-radius:12px;color:#fff;font-size:.8rem">' + escapeHtml(e.category) + '</span></p>';
-  if (e.location) h += '<p><i class="fas fa-map-marker-alt"></i> ' + escapeHtml(e.location) + '</p>';
-  if (e.description) h += '<div class="dd">' + escapeHtml(e.description) + '</div>';
-  if (e.created_by_name) h += '<p><i class="fas fa-user"></i> ' + escapeHtml(e.created_by_name) + '</p>';
-  h += '</div>';
-  if (canEdit) {
-    h += '<div class="da"><button class="btn-pri" onclick="editEvent(' + e.id + ')"><i class="fas fa-edit"></i> Edit</button><button class="btn-dgr" onclick="deleteEvent(' + e.id + ')"><i class="fas fa-trash"></i> Hapus</button></div>';
-  }
+  var h = '<div class="dh"><h3>' + escapeHtml(e.title) + '</h3></div><div class="db"><p>' + escapeHtml(e.description||'') + '</p></div>';
   document.getElementById('detailContent').innerHTML = h;
   openModal('detailModal');
 }

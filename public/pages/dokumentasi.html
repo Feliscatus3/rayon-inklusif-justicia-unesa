@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dokumentasi - Kader Panel PMII Justicia</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/announcement-popup.css">
+<style>
+:root{
+  --sidebar-w:264px;
+  --header-h:66px;
+  --primary:#1a237e;
+  --primary-light:#3949ab;
+  --primary-dark:#000051;
+  --accent:#ffd600;
+  --bg:#f1f3f7;
+  --bg-card:#ffffff;
+  --text:#1c2333;
+  --text2:#64748b;
+  --text3:#94a3b8;
+  --border:#e4e8ef;
+  --shadow:0 1px 3px rgba(16,24,40,.06),0 1px 2px rgba(16,24,40,.04);
+  --shadow-lg:0 12px 32px rgba(16,24,40,.12);
+  --radius:14px;
+  --transition:.28s ease;
+  --sidebar-bg:linear-gradient(180deg,#141a4d 0%,#0d1238 55%,#090d2b 100%);
+}
+[data-theme="dark"]{
+  --primary:#7f8ff4;
+  --primary-light:#a5b4fc;
+  --primary-dark:#5c6bc0;
+  --accent:#ffd600;
+  --bg:#0b0e17;
+  --bg-card:#141926;
+  --text:#e8ecf4;
+  --text2:#94a3b8;
+  --text3:#64748b;
+  --border:#242c42;
+  --shadow:0 1px 3px rgba(0,0,0,.4),0 1px 2px rgba(0,0,0,.3);
+  --sidebar-bg:linear-gradient(180deg,#0d1130 0%,#090d26 55%,#060918 100%);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{text-decoration:none;color:inherit}
+
+.dash-layout{display:flex;min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:var(--sidebar-bg);color:#fff;z-index:1000;display:flex;flex-direction:column;transition:transform var(--transition)}
+.sidebar-brand{padding:20px;display:flex;align-items:center;gap:13px;border-bottom:1px solid rgba(255,255,255,.08)}
+.brand-logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#ffd600,#ffab00);display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:#1a237e;font-weight:800}
+.brand-text h2{font-size:.98rem;font-weight:700}
+.brand-text small{font-size:.68rem;opacity:.62;display:block}
+.sidebar-nav{padding:14px 0;flex:1}
+.sidebar-label{padding:14px 22px 6px;font-size:.64rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.4)}
+.sidebar-link{display:flex;align-items:center;gap:13px;padding:10.5px 20px;color:rgba(255,255,255,.68);font-size:.85rem;font-weight:500;margin:2px 10px;border-radius:10px;transition:all var(--transition)}
+.sidebar-link i{width:20px;text-align:center}
+.sidebar-link:hover,.sidebar-link.active{background:rgba(255,255,255,.1);color:#ffd600}
+.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.08);font-size:.7rem;color:rgba(255,255,255,.4);text-align:center}
+
+.main-area{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;width:calc(100% - var(--sidebar-w))}
+.topbar{background:var(--bg-card);height:var(--header-h);display:flex;align-items:center;padding:0 26px;gap:14px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:900}
+.topbar-right{display:flex;align-items:center;gap:12px;margin-left:auto}
+.hamburger{display:none;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:8px;cursor:pointer}
+.icon-btn{width:38px;height:38px;border-radius:11px;background:var(--bg);border:1px solid var(--border);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.theme-toggle .fa-sun{display:none}
+[data-theme="dark"] .theme-toggle .fa-moon{display:none}
+[data-theme="dark"] .theme-toggle .fa-sun{display:inline-block;color:var(--accent)}
+.topbar-user{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:12px}
+.u-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem}
+
+.dash-content{padding:26px;flex:1;max-width:1440px;margin:0 auto;width:100%}
+.page-head{margin-bottom:24px}
+.page-title{font-size:1.5rem;font-weight:800;display:flex;align-items:center;gap:12px}
+.page-subtitle{font-size:.84rem;color:var(--text2);margin-top:4px}
+
+.card{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
+.card-hd{padding:17px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-hd h3{font-size:.95rem;font-weight:700;display:flex;align-items:center;gap:10px}
+.card-bd{padding:20px}
+
+.drive-wrapper{width:100%;height:680px;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:var(--bg)}
+.drive-wrapper iframe{width:100%;height:100%;border:0}
+
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0);box-shadow:0 0 60px rgba(0,0,0,.5)}
+  .main-area{margin-left:0;width:100%}
+  .hamburger{display:inline-flex}
+  .drive-wrapper{height:480px}
+}
+</style>
+</head>
+<body>
+<div class="dash-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo"><i class="fas fa-people-arrows"></i></div>
+      <div class="brand-text">
+        <h2>Kader Panel</h2>
+        <small>PMII Justicia UNESA</small>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-label">Menu</div>
+      <a class="sidebar-link" href="dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a class="sidebar-link" href="users.html"><i class="fas fa-users"></i> Manajemen Pengguna</a>
+      <a class="sidebar-link" href="calendar.html"><i class="fas fa-calendar-days"></i> Event</a>
+      <a class="sidebar-link" href="announcements.html"><i class="fas fa-bullhorn"></i> Pengumuman</a>
+      <a class="sidebar-link" href="tabungan.html"><i class="fas fa-piggy-bank"></i> Tabungan</a>
+      <a class="sidebar-link active" href="dokumentasi.html"><i class="fas fa-folder-open"></i> Dokumentasi</a>
+      <div class="sidebar-label">Lainnya</div>
+      <a class="sidebar-link" href="settings.html"><i class="fas fa-cog"></i> Pengaturan</a>
+      <div class="sidebar-label">Akun</div>
+      <a class="sidebar-link" id="logoutBtn" href="#"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+    </nav>
+    <div class="sidebar-footer">PMII Rayon Justicia &copy; 2025</div>
+  </aside>
+
+  <div class="main-area">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+        <div class="topbar-title"><i class="fas fa-folder-open"></i> Dokumentasi & Galeri</div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn theme-toggle" id="themeToggle"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
+        <div class="topbar-user">
+          <div class="u-avatar" id="userAvatar">K</div>
+          <div class="u-info">
+            <div class="u-name" id="userName">Kader</div>
+            <div class="u-role" id="userRole">-</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="dash-content">
+      <div class="page-head">
+        <h1 class="page-title"><i class="fas fa-images"></i> Galeri Dokumentasi Kegiatan</h1>
+        <p class="page-subtitle">Arsip foto, media kit, dan berkas dokumentasi Rayon PMII Justicia.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-hd">
+          <h3><i class="fab fa-google-drive"></i> Google Drive Galeri Folder</h3>
+          <a href="https://drive.google.com/drive/folders/1Ltc_TQyQS-7-Xo0raUdbGfU7oCyttGVH?usp=sharing" target="_blank" class="sidebar-link" style="background:var(--primary);color:#fff;padding:6px 14px;border-radius:8px;margin:0"><i class="fas fa-external-link-alt"></i> Buka Drive</a>
+        </div>
+        <div class="card-bd">
+          <div class="drive-wrapper">
+            <iframe src="https://drive.google.com/embeddedfolderview?id=1Ltc_TQyQS-7-Xo0raUdbGfU7oCyttGVH#grid" title="Dokumentasi Google Drive"></iframe>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+function $(id){return document.getElementById(id)}
+function initials(n){if(!n)return '?';return n.trim().split(/\s+/).map(function(w){return w[0]}).join('').substring(0,2).toUpperCase();}
+function capRole(r){if(!r)return '-';return r.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()});}
+
+(function initTheme(){
+  var saved=localStorage.getItem('theme');
+  if(saved==='dark'||(!saved&&window.matchMedia('(prefers-color-scheme: dark)').matches)){
+    document.documentElement.setAttribute('data-theme','dark');
+  }
+})();
+$('themeToggle').addEventListener('click',function(){
+  var dark=document.documentElement.getAttribute('data-theme')==='dark';
+  if(dark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme','light');}
+  else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('theme','dark');}
+});
+$('hamburger').addEventListener('click',function(){ $('sidebar').classList.toggle('open'); });
+
+async function loadUser(){
+  try{
+    var r=await fetch('/api/auth/me',{credentials:'include'});
+    var d=await r.json();
+    if(!d.authenticated){ window.location.href='../panel.html'; return; }
+    var u=d.user;
+    var name=u.full_name||u.username||'Kader';
+    $('userName').textContent=name;
+    $('userRole').textContent=capRole(u.role);
+    $('userAvatar').textContent=initials(name);
+  }catch(e){ window.location.href='../panel.html'; }
+}
+$('logoutBtn').onclick=async function(ev){
+  ev.preventDefault();
+  try{ await fetch('/api/auth/logout',{method:'POST',credentials:'include'}); }catch(e){}
+  window.location.href='../panel.html';
+};
+loadUser();
+</script>
+</body>
+</html>

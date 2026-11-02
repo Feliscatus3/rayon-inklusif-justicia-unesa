@@ -59,10 +59,11 @@ a{text-decoration:none;color:inherit}
 .sidebar-link:hover,.sidebar-link.active{background:rgba(255,255,255,.1);color:#ffd600}
 .sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.08);font-size:.7rem;color:rgba(255,255,255,.4);text-align:center}
 
-.main-area{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;width:calc(100% - var(--sidebar-w))}
+.main-area{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;width:calc(100% - var(--sidebar-w));transition:margin var(--transition),width var(--transition)}
 .topbar{background:var(--bg-card);height:var(--header-h);display:flex;align-items:center;padding:0 26px;gap:14px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:900}
+.topbar-left{display:flex;align-items:center;gap:12px}
 .topbar-right{display:flex;align-items:center;gap:12px;margin-left:auto}
-.hamburger{display:none;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:8px;cursor:pointer}
+.hamburger{display:none;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:8px;cursor:pointer;font-size:1rem}
 .icon-btn{width:38px;height:38px;border-radius:11px;background:var(--bg);border:1px solid var(--border);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center}
 .theme-toggle .fa-sun{display:none}
 [data-theme="dark"] .theme-toggle .fa-moon{display:none}
@@ -72,23 +73,64 @@ a{text-decoration:none;color:inherit}
 
 .dash-content{padding:26px;flex:1;max-width:1440px;margin:0 auto;width:100%}
 .page-head{margin-bottom:24px}
-.page-title{font-size:1.5rem;font-weight:800;display:flex;align-items:center;gap:12px}
+.page-title{font-size:1.4rem;font-weight:800;display:flex;align-items:center;gap:12px}
 .page-subtitle{font-size:.84rem;color:var(--text2);margin-top:4px}
 
-.card{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
-.card-hd{padding:17px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+/* Card & Responsive Actions Header */
+.card{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow);margin-bottom:24px}
+.card-hd{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .card-hd h3{font-size:.95rem;font-weight:700;display:flex;align-items:center;gap:10px}
-.card-bd{padding:20px}
+.btn-drive{background:var(--primary);color:#fff;padding:8px 16px;border-radius:8px;font-size:.82rem;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:var(--transition)}
+.btn-drive:hover{opacity:.9;transform:translateY(-1px)}
 
-.drive-wrapper{width:100%;height:680px;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:var(--bg)}
+.card-bd{padding:16px}
+
+/* Container Iframe & Mobile Helper */
+.drive-wrapper{width:100%;height:680px;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:var(--bg);position:relative}
 .drive-wrapper iframe{width:100%;height:100%;border:0}
 
+/* Mobile Quick Access Cards (Tampil di Layar Kecil) */
+.mobile-drive-banner{
+  display:none;
+  background:linear-gradient(135deg, var(--primary), var(--primary-light));
+  color:#fff;
+  padding:20px;
+  border-radius:12px;
+  text-align:center;
+  margin-bottom:16px;
+}
+.mobile-drive-banner h4{font-size:1rem;margin-bottom:6px}
+.mobile-drive-banner p{font-size:.78rem;opacity:.9;margin-bottom:14px}
+.mobile-drive-banner .btn-drive-mobile{
+  background:var(--accent);
+  color:#1a237e;
+  padding:10px 20px;
+  border-radius:30px;
+  font-weight:700;
+  font-size:.85rem;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
+
+/* Responsif Mobile Screen (< 768px) */
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%)}
   .sidebar.open{transform:translateX(0);box-shadow:0 0 60px rgba(0,0,0,.5)}
   .main-area{margin-left:0;width:100%}
   .hamburger{display:inline-flex}
-  .drive-wrapper{height:480px}
+  
+  .dash-content{padding:16px}
+  .page-title{font-size:1.2rem}
+  .topbar{padding:0 16px}
+  .u-info{display:none} /* Sembunyikan nama user di topbar mobile agar ringkas */
+
+  .card-hd{flex-direction:column;align-items:flex-start}
+  .btn-drive{width:100%;justify-content:center}
+  
+  .drive-wrapper{height:450px} /* Penyesuaian tinggi iframe untuk HP */
+  .mobile-drive-banner{display:block} /* Tampilkan banner khusus mobile */
 }
 </style>
 </head>
@@ -121,11 +163,11 @@ a{text-decoration:none;color:inherit}
   <div class="main-area">
     <header class="topbar">
       <div class="topbar-left">
-        <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+        <button class="hamburger" id="hamburger" aria-label="Toggle Navigation"><i class="fas fa-bars"></i></button>
         <div class="topbar-title"><i class="fas fa-folder-open"></i> Dokumentasi & Galeri</div>
       </div>
       <div class="topbar-right">
-        <button class="icon-btn theme-toggle" id="themeToggle"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
+        <button class="icon-btn theme-toggle" id="themeToggle" title="Ganti Tema"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
         <div class="topbar-user">
           <div class="u-avatar" id="userAvatar">K</div>
           <div class="u-info">
@@ -142,10 +184,21 @@ a{text-decoration:none;color:inherit}
         <p class="page-subtitle">Arsip foto, media kit, dan berkas dokumentasi Rayon PMII Justicia.</p>
       </div>
 
+      <!-- Banner Akses Cepat Khusus Tampilan Mobile -->
+      <div class="mobile-drive-banner">
+        <h4><i class="fab fa-google-drive"></i> Akses Aplikasi Google Drive</h4>
+        <p>Gunakan aplikasi Google Drive di smartphone kamu untuk performa galeri yang lebih cepat & responsif.</p>
+        <a href="https://drive.google.com/drive/folders/1Ltc_TQyQS-7-Xo0raUdbGfU7oCyttGVH?usp=sharing" target="_blank" class="btn-drive-mobile">
+          <i class="fas fa-external-link-alt"></i> Buka Folder di Drive
+        </a>
+      </div>
+
       <div class="card">
         <div class="card-hd">
           <h3><i class="fab fa-google-drive"></i> Google Drive Galeri Folder</h3>
-          <a href="https://drive.google.com/drive/folders/1Ltc_TQyQS-7-Xo0raUdbGfU7oCyttGVH?usp=sharing" target="_blank" class="sidebar-link" style="background:var(--primary);color:#fff;padding:6px 14px;border-radius:8px;margin:0"><i class="fas fa-external-link-alt"></i> Buka Drive</a>
+          <a href="https://drive.google.com/drive/folders/1Ltc_TQyQS-7-Xo0raUdbGfU7oCyttGVH?usp=sharing" target="_blank" class="btn-drive">
+            <i class="fas fa-external-link-alt"></i> Buka Drive Langsung
+          </a>
         </div>
         <div class="card-bd">
           <div class="drive-wrapper">
@@ -168,11 +221,13 @@ function capRole(r){if(!r)return '-';return r.replace(/_/g,' ').replace(/\b\w/g,
     document.documentElement.setAttribute('data-theme','dark');
   }
 })();
+
 $('themeToggle').addEventListener('click',function(){
   var dark=document.documentElement.getAttribute('data-theme')==='dark';
   if(dark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme','light');}
   else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('theme','dark');}
 });
+
 $('hamburger').addEventListener('click',function(){ $('sidebar').classList.toggle('open'); });
 
 async function loadUser(){
@@ -187,11 +242,13 @@ async function loadUser(){
     $('userAvatar').textContent=initials(name);
   }catch(e){ window.location.href='../panel.html'; }
 }
+
 $('logoutBtn').onclick=async function(ev){
   ev.preventDefault();
   try{ await fetch('/api/auth/logout',{method:'POST',credentials:'include'}); }catch(e){}
   window.location.href='../panel.html';
 };
+
 loadUser();
 </script>
 </body>

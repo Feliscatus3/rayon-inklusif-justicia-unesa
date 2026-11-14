@@ -75,8 +75,8 @@ a{text-decoration:none;color:inherit}
 .sidebar-brand{padding:20px 20px 18px;display:flex;align-items:center;gap:13px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
 .brand-logo{width:42px;height:42px;border-radius:12px;flex-shrink:0;background:linear-gradient(135deg,#ffd600,#ffab00);display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:#1a237e;font-weight:800;box-shadow:0 4px 14px rgba(255,214,0,.35);overflow:hidden}
 .brand-logo img{width:100%;height:100%;object-fit:cover}
-.brand-text h2{font-size:.98rem;font-weight:700;letter-spacing:.2px;line-height:1.25;white-space:nowrap}
-.brand-text small{font-size:.68rem;opacity:.62;display:block;margin-top:2px;letter-spacing:.4px;white-space:nowrap}
+.brand-text h2{font-size:.98rem;font-weight:700;letter-spacing:.2px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px}
+.brand-text small{font-size:.68rem;opacity:.62;display:block;margin-top:2px;letter-spacing:.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px}
 .sidebar-nav{padding:14px 0 10px;flex:1}
 .sidebar-label{padding:14px 22px 6px;font-size:.64rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.4)}
 .sidebar-link{display:flex;align-items:center;gap:13px;padding:10.5px 20px;color:rgba(255,255,255,.68);text-decoration:none;font-size:.85rem;font-weight:500;transition:all var(--transition);border-left:3px solid transparent;margin:2px 10px;border-radius:10px}
@@ -160,7 +160,7 @@ a{text-decoration:none;color:inherit}
 .file-btn input[type=file]{position:absolute;left:0;top:0;opacity:0;width:100%;height:100%;cursor:pointer}
 .media-url input{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:9px;background:var(--bg);color:var(--text);font-size:.78rem;outline:none;transition:all var(--transition)}
 .media-url input:focus{border-color:var(--primary)}
-.media-actions{display:flex;gap:8px;align-items:center}
+.media-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 
 /* Save bar */
 .save-bar{display:flex;align-items:center;gap:14px;padding:16px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);position:sticky;bottom:18px;z-index:500;flex-wrap:wrap}
@@ -245,11 +245,11 @@ a{text-decoration:none;color:inherit}
   <div class="main-area">
     <header class="topbar">
       <div class="topbar-left">
-        <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+        <button type="button" class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
         <div class="topbar-title"><i class="fas fa-cog"></i> Pengaturan</div>
       </div>
       <div class="topbar-right">
-        <button class="icon-btn theme-toggle" id="themeToggle" title="Ganti tema"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
+        <button type="button" class="icon-btn theme-toggle" id="themeToggle" title="Ganti tema"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
         <div class="topbar-user" id="userChip">
           <div class="u-avatar" id="userAvatar">K</div>
           <div class="u-info">
@@ -266,9 +266,13 @@ a{text-decoration:none;color:inherit}
         <p class="page-subtitle">Kelola identitas, kontak, dan tampilan situs. Perubahan tersimpan di database dan berlaku secara global.</p>
       </div>
 
-      <!-- Loading state -->
+      <!-- Loading & Error states -->
       <div class="state spin" id="loadingState"><i class="fas fa-spinner"></i><p>Memuat pengaturan...</p></div>
-      <div class="state" id="errorState"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat pengaturan.</p></div>
+      <div class="state hidden" id="errorState">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p id="errorMsg">Gagal memuat pengaturan.</p>
+        <button type="button" class="btn btn-ghost" id="retryBtn"><i class="fas fa-rotate-right"></i> Coba Lagi</button>
+      </div>
 
       <form id="settingsForm" class="hidden">
         <!-- Branding -->
@@ -276,7 +280,7 @@ a{text-decoration:none;color:inherit}
           <div class="card-hd"><h3><i class="fas fa-palette"></i> Branding</h3></div>
           <div class="card-bd">
             <div class="fg">
-              <label>Nama Website <span class="req">*</span></label>
+              <label for="inSiteName">Nama Website <span class="req">*</span></label>
               <input type="text" id="inSiteName" placeholder="Kader Panel" maxlength="100" required>
               <span class="sub-txt">Ditampilkan pada judul halaman dan sidebar.</span>
             </div>
@@ -286,7 +290,7 @@ a{text-decoration:none;color:inherit}
                 <div class="media-preview" id="logoPrev"><div class="ph"><i class="fas fa-image"></i>Preview</div></div>
                 <div class="media-controls">
                   <label class="file-btn"><i class="fas fa-upload"></i> Upload Logo<input type="file" id="inLogoFile" accept="image/*"></label>
-                  <div class="media-url"><input type="text" id="inLogoUrl" placeholder="...atau URL gambar logo"><span class="sub-txt">Mendukung file gambar atau URL eksternal.</span></div>
+                  <div class="media-url"><input type="text" id="inLogoUrl" placeholder="...atau URL gambar logo"><span class="sub-txt">Mendukung file gambar (maks 2MB) atau URL eksternal.</span></div>
                   <div class="media-actions">
                     <button type="button" class="btn btn-ghost" id="logoClear" style="padding:6px 12px;font-size:.74rem"><i class="fas fa-eraser"></i> Hapus</button>
                     <span id="logoInfo" style="font-size:.7rem;color:var(--text3)"></span>
@@ -297,10 +301,14 @@ a{text-decoration:none;color:inherit}
             <div class="fg">
               <label>Favicon</label>
               <div class="media-row">
-                <div class="media-preview" id="favPrev" style="width:44px;height:44px;border-radius:10px"><div class="ph"><i class="fas fa-image"></i></div></div>
+                <div class="media-preview" id="favPrev" style="width:48px;height:48px;border-radius:10px"><div class="ph"><i class="fas fa-image"></i></div></div>
                 <div class="media-controls">
                   <label class="file-btn"><i class="fas fa-upload"></i> Upload Favicon<input type="file" id="inFavFile" accept="image/*"></label>
                   <div class="media-url"><input type="text" id="inFavUrl" placeholder="...atau URL favicon"></div>
+                  <div class="media-actions">
+                    <button type="button" class="btn btn-ghost" id="favClear" style="padding:6px 12px;font-size:.74rem"><i class="fas fa-eraser"></i> Hapus</button>
+                    <span id="favInfo" style="font-size:.7rem;color:var(--text3)"></span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -312,23 +320,23 @@ a{text-decoration:none;color:inherit}
           <div class="card-hd"><h3><i class="fas fa-building"></i> Organisasi</h3></div>
           <div class="card-bd">
             <div class="fg">
-              <label>Nama Organisasi <span class="req">*</span></label>
+              <label for="inOrgName">Nama Organisasi <span class="req">*</span></label>
               <input type="text" id="inOrgName" placeholder="PMII Rayon Inklusif Justicia" maxlength="150" required>
             </div>
             <div class="fg">
-              <label>Alamat</label>
+              <label for="inAddress">Alamat</label>
               <textarea id="inAddress" rows="2" placeholder="Alamat sekretariat organisasi..."></textarea>
             </div>
             <div class="fg">
-              <label>Email</label>
-              <input type="email" id="inEmail" placeholder="organisasi@example.com">
+              <label for="inEmail">Email</label>
+              <input type="email" id="inEmail" placeholder="organisasi@example.com" maxlength="100">
             </div>
             <div class="fg">
-              <label>Instagram</label>
+              <label for="inInstagram">Instagram</label>
               <input type="text" id="inInstagram" placeholder="@pmii.justicia" maxlength="100">
             </div>
             <div class="fg">
-              <label>WhatsApp</label>
+              <label for="inWhatsapp">WhatsApp</label>
               <input type="tel" id="inWhatsapp" placeholder="+6281234567890" maxlength="30">
             </div>
           </div>
@@ -354,6 +362,7 @@ a{text-decoration:none;color:inherit}
                   <div class="media-url"><input type="text" id="inBgUrl" placeholder="...atau URL gambar background"></div>
                   <div class="media-actions">
                     <button type="button" class="btn btn-ghost" id="bgClear" style="padding:6px 12px;font-size:.74rem"><i class="fas fa-eraser"></i> Hapus</button>
+                    <span id="bgInfo" style="font-size:.7rem;color:var(--text3)"></span>
                   </div>
                 </div>
               </div>
@@ -375,20 +384,20 @@ a{text-decoration:none;color:inherit}
 
 <script>
 /* ===== Helpers ===== */
-function $(id){return document.getElementById(id)}
+function $(id){ return document.getElementById(id); }
 function escapeHtml(s){
   if(s===null||s===undefined) return '';
-  return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'<','>':'>','"':'"',"'":'&#39;'}[c];});
+  return String(s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; });
 }
-function initials(n){if(!n)return '?';return n.trim().split(/\s+/).map(function(w){return w[0]}).join('').substring(0,2).toUpperCase();}
-function capRole(r){if(!r)return '-';return r.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()});}
+function initials(n){ if(!n) return '?'; return n.trim().split(/\s+/).map(function(w){ return w[0]; }).join('').substring(0,2).toUpperCase(); }
+function capRole(r){ if(!r) return '-'; return r.replace(/_/g,' ').replace(/\b\w/g,function(c){ return c.toUpperCase(); }); }
 function toast(msg,type){
   var wrap=$('toastWrap');
   var el=document.createElement('div');
   el.className='toast '+(type==='err'?'err':'succ');
   el.innerHTML='<i class="fas '+(type==='err'?'fa-exclamation-circle':'fa-check-circle')+'"></i>'+escapeHtml(msg);
   wrap.appendChild(el);
-  setTimeout(function(){el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(function(){el.remove();},320);},3200);
+  setTimeout(function(){ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(function(){ el.remove(); },320); },3200);
 }
 
 /* ===== Theme ===== */
@@ -400,53 +409,94 @@ function toast(msg,type){
 })();
 $('themeToggle').addEventListener('click',function(){
   var dark=document.documentElement.getAttribute('data-theme')==='dark';
-  if(dark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme','light');}
-  else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('theme','dark');}
+  if(dark){ document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme','light'); }
+  else { document.documentElement.setAttribute('data-theme','dark'); localStorage.setItem('theme','dark'); }
 });
 
 /* ===== Hamburger ===== */
-$('hamburger').addEventListener('click',function(){$('sidebar').classList.toggle('open');});
+$('hamburger').addEventListener('click',function(){ $('sidebar').classList.toggle('open'); });
 document.addEventListener('click',function(e){
-  if(window.innerWidth<=768&&!e.target.closest('.sidebar')&&!e.target.closest('.hamburger'))$('sidebar').classList.remove('open');
+  if(window.innerWidth<=768&&!e.target.closest('.sidebar')&&!e.target.closest('.hamburger')) $('sidebar').classList.remove('open');
 });
 
 /* ===== Media helpers ===== */
 function fileToDataUrl(file, cb){
   var reader=new FileReader();
   reader.onload=function(){ cb(reader.result); };
+  reader.onerror=function(){ toast('Gagal membaca file gambar','err'); };
   reader.readAsDataURL(file);
 }
-function setPreview(el, val){
-  if(!val){ el.innerHTML='<div class="ph"><i class="fas fa-image"></i>Preview</div>'; return; }
-  el.innerHTML='<img src="'+escapeHtml(val)+'" alt="preview">';
+function setPreview(el, val, compact){
+  var cleanVal = val ? String(val).trim() : '';
+  if(!cleanVal){
+    el.innerHTML = compact
+      ? '<div class="ph"><i class="fas fa-image"></i></div>'
+      : '<div class="ph"><i class="fas fa-image"></i>Preview</div>';
+    return;
+  }
+  el.innerHTML = '<img src="'+escapeHtml(cleanVal)+'" alt="preview" onerror="this.parentElement.innerHTML=\'<div class=\\\'ph\\\'><i class=\\\'fas fa-broken-image\\\'></i>Invalid</div>\'">';
 }
-function bindFileInput(fileInput,urlInput,previewEl,infoEl){
+function bindFileInput(fileInput, urlInput, previewEl, infoEl, compact){
   fileInput.addEventListener('change',function(){
     var f=fileInput.files&&fileInput.files[0];
-    if(!f){return;}
-    if(f.size>2*1024*1024){toast('Ukuran maksimal 2MB','err');fileInput.value='';return;}
+    if(!f) return;
+    if(!f.type || !f.type.startsWith('image/')){
+      toast('File harus berupa gambar','err');
+      fileInput.value='';
+      return;
+    }
+    if(f.size>2*1024*1024){
+      toast('Ukuran maksimal gambar adalah 2MB','err');
+      fileInput.value='';
+      return;
+    }
     fileToDataUrl(f,function(dataUrl){
       urlInput.value=dataUrl;
-      setPreview(previewEl,dataUrl);
-      if(infoEl)infoEl.textContent=f.name+' · '+Math.round(f.size/1024)+' KB';
+      setPreview(previewEl, dataUrl, compact);
+      if(infoEl) infoEl.textContent=f.name+' · '+Math.round(f.size/1024)+' KB';
     });
   });
 }
-$('inLogoUrl').addEventListener('input',function(){setPreview($('logoPrev'),this.value);});
-$('inFavUrl').addEventListener('input',function(){if(this.value){$('favPrev').innerHTML='<img src="'+escapeHtml(this.value)+'">';}else{$('favPrev').innerHTML='<div class="ph"><i class="fas fa-image"></i></div>';}});
-$('inBgUrl').addEventListener('input',function(){setPreview($('bgPrev'),this.value);});
-bindFileInput($('inLogoFile'),$('inLogoUrl'),$('logoPrev'),$('logoInfo'));
-bindFileInput($('inFavFile'),$('inFavUrl'),$('favPrev'),null);
-bindFileInput($('inBgFile'),$('inBgUrl'),$('bgPrev'),null);
-$('logoClear').addEventListener('click',function(){$('inLogoUrl').value='';$('inLogoFile').value='';setPreview($('logoPrev'),'');$('logoInfo').textContent='';});
-$('bgClear').addEventListener('click',function(){$('inBgUrl').value='';$('inBgFile').value='';setPreview($('bgPrev'),'');});
+
+$('inLogoUrl').addEventListener('input',function(){ setPreview($('logoPrev'), this.value, false); });
+$('inFavUrl').addEventListener('input',function(){ setPreview($('favPrev'), this.value, true); });
+$('inBgUrl').addEventListener('input',function(){ setPreview($('bgPrev'), this.value, false); });
+
+bindFileInput($('inLogoFile'), $('inLogoUrl'), $('logoPrev'), $('logoInfo'), false);
+bindFileInput($('inFavFile'), $('inFavUrl'), $('favPrev'), $('favInfo'), true);
+bindFileInput($('inBgFile'), $('inBgUrl'), $('bgPrev'), $('bgInfo'), false);
+
+$('logoClear').addEventListener('click',function(){
+  $('inLogoUrl').value='';
+  $('inLogoFile').value='';
+  setPreview($('logoPrev'), '', false);
+  $('logoInfo').textContent='';
+});
+$('favClear').addEventListener('click',function(){
+  $('inFavUrl').value='';
+  $('inFavFile').value='';
+  setPreview($('favPrev'), '', true);
+  $('favInfo').textContent='';
+});
+$('bgClear').addEventListener('click',function(){
+  $('inBgUrl').value='';
+  $('inBgFile').value='';
+  setPreview($('bgPrev'), '', false);
+  $('bgInfo').textContent='';
+});
 
 /* ===== Load & render settings ===== */
 var CURRENT={};
 async function loadSettings(){
+  $('loadingState').classList.remove('hidden');
+  $('errorState').classList.add('hidden');
+  $('settingsForm').classList.add('hidden');
   try{
     var r=await fetch('/api/settings',{credentials:'include'});
     var d=await r.json();
+    if(!r.ok){
+      throw new Error(d.error || 'Gagal memuat pengaturan');
+    }
     CURRENT=d.settings||{};
     renderForm(CURRENT);
     renderBrand(CURRENT);
@@ -454,9 +504,11 @@ async function loadSettings(){
     $('settingsForm').classList.remove('hidden');
   }catch(e){
     $('loadingState').classList.add('hidden');
+    $('errorMsg').textContent=(e && e.message) ? e.message : 'Gagal memuat pengaturan.';
     $('errorState').classList.remove('hidden');
   }
 }
+
 function renderForm(s){
   $('inSiteName').value=s.site_name||'';
   $('inOrgName').value=s.org_name||'';
@@ -466,24 +518,34 @@ function renderForm(s){
   $('inWhatsapp').value=s.org_whatsapp||'';
   $('inDarkMode').checked=!!s.default_dark_mode;
   $('inLogoUrl').value=s.site_logo||'';
-  setPreview($('logoPrev'),s.site_logo);
+  setPreview($('logoPrev'), s.site_logo, false);
   $('inFavUrl').value=s.site_favicon||'';
-  if(s.site_favicon){$('favPrev').innerHTML='<img src="'+escapeHtml(s.site_favicon)+'">';}else{$('favPrev').innerHTML='<div class="ph"><i class="fas fa-image"></i></div>';}
+  setPreview($('favPrev'), s.site_favicon, true);
   $('inBgUrl').value=s.login_background||'';
-  setPreview($('bgPrev'),s.login_background);
+  setPreview($('bgPrev'), s.login_background, false);
 }
+
 function renderBrand(s){
   var name=s.site_name||'Kader Panel';
   var org=s.org_name||'PMII Justicia UNESA';
   $('sbName').textContent=name;
   $('sbOrg').textContent=org;
+  document.title='Pengaturan - '+name;
+
   if(s.site_logo){
-    $('sbLogo').innerHTML='<img src="'+escapeHtml(s.site_logo)+'">';
+    $('sbLogo').innerHTML='<img src="'+escapeHtml(s.site_logo)+'" alt="Logo">';
+  }else{
+    $('sbLogo').innerHTML='<i class="fas fa-people-arrows"></i>';
   }
+
+  var existingLink=document.querySelector('link[rel="icon"]');
   if(s.site_favicon){
-    var link=document.querySelector('link[rel="icon"]')||document.createElement('link');
-    link.rel='icon';link.href=s.site_favicon;
-    document.head.appendChild(link);
+    var link=existingLink||document.createElement('link');
+    link.rel='icon';
+    link.href=s.site_favicon;
+    if(!existingLink) document.head.appendChild(link);
+  }else if(existingLink){
+    existingLink.remove();
   }
 }
 
@@ -495,15 +557,15 @@ $('settingsForm').addEventListener('submit',async function(e){
   btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
   var payload={
     site_name:$('inSiteName').value.trim(),
-    site_logo:$('inLogoUrl').value||null,
-    site_favicon:$('inFavUrl').value||null,
+    site_logo:$('inLogoUrl').value.trim()||null,
+    site_favicon:$('inFavUrl').value.trim()||null,
     org_name:$('inOrgName').value.trim(),
-    org_address:$('inAddress').value||null,
-    org_instagram:$('inInstagram').value||null,
-    org_whatsapp:$('inWhatsapp').value||null,
-    org_email:$('inEmail').value||null,
+    org_address:$('inAddress').value.trim()||null,
+    org_instagram:$('inInstagram').value.trim()||null,
+    org_whatsapp:$('inWhatsapp').value.trim()||null,
+    org_email:$('inEmail').value.trim()||null,
     default_dark_mode:$('inDarkMode').checked,
-    login_background:$('inBgUrl').value||null
+    login_background:$('inBgUrl').value.trim()||null
   };
   try{
     var _h={'Content-Type':'application/json'};
@@ -512,13 +574,13 @@ $('settingsForm').addEventListener('submit',async function(e){
     var d=await r.json();
     if(r.ok){
       toast(d.message||'Pengaturan berhasil disimpan');
-      CURRENT=payload;
-      renderBrand(payload);
-      if(payload.default_dark_mode&&!localStorage.getItem('theme')){
+      CURRENT=d.settings||payload;
+      renderBrand(CURRENT);
+      if(CURRENT.default_dark_mode&&!localStorage.getItem('theme')){
         document.documentElement.setAttribute('data-theme','dark');
       }
     }else{
-      toast(d.error||'Gagal menyimpan','err');
+      toast(d.error||'Gagal menyimpan pengaturan','err');
     }
   }catch(err){
     toast('Terjadi kesalahan koneksi','err');
@@ -531,16 +593,19 @@ $('settingsForm').addEventListener('submit',async function(e){
 /* ===== Auth / logout ===== */
 var _csrfToken=null;
 function getCsrfToken(){return _csrfToken||null;}
+
+$('retryBtn').addEventListener('click', loadSettings);
+
 $('logoutBtn').addEventListener('click',async function(ev){
   ev.preventDefault();
   var headers={'Content-Type':'application/json'};
   var csrf=getCsrfToken();
   if(csrf) headers['X-CSRF-Token']=csrf;
   try{await fetch('/api/auth/logout',{method:'POST',headers:headers,credentials:'include'});}catch(e){}
-window.location.href='../panel.html';
+  window.location.href='../panel.html';
 });
+
 async function init(){
-  // Auth check (admin only page)
   try{
     var r=await fetch('/api/auth/me',{credentials:'include'});
     var d=await r.json();
@@ -563,4 +628,3 @@ init();
 <script src="/assets/js/announcement-popup.js"></script>
 </body>
 </html>
-

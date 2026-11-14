@@ -9,6 +9,259 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="/assets/css/announcement-popup.css">
+<style>
+  /* ===== Perbaikan Layout Toolbar & Filter ===== */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .t-left, .t-right {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .t-left h2 {
+    margin: 0 6px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    min-width: 155px;
+    text-align: center;
+  }
+
+  /* ===== Perbaikan Grid Kalender Bulan (Desktop & Mobile) ===== */
+  .cal-views {
+    background: var(--bg-card, #ffffff);
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    margin-bottom: 22px;
+  }
+  .mgrid {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .mhdr {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    background: var(--primary, #1a237e);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.82rem;
+    text-align: center;
+  }
+  .mhdr > div {
+    padding: 12px 4px;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    letter-spacing: 0.3px;
+  }
+  .mhdr > div:last-child {
+    border-right: none;
+  }
+  .mhdr > div.sun-col {
+    color: #ffcdd2;
+  }
+  .mdays {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    background: var(--border, #e2e8f0);
+    gap: 1px;
+  }
+  .cell {
+    background: var(--bg-card, #ffffff);
+    min-height: 112px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    overflow: hidden;
+  }
+  .cell:hover {
+    background: var(--bg-hover, #f8fafc);
+  }
+  .cell.om {
+    background: var(--bg-muted, #f1f5f9);
+    opacity: 0.6;
+  }
+  .cell .num-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2px;
+  }
+  .cell .num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.83rem;
+    font-weight: 600;
+    color: var(--text, #1e293b);
+  }
+  .cell.sun .num {
+    color: #d32f2f;
+  }
+  .cell.today .num {
+    background: var(--primary, #1a237e);
+    color: #ffffff !important;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(26, 35, 126, 0.35);
+  }
+  .chip {
+    display: block;
+    width: 100%;
+    padding: 3px 7px;
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 0.74rem;
+    font-weight: 600;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    transition: transform 0.12s ease, opacity 0.15s ease;
+  }
+  .chip:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+  }
+  .more-chip {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text2, #64748b);
+    padding-left: 4px;
+  }
+
+  /* ===== Perbaikan Grid Mingguan (Week View) ===== */
+  .wgrid {
+    width: 100%;
+    overflow-x: auto;
+  }
+  .wg {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(120px, 1fr));
+    background: var(--border, #e2e8f0);
+    gap: 1px;
+    min-height: 260px;
+  }
+  .wc {
+    background: var(--bg-card, #ffffff);
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+  .wl {
+    text-align: center;
+    padding: 8px 4px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: var(--bg-muted, #f1f5f9);
+    color: var(--text, #1e293b);
+    margin-bottom: 4px;
+  }
+  .wl.td {
+    background: var(--primary, #1a237e);
+    color: #ffffff;
+  }
+  .we {
+    padding: 6px 8px;
+    border-radius: 7px;
+    color: #ffffff;
+    font-size: 0.76rem;
+    font-weight: 600;
+    line-height: 1.35;
+    word-break: break-word;
+    cursor: pointer;
+  }
+
+  /* ===== Perbaikan Tampilan Harian (Day View) ===== */
+  .dv {
+    padding: 18px 20px;
+  }
+  .dv h3 {
+    margin: 0 0 14px;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  /* ===== Responsif Tablet & Mobile ===== */
+  @media (max-width: 768px) {
+    .toolbar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .t-left {
+      justify-content: space-between;
+    }
+    .t-right {
+      justify-content: space-between;
+    }
+    .mhdr > div {
+      padding: 9px 2px;
+      font-size: 0.72rem;
+    }
+    .cell {
+      min-height: 76px;
+      padding: 4px 3px;
+      gap: 3px;
+    }
+    .cell .num {
+      width: 22px;
+      height: 22px;
+      font-size: 0.74rem;
+    }
+    .chip {
+      padding: 2px 4px;
+      font-size: 0.64rem;
+      border-radius: 4px;
+    }
+    .more-chip {
+      font-size: 0.62rem;
+      padding-left: 2px;
+    }
+    .wg {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+    .wc {
+      border-bottom: 1px solid var(--border, #e2e8f0);
+    }
+    .wl {
+      text-align: left;
+      padding: 8px 12px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .cell {
+      min-height: 64px;
+      padding: 3px 2px;
+    }
+    .cell .num {
+      width: 20px;
+      height: 20px;
+      font-size: 0.7rem;
+    }
+    .chip {
+      font-size: 0.6rem;
+      padding: 1px 3px;
+    }
+  }
+</style>
 </head>
 <body>
 <div class="dash-layout">
@@ -62,18 +315,18 @@
 
       <div class="toolbar">
         <div class="t-left">
-          <button id="prevBtn" class="btn-ico"><i class="fas fa-chevron-left"></i></button>
-          <h2 id="titleLabel">Januari 2025</h2>
-          <button id="nextBtn" class="btn-ico"><i class="fas fa-chevron-right"></i></button>
-          <button id="todayBtn" class="btn-tdy">Hari Ini</button>
+          <button type="button" id="prevBtn" class="btn-ico" title="Sebelumnya"><i class="fas fa-chevron-left"></i></button>
+          <h2 id="titleLabel">Memuat...</h2>
+          <button type="button" id="nextBtn" class="btn-ico" title="Berikutnya"><i class="fas fa-chevron-right"></i></button>
+          <button type="button" id="todayBtn" class="btn-tdy">Hari Ini</button>
         </div>
         <div class="t-right">
           <div class="vsw">
-            <button class="active" data-view="month"><i class="fas fa-calendar"></i> Bulan</button>
-            <button data-view="week"><i class="fas fa-calendar-week"></i> Minggu</button>
-            <button data-view="day"><i class="fas fa-calendar-day"></i> Hari</button>
+            <button type="button" class="active" data-view="month"><i class="fas fa-calendar"></i> Bulan</button>
+            <button type="button" data-view="week"><i class="fas fa-calendar-week"></i> Minggu</button>
+            <button type="button" data-view="day"><i class="fas fa-calendar-day"></i> Hari</button>
           </div>
-          <select id="catFilter" class="cf">
+          <select id="catFilter" class="cf" aria-label="Filter Kategori">
             <option value="">Semua Kategori</option>
             <option value="PMII">PMII</option>
             <option value="Rayon">Rayon</option>
@@ -84,14 +337,34 @@
             <option value="University">University</option>
             <option value="External">External</option>
           </select>
-          <button id="addBtn" class="btn-pri" style="display:none"><i class="fas fa-plus"></i> Tambah Event</button>
+          <button type="button" id="addBtn" class="btn-pri" style="display:none"><i class="fas fa-plus"></i> Tambah Event</button>
         </div>
       </div>
 
       <div class="cal-views">
-        <div id="monthView" class="mv"><div class="mgrid"><div class="mhdr"><div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div></div><div id="monthDays" class="mdays"></div></div></div>
-        <div id="weekView" class="mv" style="display:none"><div class="wgrid"><div id="weekBody" class="wg"></div></div></div>
-        <div id="dayView" class="mv dv" style="display:none"><h3 id="dayTitle">Agenda Hari Ini</h3><div id="dayList"></div></div>
+        <div id="monthView" class="mv">
+          <div class="mgrid">
+            <div class="mhdr">
+              <div class="sun-col">Min</div>
+              <div>Sen</div>
+              <div>Sel</div>
+              <div>Rab</div>
+              <div>Kam</div>
+              <div>Jum</div>
+              <div>Sab</div>
+            </div>
+            <div id="monthDays" class="mdays"></div>
+          </div>
+        </div>
+        <div id="weekView" class="mv" style="display:none">
+          <div class="wgrid">
+            <div id="weekBody" class="wg"></div>
+          </div>
+        </div>
+        <div id="dayView" class="mv dv" style="display:none">
+          <h3 id="dayTitle">Agenda Hari Ini</h3>
+          <div id="dayList"></div>
+        </div>
       </div>
 
       <div class="card up-card">
@@ -122,13 +395,14 @@
 </div>
 
 <script>
-function $(id){return document.getElementById(id)}
-function initials(n){if(!n)return '?';return n.trim().split(/\s+/).map(function(w){return w[0]}).join('').substring(0,2).toUpperCase();}
-function capRole(r){if(!r)return '-';return r.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()});}
+function $(id){ return document.getElementById(id); }
+function initials(n){ if(!n) return '?'; return n.trim().split(/\s+/).map(function(w){ return w[0]; }).join('').substring(0,2).toUpperCase(); }
+function capRole(r){ if(!r) return '-'; return r.replace(/_/g,' ').replace(/\b\w/g,function(c){ return c.toUpperCase(); }); }
 function escapeHtml(s){
   if(s===null||s===undefined) return '';
-  return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
+  return String(s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; });
 }
+
 /* ===== Theme ===== */
 (function initTheme(){
   var saved=localStorage.getItem('theme');
@@ -138,9 +412,10 @@ function escapeHtml(s){
 })();
 $('themeToggle').addEventListener('click',function(){
   var dark=document.documentElement.getAttribute('data-theme')==='dark';
-  if(dark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme','light');}
-  else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('theme','dark');}
+  if(dark){ document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme','light'); }
+  else { document.documentElement.setAttribute('data-theme','dark'); localStorage.setItem('theme','dark'); }
 });
+
 /* ===== Hamburger ===== */
 $('hamburger').addEventListener('click',function(){ $('sidebar').classList.toggle('open'); });
 document.addEventListener('click',function(e){
@@ -150,13 +425,19 @@ document.addEventListener('click',function(e){
 });
 
 var MONTHS = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+var DAYS_SHORT = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+var DAYS_FULL = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
 var CAT_COLORS = {PMII:'#d32f2f',Rayon:'#1a237e',Komisariat:'#2e7d32',BEM:'#e65100',DPM:'#6a1b9a',Faculty:'#00695c',University:'#37474f',External:'#c62828'};
 var ADMIN_ROLES = ['admin','super_admin'];
-var today = new Date(), curView = 'month', events = [], curUser = null, csrfToken = null;
+
+var today = new Date();
+var curView = 'month';
+var events = [];
+var curUser = null;
+var csrfToken = null;
 
 function getCsrfToken(){ return csrfToken || null; }
 
-/* Admin/read-only: role is admin/super_admin OR privilege is admin/super_admin */
 function isAdmin() {
   if (!curUser) return false;
   if (ADMIN_ROLES.indexOf(curUser.role) >= 0) return true;
@@ -171,7 +452,24 @@ function toast(msg, type){
   setTimeout(function(){ t.classList.remove('show'); }, 3500);
 }
 
+/* Normalisasi string tanggal YYYY-MM-DD agar kebal terhadap format ISO timestamp */
+function normalizeDateStr(raw) {
+  if (!raw) return '';
+  var s = String(raw).trim();
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+    return s.substring(0, 10);
+  }
+  var parsed = new Date(s);
+  if (!isNaN(parsed.getTime())) {
+    return getDateStr(parsed);
+  }
+  return s;
+}
+
 document.addEventListener('DOMContentLoaded', async function(){
+  // Set label bulan/tahun langsung saat halaman dimuat
+  $('titleLabel').textContent = MONTHS[today.getMonth()] + ' ' + today.getFullYear();
+
   try {
     var r = await fetch('/api/auth/me', {credentials:'include'});
     var d = await r.json();
@@ -204,8 +502,7 @@ document.addEventListener('DOMContentLoaded', async function(){
   document.getElementById('formCancel').onclick = function(){ closeModal('formModal'); };
   document.getElementById('eventForm').onsubmit = handleSubmit;
 
-  var q = document.querySelectorAll('.mx');
-  for (var i=0; i<q.length; i++) q[i].onclick = function(){ closeModal(this.closest('.modal').id); };
+  bindModalClosers();
 
   var vBtns = document.querySelectorAll('[data-view]');
   for (var i=0; i<vBtns.length; i++) vBtns[i].onclick = function(){
@@ -225,15 +522,28 @@ document.addEventListener('DOMContentLoaded', async function(){
   });
 });
 
+function bindModalClosers() {
+  var q = document.querySelectorAll('.mx');
+  for (var i=0; i<q.length; i++) {
+    q[i].onclick = function(){ closeModal(this.closest('.modal').id); };
+  }
+}
+
 function changeDate(delta) {
-  if (curView === 'month') today.setMonth(today.getMonth() + delta);
-  else if (curView === 'week') today.setDate(today.getDate() + (7 * delta));
-  else today.setDate(today.getDate() + delta);
+  if (curView === 'month') {
+    // Hindari loncatan tanggal saat akhir bulan (misal 31 Jan -> Maret) dengan set tanggal ke 1 dulu
+    var targetMonth = today.getMonth() + delta;
+    today = new Date(today.getFullYear(), targetMonth, 1);
+  } else if (curView === 'week') {
+    today.setDate(today.getDate() + (7 * delta));
+  } else {
+    today.setDate(today.getDate() + delta);
+  }
   render();
 }
 
 function getDateStr(d) {
-  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 }
 
 function filteredEvents() {
@@ -262,92 +572,145 @@ function closeModal(id) {
 }
 
 function render() {
-  document.getElementById('monthView').style.display = (curView === 'month') ? 'block' : 'none';
-  document.getElementById('weekView').style.display = (curView === 'week') ? 'block' : 'none';
-  document.getElementById('dayView').style.display = (curView === 'day') ? 'block' : 'none';
+  var mv = document.getElementById('monthView');
+  var wv = document.getElementById('weekView');
+  var dv = document.getElementById('dayView');
+  if (!mv || !wv || !dv) return;
+
+  mv.style.display = (curView === 'month') ? 'block' : 'none';
+  wv.style.display = (curView === 'week') ? 'block' : 'none';
+  dv.style.display = (curView === 'day') ? 'block' : 'none';
+
   if (curView === 'month') renderMonth();
   else if (curView === 'week') renderWeek();
   else renderDay();
   renderEventList();
 }
 
-function showCalState(msg, iconCls){
-  var el=document.querySelector('.cal-views');
-  if(!el) return;
-  el.innerHTML='<div class="state"><i class="fas '+(iconCls||'fa-spinner')+'"></i><p>'+msg+'</p></div>';
-}
 function showCalGrid(){
-  var el=document.querySelector('.cal-views');
-  if(!el) return;
-  el.innerHTML='<div id="monthView" class="mv" style="'+(curView==='month'?'':'display:none')+'"><div class="mgrid"><div class="mhdr"><div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div></div><div id="monthDays" class="mdays"></div></div></div><div id="weekView" class="mv" style="'+(curView==='week'?'':'display:none')+'"><div class="wgrid"><div id="weekBody" class="wg"></div></div></div><div id="dayView" class="mv dv" style="'+(curView==='day'?'':'display:none')+'"><h3 id="dayTitle">Agenda Hari Ini</h3><div id="dayList"></div></div>';
+  var el = document.querySelector('.cal-views');
+  if (!el) return;
+  el.innerHTML =
+    '<div id="monthView" class="mv" style="' + (curView === 'month' ? '' : 'display:none') + '">' +
+      '<div class="mgrid">' +
+        '<div class="mhdr"><div class="sun-col">Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div></div>' +
+        '<div id="monthDays" class="mdays"></div>' +
+      '</div>' +
+    '</div>' +
+    '<div id="weekView" class="mv" style="' + (curView === 'week' ? '' : 'display:none') + '">' +
+      '<div class="wgrid"><div id="weekBody" class="wg"></div></div>' +
+    '</div>' +
+    '<div id="dayView" class="mv dv" style="' + (curView === 'day' ? '' : 'display:none') + '">' +
+      '<h3 id="dayTitle">Agenda Hari Ini</h3><div id="dayList"></div>' +
+    '</div>';
 }
 
+/* ===== Tampilan Bulanan (Min - Sab) ===== */
 function renderMonth() {
   var f = filteredEvents();
   var y = today.getFullYear(), m = today.getMonth();
   document.getElementById('titleLabel').textContent = MONTHS[m] + ' ' + y;
+
+  // Hari pertama bulan (0 = Minggu, 1 = Senin, ..., 6 = Sabtu)
   var fd = new Date(y, m, 1).getDay();
   var dim = new Date(y, m + 1, 0).getDate();
   var dip = new Date(y, m, 0).getDate();
   var ts = getDateStr(new Date());
+
   var h = '';
+  // Sisa tanggal bulan sebelumnya
   for (var i = fd - 1; i >= 0; i--) {
-    h += '<div class="cell om"><div class="num">' + (dip - i) + '</div></div>';
+    h += '<div class="cell om"><div class="num-row"><div class="num">' + (dip - i) + '</div></div></div>';
   }
+
+  // Tanggal bulan aktif
   for (var d = 1; d <= dim; d++) {
     var ds = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    var dayOfWeek = new Date(y, m, d).getDay();
     var it = (ds === ts);
-    var de = f.filter(function(e) { return String(e.event_date) === ds; });
-    h += '<div class="cell' + (it ? ' today' : '') + '" onclick="goToDay(\'' + ds + '\')"><div class="num">' + d + '</div>';
+    var isSun = (dayOfWeek === 0);
+    var de = f.filter(function(e) { return normalizeDateStr(e.event_date) === ds; });
+
+    // Urutkan event per tanggal berdasarkan jam
+    de.sort(function(a, b) { return (a.event_time || '99:99') > (b.event_time || '99:99') ? 1 : -1; });
+
+    h += '<div class="cell' + (it ? ' today' : '') + (isSun ? ' sun' : '') + '" onclick="goToDay(\'' + ds + '\')">';
+    h += '<div class="num-row"><div class="num">' + d + '</div></div>';
     for (var j = 0; j < Math.min(de.length, 3); j++) {
-      h += '<div class="chip" style="background:' + getColor(de[j]) + '" onclick="event.stopPropagation();showDetail(' + de[j].id + ')">' + escapeHtml(de[j].title) + '</div>';
+      var timePrefix = de[j].event_time ? String(de[j].event_time).substring(0, 5) + ' ' : '';
+      h += '<div class="chip" style="background:' + getColor(de[j]) + '" title="' + escapeHtml(timePrefix + de[j].title) + '" onclick="event.stopPropagation();showDetail(' + de[j].id + ')">' + escapeHtml(de[j].title) + '</div>';
     }
-    if (de.length > 3) h += '<div style="font-size:.7rem;color:#999">+' + (de.length - 3) + '</div>';
+    if (de.length > 3) {
+      h += '<div class="more-chip">+' + (de.length - 3) + ' lainnya</div>';
+    }
     h += '</div>';
   }
+
+  // Sisa tanggal bulan berikutnya agar genap kelipatan 7
   var tc = fd + dim;
   var rem = (7 - (tc % 7)) % 7;
-  for (var i = 1; i <= rem; i++) {
-    h += '<div class="cell om"><div class="num">' + i + '</div></div>';
+  for (var k = 1; k <= rem; k++) {
+    h += '<div class="cell om"><div class="num-row"><div class="num">' + k + '</div></div></div>';
   }
   document.getElementById('monthDays').innerHTML = h;
 }
 
+/* ===== Tampilan Mingguan (Selaras Min - Sab dengan Grid Bulanan) ===== */
 function renderWeek() {
   var f = filteredEvents();
   var ts = getDateStr(new Date());
-  var mon = new Date(today);
-  mon.setDate(mon.getDate() - ((mon.getDay() + 6) % 7));
-  document.getElementById('titleLabel').textContent = 'Minggu ' + MONTHS[mon.getMonth()] + ' ' + mon.getFullYear();
-  var dy = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+
+  // Mulai minggu dari hari Minggu (getDay() === 0) agar sinkron dengan header Min-Sab
+  var sun = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  sun.setDate(sun.getDate() - sun.getDay());
+
+  var sat = new Date(sun);
+  sat.setDate(sun.getDate() + 6);
+
+  if (sun.getMonth() === sat.getMonth()) {
+    document.getElementById('titleLabel').textContent = sun.getDate() + ' – ' + sat.getDate() + ' ' + MONTHS[sun.getMonth()] + ' ' + sun.getFullYear();
+  } else {
+    document.getElementById('titleLabel').textContent = sun.getDate() + ' ' + MONTHS[sun.getMonth()].substring(0, 3) + ' – ' + sat.getDate() + ' ' + MONTHS[sat.getMonth()].substring(0, 3) + ' ' + sat.getFullYear();
+  }
+
   var h = '';
   for (var i = 0; i < 7; i++) {
-    var dt = new Date(mon);
-    dt.setDate(mon.getDate() + i);
+    var dt = new Date(sun.getFullYear(), sun.getMonth(), sun.getDate() + i);
     var ds = getDateStr(dt);
     var it = (ds === ts);
-    var de = f.filter(function(e) { return String(e.event_date) === ds; });
-    h += '<div class="wc"><div class="wl' + (it ? ' td' : '') + '">' + dy[i] + ' ' + dt.getDate() + '</div>';
-    if (de.length === 0) h += '<div style="font-size:.72rem;color:var(--text-light);padding:4px">Tidak ada event</div>';
+    var de = f.filter(function(e) { return normalizeDateStr(e.event_date) === ds; });
+    de.sort(function(a, b) { return (a.event_time || '99:99') > (b.event_time || '99:99') ? 1 : -1; });
+
+    h += '<div class="wc">';
+    h += '<div class="wl' + (it ? ' td' : '') + '">' + DAYS_SHORT[dt.getDay()] + ', ' + dt.getDate() + ' ' + MONTHS[dt.getMonth()].substring(0, 3) + '</div>';
+    if (de.length === 0) {
+      h += '<div style="font-size:.74rem;color:var(--text-light,#94a3b8);padding:6px 4px;text-align:center;">Tidak ada event</div>';
+    }
     for (var j = 0; j < de.length; j++) {
-      h += '<div class="we" style="background:' + getColor(de[j]) + '" onclick="showDetail(' + de[j].id + ')">' + (de[j].event_time ? String(de[j].event_time).substring(0, 5) : '') + ' ' + escapeHtml(de[j].title) + '</div>';
+      var timeStr = de[j].event_time ? String(de[j].event_time).substring(0, 5) + ' ' : '';
+      h += '<div class="we" style="background:' + getColor(de[j]) + '" onclick="showDetail(' + de[j].id + ')">' + escapeHtml(timeStr + de[j].title) + '</div>';
     }
     h += '</div>';
   }
   document.getElementById('weekBody').innerHTML = h;
 }
 
+/* ===== Tampilan Harian ===== */
 function renderDay() {
   var f = filteredEvents();
   var ds = getDateStr(today);
+  var dayName = DAYS_FULL[today.getDay()];
+  var fullLabel = dayName + ', ' + today.getDate() + ' ' + MONTHS[today.getMonth()] + ' ' + today.getFullYear();
+
   document.getElementById('titleLabel').textContent = today.getDate() + ' ' + MONTHS[today.getMonth()] + ' ' + today.getFullYear();
-  document.getElementById('dayTitle').textContent = 'Agenda ' + today.getDate() + ' ' + MONTHS[today.getMonth()] + ' ' + today.getFullYear();
-  var de = f.filter(function(e) { return String(e.event_date) === ds; });
+  document.getElementById('dayTitle').textContent = 'Agenda ' + fullLabel;
+
+  var de = f.filter(function(e) { return normalizeDateStr(e.event_date) === ds; });
   var h = '';
   if (de.length === 0) {
     h = '<div class="noe"><i class="far fa-calendar"></i><p>Tidak ada event pada tanggal ini</p></div>';
   } else {
-    de.sort(function(a, b) { return (a.event_time || '00:00') > (b.event_time || '00:00') ? 1 : -1; });
+    de.sort(function(a, b) { return (a.event_time || '99:99') > (b.event_time || '99:99') ? 1 : -1; });
     for (var j = 0; j < de.length; j++) {
       var e = de[j];
       var t = e.event_time ? String(e.event_time).substring(0, 5) : '--:--';
@@ -358,7 +721,10 @@ function renderDay() {
 }
 
 function goToDay(ds) {
-  today = new Date(ds + 'T00:00:00');
+  var parts = ds.split('-');
+  if (parts.length === 3) {
+    today = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+  }
   var btns = document.querySelectorAll('[data-view]');
   for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
   document.querySelector('[data-view="day"]').classList.add('active');
@@ -373,7 +739,7 @@ function showCalError(msg){
 
 async function loadEvents() {
   var el=document.querySelector('.cal-views');
-  if(el) el.innerHTML='<div class="state spin"><i class="fas fa-spinner"></i><p>Memuat event...</p></div>';
+  if(el) el.innerHTML='<div class="state spin"><i class="fas fa-spinner fa-spin"></i><p>Memuat event...</p></div>';
   var ok = false;
   try {
     var r = await fetch('/api/events', { credentials: 'include' });
@@ -390,7 +756,7 @@ async function loadEvents() {
       return;
     }
     var d = await r.json();
-    events = Array.isArray(d) ? d : [];
+    events = Array.isArray(d) ? d : (Array.isArray(d.events) ? d.events : []);
     ok = true;
   } catch (err) {
     showCalError('Koneksi gagal. Periksa jaringan Anda.');
@@ -400,7 +766,6 @@ async function loadEvents() {
     if (ok) {
       showCalGrid();
       render();
-      renderEventList();
     }
   }
 }
@@ -414,17 +779,20 @@ function renderEventList() {
     return;
   }
   var ts = getDateStr(new Date());
-  var upcoming = f.filter(function(e){ return String(e.event_date) >= ts; });
+  var upcoming = f.filter(function(e){ return normalizeDateStr(e.event_date) >= ts; });
   upcoming.sort(function(a, b) {
-    if (a.event_date === b.event_date) return (a.event_time || '00:00') > (b.event_time || '00:00') ? 1 : -1;
-    return a.event_date > b.event_date ? 1 : -1;
+    var da = normalizeDateStr(a.event_date);
+    var db = normalizeDateStr(b.event_date);
+    if (da === db) return (a.event_time || '99:99') > (b.event_time || '99:99') ? 1 : -1;
+    return da > db ? 1 : -1;
   });
   var shown = upcoming.slice(0, 6);
   var h = '';
   for (var j = 0; j < shown.length; j++) {
     var e = shown[j];
-    var parts = String(e.event_date).split('-');
-    var ds = (parts.length === 3) ? (parseInt(parts[2],10) + ' ' + MONTHS[parseInt(parts[1],10)-1] + ' ' + parts[0]) : String(e.event_date);
+    var cleanDate = normalizeDateStr(e.event_date);
+    var parts = cleanDate.split('-');
+    var ds = (parts.length === 3) ? (parseInt(parts[2],10) + ' ' + MONTHS[parseInt(parts[1],10)-1] + ' ' + parts[0]) : cleanDate;
     var t = e.event_time ? String(e.event_time).substring(0, 5) : '--:--';
     h += '<div class="up" onclick="showDetail(' + e.id + ')">';
     h += '<div class="up-d"><span class="up-dt">' + ds + '</span><span class="up-t">' + t + '</span></div>';
@@ -467,7 +835,7 @@ function editEvent(id) {
   document.getElementById('evCategory').value = e.category || 'Rayon';
   document.getElementById('evColor').value = getColor(e);
   document.getElementById('evLocation').value = e.location || '';
-  document.getElementById('evDate').value = e.event_date;
+  document.getElementById('evDate').value = normalizeDateStr(e.event_date);
   document.getElementById('evTime').value = e.event_time ? String(e.event_time).substring(0,5) : '';
   document.getElementById('formTitle').textContent = 'Edit Event';
   document.getElementById('formSubmit').innerHTML = '<i class="fas fa-save"></i> Perbarui Event';
@@ -478,7 +846,15 @@ function editEvent(id) {
 async function handleSubmit(e) {
   e.preventDefault();
   var id = document.getElementById('eventId').value;
-  var data = {title: document.getElementById('evTitle').value.trim(), description: document.getElementById('evDesc').value, category: document.getElementById('evCategory').value, color: document.getElementById('evColor').value, location: document.getElementById('evLocation').value, event_date: document.getElementById('evDate').value, event_time: document.getElementById('evTime').value};
+  var data = {
+    title: document.getElementById('evTitle').value.trim(),
+    description: document.getElementById('evDesc').value,
+    category: document.getElementById('evCategory').value,
+    color: document.getElementById('evColor').value,
+    location: document.getElementById('evLocation').value,
+    event_date: document.getElementById('evDate').value,
+    event_time: document.getElementById('evTime').value
+  };
   if (!data.title) { toast('Judul event wajib diisi','err'); return; }
   if (!data.event_date) { toast('Tanggal event wajib diisi','err'); return; }
   if (!isAdmin()) { toast('Anda tidak memiliki izin untuk menyimpan event','err'); return; }
@@ -527,8 +903,11 @@ function showDetail(id) {
   for (var i = 0; i < events.length; i++) { if (String(events[i].id) === String(id)) { e = events[i]; break; } }
   if (!e) return;
   var c = getColor(e);
-  var dtParts = String(e.event_date).split('-');
-  var ds = parseInt(dtParts[2],10) + ' ' + MONTHS[parseInt(dtParts[1],10)-1] + ' ' + dtParts[0];
+  var cleanDate = normalizeDateStr(e.event_date);
+  var dtParts = cleanDate.split('-');
+  var ds = (dtParts.length === 3)
+    ? (DAYS_FULL[new Date(parseInt(dtParts[0],10), parseInt(dtParts[1],10)-1, parseInt(dtParts[2],10)).getDay()] + ', ' + parseInt(dtParts[2],10) + ' ' + MONTHS[parseInt(dtParts[1],10)-1] + ' ' + dtParts[0])
+    : cleanDate;
   var t = e.event_time ? String(e.event_time).substring(0, 5) : '--:--';
   var canEdit = isAdmin();
   var h = '<div class="dh"><div class="dc" style="background:' + c + '"></div><h3>' + escapeHtml(e.title) + '</h3></div>';
@@ -541,7 +920,7 @@ function showDetail(id) {
   if (e.created_by_name) h += '<p><i class="fas fa-user"></i> ' + escapeHtml(e.created_by_name) + '</p>';
   h += '</div>';
   if (canEdit) {
-    h += '<div class="da"><button class="btn-pri" onclick="editEvent(' + e.id + ')"><i class="fas fa-edit"></i> Edit</button><button class="btn-dgr" onclick="deleteEvent(' + e.id + ')"><i class="fas fa-trash"></i> Hapus</button></div>';
+    h += '<div class="da"><button type="button" class="btn-pri" onclick="editEvent(' + e.id + ')"><i class="fas fa-edit"></i> Edit</button><button type="button" class="btn-dgr" onclick="deleteEvent(' + e.id + ')"><i class="fas fa-trash"></i> Hapus</button></div>';
   }
   document.getElementById('detailContent').innerHTML = h;
   openModal('detailModal');

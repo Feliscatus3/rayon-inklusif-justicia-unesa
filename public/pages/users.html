@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/assets/css/announcement-popup.css">
   <style>
-    /* Styling tambahan untuk pagination & filter agar rapi di berbagai resolusi */
     .pag {
       display: flex;
       align-items: center;
@@ -244,6 +243,7 @@ function capRole(r){ if(!r) return '-'; return r.replace(/_/g,' ').replace(/\b\w
 
 var cp = 1;
 var ITEMS_PER_PAGE = 10;
+var allUsersCache = []; // Menyimpan seluruh daftar pengguna untuk pagination & filter yang akurat
 var dtid = null;
 var ptid = null;
 var rtid = null;
@@ -304,35 +304,18 @@ document.addEventListener('click',function(e){
   }
 });
 
-/* ===== Load & Hybrid Pagination + Filtering ===== */
-async function load(page) {
-    if (typeof page === 'number' && page >= 1) {
-        cp = page;
+/* ===== Fetch Semua Data dari Server Sekali (atau saat mutasi CRUD) ===== */
+async function fetchAllUsers(targetPage) {
+    if (typeof targetPage === 'number' && targetPage >= 1) {
+        cp = targetPage;
     }
-    var searchVal = $('si').value.trim();
-    var statusVal = $('statusFilter').value.trim();
     var tb = $('tb');
     var pc = $('pc');
-
-    // Tampilkan/sembunyikan tombol reset filter
-    $('resetFilterBtn').style.display = (searchVal || statusVal) ? 'inline-flex' : 'none';
-
     tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-spinner fa-spin"></i><p>Memuat data...</p></td></tr>';
 
     try {
-        var params = new URLSearchParams();
-        params.set('page', cp);
-        params.set('limit', ITEMS_PER_PAGE);
-        if (searchVal) {
-            params.set('search', searchVal);
-            params.set('q', searchVal); // Cadangan jika backend membaca 'q'
-        }
-        if (statusVal) {
-            params.set('status', statusVal);
-        }
-
-        var url = '/api/users?' + params.toString();
-        var r = await fetch(url, { credentials: 'include' });
+        // Minta limit besar agar seluruh data tertarik ke client-side cache
+        var r = await fetch('/api/users?limit=1000&page=1', { credentials: 'include' });
 
         if (r.status === 401) {
             tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-user-lock"></i><p>Sesi Anda telah berakhir. Silakan login kembali.</p></td></tr>';
@@ -351,98 +334,33 @@ async function load(page) {
         }
 
         var d = await r.json();
-        var rawUsers = Array.isArray(d) ? d : (d.users || d.data || []);
+        allUsersCache = Array.isArray(d) ? d : (d.users || d.data || []);
 
-        // Deteksi apakah server melakukan server-side pagination atau mengembalikan semua data sekaligus
+        // Jika backend tetap membatasi misal 10 per halaman dan masih ada totalPages > 1, tarik halaman sisanya secara paralel
         var pInfo = d.pagination || null;
-        var isServerPaginated = pInfo && (
-            typeof pInfo.total === 'number' && pInfo.total > rawUsers.length ||
-            (typeof pInfo.totalPages === 'number' && pInfo.totalPages > 1 && rawUsers.length <= ITEMS_PER_PAGE)
-        );
-
-        var displayUsers = rawUsers;
-        var paginationMeta = {
-            page: cp,
-            limit: ITEMS_PER_PAGE,
-            total: rawUsers.length,
-            totalPages: 1
-        };
-
-        if (isServerPaginated) {
-            // Backend sudah memfilter & memotong halaman
-            paginationMeta.page = Number(pInfo.page || pInfo.current_page || cp);
-            paginationMeta.total = Number(pInfo.total || pInfo.totalItems || rawUsers.length);
-            paginationMeta.totalPages = Number(pInfo.totalPages || pInfo.total_pages || Math.ceil(paginationMeta.total / ITEMS_PER_PAGE));
-            cp = paginationMeta.page;
-        } else {
-            // Backend mengembalikan seluruh array: terapkan filter & pagination di sisi client agar tidak berulang
-            var filtered = rawUsers.filter(function(u) {
-                var matchStatus = true;
-                if (statusVal) {
-                    matchStatus = String(u.status || '').toLowerCase() === statusVal.toLowerCase();
-                }
-                var matchSearch = true;
-                if (searchVal) {
-                    var kw = searchVal.toLowerCase();
-                    var uname = String(u.username || '').toLowerCase();
-                    var fname = String(u.full_name || '').toLowerCase();
-                    var email = String(u.email || '').toLowerCase();
-                    var phone = String(u.phone || '').toLowerCase();
-                    matchSearch = uname.includes(kw) || fname.includes(kw) || email.includes(kw) || phone.includes(kw);
-                }
-                return matchStatus && matchSearch;
-            });
-
-            paginationMeta.total = filtered.length;
-            paginationMeta.totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
-            if (cp > paginationMeta.totalPages) cp = paginationMeta.totalPages;
-            paginationMeta.page = cp;
-
-            var startIdx = (cp - 1) * ITEMS_PER_PAGE;
-            displayUsers = filtered.slice(startIdx, startIdx + ITEMS_PER_PAGE);
-        }
-
-        if (displayUsers.length === 0) {
-            tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-users-slash"></i><p>Tidak ada data pengguna yang sesuai kriteria.</p></td></tr>';
-            pc.innerHTML = '';
-            return;
-        }
-
-        var h = '';
-        for (var i = 0; i < displayUsers.length; i++) {
-            var u = displayUsers[i];
-            var stLower = String(u.status || 'unknown').toLowerCase();
-            var rlLower = String(u.role || 'kader').toLowerCase();
-            var prLower = String(u.privilege || 'member').toLowerCase();
-
-            var sc = 'b' + stLower.charAt(0);
-            var rc = 'b' + rlLower.charAt(0);
-            var pr = u.privilege ? 'b' + prLower.charAt(0) : 'bkd';
-            var rowNum = ((cp - 1) * ITEMS_PER_PAGE) + i + 1;
-
-            h += '<tr>';
-            h += '<td>' + rowNum + '</td>';
-            h += '<td><strong>' + escapeHtml(u.username) + '</strong></td>';
-            h += '<td>' + escapeHtml(u.full_name || '-') + '</td>';
-            h += '<td>' + escapeHtml(u.email || '-') + '</td>';
-            h += '<td><span class="badge ' + rc + '">' + escapeHtml(u.role) + '</span></td>';
-            h += '<td><span class="badge ' + pr + '">' + escapeHtml(u.privilege || 'member') + '</span></td>';
-            h += '<td><span class="badge ' + sc + '">' + escapeHtml(u.status) + '</span></td>';
-            h += '<td><div class="act">';
-            h += '<button type="button" class="btn btn-p btn-sm" onclick="oem(\'' + escapeHtml(u.id) + '\')" title="Edit"><i class="fas fa-edit"></i></button>';
-            h += '<button type="button" class="btn btn-w btn-sm" onclick="opm(\'' + escapeHtml(u.id) + '\',\'' + escapeHtml(u.username) + '\')" title="Reset Password"><i class="fas fa-key"></i></button>';
-            if (stLower === 'active') {
-                h += '<button type="button" class="btn btn-s btn-sm" onclick="ts(\'' + escapeHtml(u.id) + '\',\'inactive\')" title="Nonaktifkan"><i class="fas fa-ban"></i></button>';
-            } else {
-                h += '<button type="button" class="btn btn-g btn-sm" onclick="ts(\'' + escapeHtml(u.id) + '\',\'active\')" title="Aktifkan"><i class="fas fa-check-circle"></i></button>';
+        if (pInfo && Number(pInfo.totalPages) > 1 && allUsersCache.length < Number(pInfo.total)) {
+            var totalPagesToFetch = Number(pInfo.totalPages);
+            var promises = [];
+            for (var p = 2; p <= totalPagesToFetch; p++) {
+                promises.push(
+                    fetch('/api/users?limit=' + (pInfo.limit || 10) + '&page=' + p, { credentials: 'include' })
+                        .then(function(res){ return res.ok ? res.json() : {}; })
+                );
             }
-            h += '<button type="button" class="btn btn-i btn-sm" onclick="orm(\'' + escapeHtml(u.id) + '\',\'' + escapeHtml(u.username) + '\',\'' + escapeHtml(u.role) + '\')" title="Ubah Role"><i class="fas fa-user-tag"></i></button>';
-            h += '<button type="button" class="btn btn-r btn-sm" onclick="odm(\'' + escapeHtml(u.id) + '\',\'' + escapeHtml(u.username) + '\')" title="Hapus"><i class="fas fa-trash"></i></button>';
-            h += '</div></td>';
-            h += '</tr>';
+            var extraResults = await Promise.all(promises);
+            var seenIds = new Set(allUsersCache.map(function(u){ return u.id; }));
+            extraResults.forEach(function(resData) {
+                var extraList = Array.isArray(resData) ? resData : (resData.users || resData.data || []);
+                extraList.forEach(function(item) {
+                    if (!seenIds.has(item.id)) {
+                        seenIds.add(item.id);
+                        allUsersCache.push(item);
+                    }
+                });
+            });
         }
-        tb.innerHTML = h;
-        rp(paginationMeta);
+
+        renderFilteredTable(cp);
     } catch (e) {
         console.error('[USERS] error:', e);
         tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-exclamation-triangle"></i><p>Gagal terhubung ke server.</p></td></tr>';
@@ -450,11 +368,109 @@ async function load(page) {
     }
 }
 
-/* ===== Render Pagination Lengkap dengan Nomor Halaman ===== */
-function rp(p) {
+/* ===== Render Tabel dengan Filter & Pagination 100% Akurat ===== */
+function renderFilteredTable(page) {
+    if (typeof page === 'number' && page >= 1) {
+        cp = page;
+    }
+
+    var searchVal = $('si').value.trim().toLowerCase();
+    var statusVal = $('statusFilter').value.trim().toLowerCase();
+    var tb = $('tb');
+    var pc = $('pc');
+
+    $('resetFilterBtn').style.display = (searchVal || statusVal) ? 'inline-flex' : 'none';
+
+    // 1. Filter berdasarkan status dan kata kunci pencarian
+    var filtered = allUsersCache.filter(function(u) {
+        // Normalisasi status (menangani baik field 'status' maupun boolean 'is_active')
+        var userStatus = String(u.status || '').toLowerCase();
+        if (!userStatus && typeof u.is_active === 'boolean') {
+            userStatus = u.is_active ? 'active' : 'inactive';
+        }
+
+        var matchStatus = !statusVal || userStatus === statusVal;
+
+        var matchSearch = true;
+        if (searchVal) {
+            var uname = String(u.username || '').toLowerCase();
+            var fname = String(u.full_name || '').toLowerCase();
+            var email = String(u.email || '').toLowerCase();
+            var phone = String(u.phone || u.no_telepon || '').toLowerCase();
+            var role = String(u.role || '').toLowerCase();
+            matchSearch = uname.includes(searchVal) ||
+                          fname.includes(searchVal) ||
+                          email.includes(searchVal) ||
+                          phone.includes(searchVal) ||
+                          role.includes(searchVal);
+        }
+
+        return matchStatus && matchSearch;
+    });
+
+    // 2. Hitung pagination
+    var totalItems = filtered.length;
+    var totalPages = Math.max(1, Math.ceil(totalItems / ITEMS_PER_PAGE));
+    if (cp > totalPages) cp = totalPages;
+
+    var startIdx = (cp - 1) * ITEMS_PER_PAGE;
+    var endIdx = startIdx + ITEMS_PER_PAGE;
+    var pageItems = filtered.slice(startIdx, endIdx);
+
+    if (pageItems.length === 0) {
+        tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-users-slash"></i><p>Tidak ada data pengguna yang sesuai kriteria.</p></td></tr>';
+        pc.innerHTML = '';
+        return;
+    }
+
+    // 3. Render baris tabel
+    var h = '';
+    for (var i = 0; i < pageItems.length; i++) {
+        var u = pageItems[i];
+        var stLower = String(u.status || (u.is_active === false ? 'inactive' : 'active')).toLowerCase();
+        var rlLower = String(u.role || 'kader').toLowerCase();
+        var prLower = String(u.privilege || 'member').toLowerCase();
+
+        var sc = 'b' + stLower.charAt(0);
+        var rc = 'b' + rlLower.charAt(0);
+        var pr = u.privilege ? 'b' + prLower.charAt(0) : 'bkd';
+        var rowNum = startIdx + i + 1;
+
+        h += '<tr>';
+        h += '<td>' + rowNum + '</td>';
+        h += '<td><strong>' + escapeHtml(u.username) + '</strong></td>';
+        h += '<td>' + escapeHtml(u.full_name || '-') + '</td>';
+        h += '<td>' + escapeHtml(u.email || '-') + '</td>';
+        h += '<td><span class="badge ' + rc + '">' + escapeHtml(u.role) + '</span></td>';
+        h += '<td><span class="badge ' + pr + '">' + escapeHtml(u.privilege || 'member') + '</span></td>';
+        h += '<td><span class="badge ' + sc + '">' + escapeHtml(stLower) + '</span></td>';
+        h += '<td><div class="act">';
+        h += '<button type="button" class="btn btn-p btn-sm" onclick="oem(\'' + escapeHtml(u.id) + '\')" title="Edit"><i class="fas fa-edit"></i></button>';
+        h += '<button type="button" class="btn btn-w btn-sm" onclick="opm(\'' + escapeHtml(u.id) + '\',\'' + escapeHtml(u.username) + '\')" title="Reset Password"><i class="fas fa-key"></i></button>';
+        if (stLower === 'active') {
+            h += '<button type="button" class="btn btn-s btn-sm" onclick="ts(\'' + escapeHtml(u.id) + '\',\'inactive\')" title="Nonaktifkan"><i class="fas fa-ban"></i></button>';
+        } else {
+            h += '<button type="button" class="btn btn-g btn-sm" onclick="ts(\'' + escapeHtml(u.id) + '\',\'active\')" title="Aktifkan"><i class="fas fa-check-circle"></i></button>';
+        }
+        h += '<button type="button" class="btn btn-i btn-sm" onclick="orm(\'' + escapeHtml(u.id) + '\',\'' + escapeHtml(u.username) + '\',\'' + escapeHtml(u.role) + '\')" title="Ubah Role"><i class="fas fa-user-tag"></i></button>';
+        h += '<button type="button" class="btn btn-r btn-sm" onclick="odm(\'' + escapeHtml(u.id) + '\',\'' + escapeHtml(u.username) + '\')" title="Hapus"><i class="fas fa-trash"></i></button>';
+        h += '</div></td>';
+        h += '</tr>';
+    }
+    tb.innerHTML = h;
+
+    // 4. Render tombol pagination
+    renderPaginationControls({
+        page: cp,
+        totalPages: totalPages,
+        total: totalItems
+    });
+}
+
+function renderPaginationControls(p) {
     var el = $('pc');
-    if (!p || p.totalPages <= 1) {
-        el.innerHTML = p && p.total > 0 ? '<span class="info">Menampilkan ' + p.total + ' pengguna</span>' : '';
+    if (!p || p.total <= 0) {
+        el.innerHTML = '';
         return;
     }
 
@@ -464,35 +480,34 @@ function rp(p) {
     var endItem = Math.min(current * ITEMS_PER_PAGE, p.total);
 
     var h = '<span class="info">Menampilkan <strong>' + startItem + '–' + endItem + '</strong> dari <strong>' + p.total + '</strong> pengguna</span>';
-    h += '<div class="pag-controls">';
 
-    // Tombol Prev
-    h += '<button type="button" ' + (current <= 1 ? 'disabled' : '') + ' onclick="load(' + (current - 1) + ')" title="Sebelumnya"><i class="fas fa-chevron-left"></i></button>';
+    if (totalPages > 1) {
+        h += '<div class="pag-controls">';
+        h += '<button type="button" ' + (current <= 1 ? 'disabled' : '') + ' onclick="renderFilteredTable(' + (current - 1) + ')" title="Sebelumnya"><i class="fas fa-chevron-left"></i></button>';
 
-    // Nomor Halaman Dinamis (Maksimal 5 tombol halaman terlihat)
-    var startPage = Math.max(1, current - 2);
-    var endPage = Math.min(totalPages, startPage + 4);
-    if (endPage - startPage < 4) {
-        startPage = Math.max(1, endPage - 4);
+        var startPage = Math.max(1, current - 2);
+        var endPage = Math.min(totalPages, startPage + 4);
+        if (endPage - startPage < 4) {
+            startPage = Math.max(1, endPage - 4);
+        }
+
+        if (startPage > 1) {
+            h += '<button type="button" onclick="renderFilteredTable(1)">1</button>';
+            if (startPage > 2) h += '<span class="info" style="padding:0 4px;">...</span>';
+        }
+
+        for (var i = startPage; i <= endPage; i++) {
+            h += '<button type="button" class="' + (i === current ? 'active' : '') + '" onclick="renderFilteredTable(' + i + ')">' + i + '</button>';
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) h += '<span class="info" style="padding:0 4px;">...</span>';
+            h += '<button type="button" onclick="renderFilteredTable(' + totalPages + ')">' + totalPages + '</button>';
+        }
+
+        h += '<button type="button" ' + (current >= totalPages ? 'disabled' : '') + ' onclick="renderFilteredTable(' + (current + 1) + ')" title="Berikutnya"><i class="fas fa-chevron-right"></i></button>';
+        h += '</div>';
     }
-
-    if (startPage > 1) {
-        h += '<button type="button" onclick="load(1)">1</button>';
-        if (startPage > 2) h += '<span class="info" style="padding:0 4px;">...</span>';
-    }
-
-    for (var i = startPage; i <= endPage; i++) {
-        h += '<button type="button" class="' + (i === current ? 'active' : '') + '" onclick="load(' + i + ')">' + i + '</button>';
-    }
-
-    if (endPage < totalPages) {
-        if (endPage < totalPages - 1) h += '<span class="info" style="padding:0 4px;">...</span>';
-        h += '<button type="button" onclick="load(' + totalPages + ')">' + totalPages + '</button>';
-    }
-
-    // Tombol Next
-    h += '<button type="button" ' + (current >= totalPages ? 'disabled' : '') + ' onclick="load(' + (current + 1) + ')" title="Berikutnya"><i class="fas fa-chevron-right"></i></button>';
-    h += '</div>';
 
     el.innerHTML = h;
 }
@@ -562,7 +577,7 @@ async function sv(e) {
         if (!r.ok) { st(d.error || 'Gagal menyimpan data', 'e'); return; }
         st(isE ? 'Pengguna berhasil diperbarui' : 'Pengguna baru berhasil dibuat', 's');
         cm('um');
-        load(isE ? cp : 1);
+        fetchAllUsers(isE ? cp : 1);
     } catch (e) {
         st('Gagal menyimpan perubahan', 'e');
     } finally {
@@ -604,7 +619,7 @@ async function ts(id, status) {
         var d = await r.json();
         if (!r.ok) { st(d.error || 'Gagal mengubah status', 'e'); return; }
         st(d.message || 'Status berhasil diperbarui', 's');
-        load(cp);
+        fetchAllUsers(cp);
     } catch (e) {
         st('Gagal mengubah status', 'e');
     }
@@ -627,7 +642,7 @@ async function confirmChangeRole() {
         if (!r.ok) { st(d.error || 'Gagal mengubah role', 'e'); return; }
         st(d.message || 'Role berhasil diperbarui', 's');
         cm('rm');
-        load(cp);
+        fetchAllUsers(cp);
     } catch (e) {
         st('Gagal mengubah role', 'e');
     }
@@ -648,7 +663,7 @@ async function cd() {
         if (!r.ok) { st(d.error || 'Gagal menghapus', 'e'); return; }
         st(d.message || 'Pengguna berhasil dihapus', 's');
         cm('dm');
-        load(cp);
+        fetchAllUsers(cp);
     } catch (e) {
         st('Gagal menghapus pengguna', 'e');
     }
@@ -674,7 +689,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         $('userName').textContent = name;
         $('userRole').textContent = capRole(u.role);
         $('userAvatar').textContent = initials(name);
-        load(1);
+        fetchAllUsers(1);
     } catch (e) {
         window.location.href = '../panel.html';
     }
@@ -689,32 +704,32 @@ $('logoutBtn').addEventListener('click', async function(ev) {
     window.location.href = '../panel.html';
 });
 
-// Pencarian dengan tombol, Enter, maupun Live Debounce saat mengetik
-$('searchBtn').addEventListener('click', function() { load(1); });
+// Pencarian dengan tombol, Enter, maupun Live Debounce langsung pada data cache
+$('searchBtn').addEventListener('click', function() { renderFilteredTable(1); });
 $('si').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
         e.preventDefault();
         clearTimeout(searchTimeout);
-        load(1);
+        renderFilteredTable(1);
     }
 });
 $('si').addEventListener('input', function() {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(function() {
-        load(1);
-    }, 350);
+        renderFilteredTable(1);
+    }, 200);
 });
 
 // Dropdown Filter Status
 $('statusFilter').addEventListener('change', function() {
-    load(1);
+    renderFilteredTable(1);
 });
 
 // Tombol Reset Filter
 $('resetFilterBtn').addEventListener('click', function() {
     $('si').value = '';
     $('statusFilter').value = '';
-    load(1);
+    renderFilteredTable(1);
 });
 
 $('addBtn').addEventListener('click', ocm);

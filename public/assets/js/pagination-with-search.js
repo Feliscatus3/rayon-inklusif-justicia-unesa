@@ -270,6 +270,16 @@ const beritaData = [
     featured: false
   },
   {
+    id: 27,
+    title: "PKD I PMII Rayon Inklusif Justicia: Cetak Kader Tajam dalam Nalar dan Tegak Lurus terhadap Keadilan",
+    excerpt: "PMII Rayon Inklusif Justicia UNESA sukses menyelenggarakan Pelatihan Kader Dasar (PKD) I di MI Khoirul Huda Sidoarjo dan mendapat apresiasi dari Wakil Bupati Bojonegoro Dra. Hj. Nurul Azizah, M.M.",
+    date: "28 Juni 2026",
+    uploadDate: "2026-06-28",
+    image: "/assets/img/foto/pkd1_cover.webp",
+    link: "/berita/pkd-1-rayon-inklusif-justicia-unesa.html",
+    featured: true
+  },
+  {
   id: 28,
   title: "Pojok Literasi Vol. 1: Satu Buku, Seribu Perspektif",
   excerpt: "Pojok Literasi Vol. 1 PMII Rayon Inklusif Justicia UNESA menghadirkan ruang membaca, berdiskusi, dan bertukar perspektif dengan lebih dari 100 buku.",

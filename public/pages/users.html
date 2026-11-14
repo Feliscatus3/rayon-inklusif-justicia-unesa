@@ -23,21 +23,23 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      flex-wrap: wrap;
     }
     .pag button {
-      min-width: 34px;
-      height: 34px;
-      padding: 0 10px;
+      min-width: 36px;
+      height: 36px;
+      padding: 0 12px;
       border-radius: 8px;
       border: 1px solid var(--border, #e4e8ef);
       background: var(--bg-card, #fff);
       color: var(--text, #1c2333);
-      font-size: 0.82rem;
+      font-size: 0.83rem;
       font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      gap: 5px;
       transition: all 0.2s ease;
     }
     .pag button:hover:not(:disabled) {
@@ -49,13 +51,14 @@
       background: var(--primary, #1a237e);
       color: #fff;
       border-color: var(--primary, #1a237e);
+      box-shadow: 0 2px 6px rgba(26, 35, 126, 0.25);
     }
     .pag button:disabled {
       opacity: 0.45;
       cursor: not-allowed;
     }
     .pag .info {
-      font-size: 0.82rem;
+      font-size: 0.83rem;
       color: var(--text2, #64748b);
       font-weight: 500;
     }
@@ -164,7 +167,7 @@
             <button type="button" class="btn btn-g" id="addBtn"><i class="fas fa-plus"></i> Tambah Pengguna</button>
           </div>
         </div>
-        <div class="table-wrap">
+        <div class="table-wrap" id="tableWrap">
           <table>
             <thead><tr>
               <th>No.</th><th>Username</th><th>Nama Lengkap</th><th>Email</th><th>Role</th><th>Privilege</th><th>Status</th><th>Aksi</th>
@@ -243,7 +246,7 @@ function capRole(r){ if(!r) return '-'; return r.replace(/_/g,' ').replace(/\b\w
 
 var cp = 1;
 var ITEMS_PER_PAGE = 10;
-var allUsersCache = []; // Menyimpan seluruh daftar pengguna untuk pagination & filter yang akurat
+var allUsersCache = [];
 var dtid = null;
 var ptid = null;
 var rtid = null;
@@ -304,17 +307,29 @@ document.addEventListener('click',function(e){
   }
 });
 
-/* ===== Fetch Semua Data dari Server Sekali (atau saat mutasi CRUD) ===== */
+/* ===== Helper Ekstrak Array User dari Berbagai Format Respons API ===== */
+function extractUsersArray(d) {
+    if (!d) return [];
+    if (Array.isArray(d)) return d;
+    if (Array.isArray(d.users)) return d.users;
+    if (Array.isArray(d.data)) return d.data;
+    if (d.data && Array.isArray(d.data.users)) return d.data.users;
+    if (Array.isArray(d.rows)) return d.rows;
+    if (Array.isArray(d.results)) return d.results;
+    return [];
+}
+
+/* ===== Fetch Seluruh Data dari Semua Halaman Backend ===== */
 async function fetchAllUsers(targetPage) {
     if (typeof targetPage === 'number' && targetPage >= 1) {
         cp = targetPage;
     }
     var tb = $('tb');
     var pc = $('pc');
-    tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-spinner fa-spin"></i><p>Memuat data...</p></td></tr>';
+    tb.innerHTML = '<tr><td colspan="8" class="empty"><i class="fas fa-spinner fa-spin"></i><p>Memuat semua data pengguna...</p></td></tr>';
 
     try {
-        // Minta limit besar agar seluruh data tertarik ke client-side cache
+        // Langkah 1: Minta dengan limit besar terlebih dahulu
         var r = await fetch('/api/users?limit=1000&page=1', { credentials: 'include' });
 
         if (r.status === 401) {
@@ -334,30 +349,73 @@ async function fetchAllUsers(targetPage) {
         }
 
         var d = await r.json();
-        allUsersCache = Array.isArray(d) ? d : (d.users || d.data || []);
+        var firstBatch = extractUsersArray(d);
+        var seenIds = new Set();
+        allUsersCache = [];
 
-        // Jika backend tetap membatasi misal 10 per halaman dan masih ada totalPages > 1, tarik halaman sisanya secara paralel
-        var pInfo = d.pagination || null;
-        if (pInfo && Number(pInfo.totalPages) > 1 && allUsersCache.length < Number(pInfo.total)) {
-            var totalPagesToFetch = Number(pInfo.totalPages);
-            var promises = [];
-            for (var p = 2; p <= totalPagesToFetch; p++) {
-                promises.push(
-                    fetch('/api/users?limit=' + (pInfo.limit || 10) + '&page=' + p, { credentials: 'include' })
-                        .then(function(res){ return res.ok ? res.json() : {}; })
+        firstBatch.forEach(function(item) {
+            var uid = item.id || item.user_id || item.username;
+            if (!seenIds.has(uid)) {
+                seenIds.add(uid);
+                allUsersCache.push(item);
+            }
+        });
+
+        // Langkah 2: Cek metadata pagination dari berbagai format kunci backend
+        var pInfo = d.pagination || d.meta || d;
+        var totalPages = Number(pInfo.totalPages || pInfo.total_pages || pInfo.last_page || pInfo.pages || 1);
+        var totalRecords = Number(pInfo.total || pInfo.totalItems || pInfo.total_items || pInfo.count || allUsersCache.length);
+        var perPage = Number(pInfo.limit || pInfo.per_page || pInfo.pageSize || firstBatch.length || 10);
+
+        if (totalPages <= 1 && totalRecords > allUsersCache.length && perPage > 0) {
+            totalPages = Math.ceil(totalRecords / perPage);
+        }
+
+        // Langkah 3: Jika masih ada halaman 2, 3, dst. di backend, tarik semuanya
+        if (totalPages > 1 && allUsersCache.length < totalRecords) {
+            var pagePromises = [];
+            for (var p = 2; p <= totalPages; p++) {
+                pagePromises.push(
+                    fetch('/api/users?limit=' + perPage + '&page=' + p, { credentials: 'include' })
+                        .then(function(res){ return res.ok ? res.json() : null; })
                 );
             }
-            var extraResults = await Promise.all(promises);
-            var seenIds = new Set(allUsersCache.map(function(u){ return u.id; }));
-            extraResults.forEach(function(resData) {
-                var extraList = Array.isArray(resData) ? resData : (resData.users || resData.data || []);
-                extraList.forEach(function(item) {
-                    if (!seenIds.has(item.id)) {
-                        seenIds.add(item.id);
+            var extraResponses = await Promise.all(pagePromises);
+            extraResponses.forEach(function(resData) {
+                var list = extractUsersArray(resData);
+                list.forEach(function(item) {
+                    var uid = item.id || item.user_id || item.username;
+                    if (!seenIds.has(uid)) {
+                        seenIds.add(uid);
                         allUsersCache.push(item);
                     }
                 });
             });
+        } else if (firstBatch.length === 10 && totalPages <= 1) {
+            // Fallback: Jika backend tidak menyertakan metadata totalPages tetapi mengembalikan tepat 10 baris,
+            // coba tarik halaman 2, 3, dst. secara bertahap sampai mendapat data kosong atau data duplikat
+            var nextP = 2;
+            while (nextP <= 50) {
+                var nextRes = await fetch('/api/users?page=' + nextP, { credentials: 'include' });
+                if (!nextRes.ok) break;
+                var nextData = await nextRes.json();
+                var nextList = extractUsersArray(nextData);
+                if (nextList.length === 0) break;
+
+                var addedInThisPage = 0;
+                nextList.forEach(function(item) {
+                    var uid = item.id || item.user_id || item.username;
+                    if (!seenIds.has(uid)) {
+                        seenIds.add(uid);
+                        allUsersCache.push(item);
+                        addedInThisPage++;
+                    }
+                });
+
+                // Hentikan loop jika server mengembalikan data yang sama persis (berarti server tidak memotong halaman)
+                if (addedInThisPage === 0 || nextList.length < 10) break;
+                nextP++;
+            }
         }
 
         renderFilteredTable(cp);
@@ -368,7 +426,16 @@ async function fetchAllUsers(targetPage) {
     }
 }
 
-/* ===== Render Tabel dengan Filter & Pagination 100% Akurat ===== */
+/* ===== Pindah Halaman & Scroll Halus ke Atas Tabel ===== */
+function goToPage(page) {
+    renderFilteredTable(page);
+    var cardEl = document.querySelector('.card');
+    if (cardEl) {
+        cardEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+/* ===== Render Tabel dengan Filter & Pagination Nomor Halaman ===== */
 function renderFilteredTable(page) {
     if (typeof page === 'number' && page >= 1) {
         cp = page;
@@ -383,7 +450,6 @@ function renderFilteredTable(page) {
 
     // 1. Filter berdasarkan status dan kata kunci pencarian
     var filtered = allUsersCache.filter(function(u) {
-        // Normalisasi status (menangani baik field 'status' maupun boolean 'is_active')
         var userStatus = String(u.status || '').toLowerCase();
         if (!userStatus && typeof u.is_active === 'boolean') {
             userStatus = u.is_active ? 'active' : 'inactive';
@@ -408,7 +474,7 @@ function renderFilteredTable(page) {
         return matchStatus && matchSearch;
     });
 
-    // 2. Hitung pagination
+    // 2. Hitung halaman
     var totalItems = filtered.length;
     var totalPages = Math.max(1, Math.ceil(totalItems / ITEMS_PER_PAGE));
     if (cp > totalPages) cp = totalPages;
@@ -423,7 +489,7 @@ function renderFilteredTable(page) {
         return;
     }
 
-    // 3. Render baris tabel
+    // 3. Render 10 baris sesuai halaman aktif
     var h = '';
     for (var i = 0; i < pageItems.length; i++) {
         var u = pageItems[i];
@@ -459,7 +525,7 @@ function renderFilteredTable(page) {
     }
     tb.innerHTML = h;
 
-    // 4. Render tombol pagination
+    // 4. Render Pagination Number & Next/Prev
     renderPaginationControls({
         page: cp,
         totalPages: totalPages,
@@ -479,12 +545,15 @@ function renderPaginationControls(p) {
     var startItem = ((current - 1) * ITEMS_PER_PAGE) + 1;
     var endItem = Math.min(current * ITEMS_PER_PAGE, p.total);
 
-    var h = '<span class="info">Menampilkan <strong>' + startItem + '–' + endItem + '</strong> dari <strong>' + p.total + '</strong> pengguna</span>';
+    var h = '<span class="info">Menampilkan <strong>' + startItem + '–' + endItem + '</strong> dari <strong>' + p.total + '</strong> pengguna (Halaman ' + current + ' dari ' + totalPages + ')</span>';
 
     if (totalPages > 1) {
         h += '<div class="pag-controls">';
-        h += '<button type="button" ' + (current <= 1 ? 'disabled' : '') + ' onclick="renderFilteredTable(' + (current - 1) + ')" title="Sebelumnya"><i class="fas fa-chevron-left"></i></button>';
 
+        // Tombol Previous
+        h += '<button type="button" ' + (current <= 1 ? 'disabled' : '') + ' onclick="goToPage(' + (current - 1) + ')" title="Halaman Sebelumnya"><i class="fas fa-chevron-left"></i> Prev</button>';
+
+        // Jendela nomor halaman (maksimal 5 nomor halaman berurutan + halaman pertama & terakhir)
         var startPage = Math.max(1, current - 2);
         var endPage = Math.min(totalPages, startPage + 4);
         if (endPage - startPage < 4) {
@@ -492,20 +561,22 @@ function renderPaginationControls(p) {
         }
 
         if (startPage > 1) {
-            h += '<button type="button" onclick="renderFilteredTable(1)">1</button>';
+            h += '<button type="button" onclick="goToPage(1)">1</button>';
             if (startPage > 2) h += '<span class="info" style="padding:0 4px;">...</span>';
         }
 
         for (var i = startPage; i <= endPage; i++) {
-            h += '<button type="button" class="' + (i === current ? 'active' : '') + '" onclick="renderFilteredTable(' + i + ')">' + i + '</button>';
+            h += '<button type="button" class="' + (i === current ? 'active' : '') + '" onclick="goToPage(' + i + ')">' + i + '</button>';
         }
 
         if (endPage < totalPages) {
             if (endPage < totalPages - 1) h += '<span class="info" style="padding:0 4px;">...</span>';
-            h += '<button type="button" onclick="renderFilteredTable(' + totalPages + ')">' + totalPages + '</button>';
+            h += '<button type="button" onclick="goToPage(' + totalPages + ')">' + totalPages + '</button>';
         }
 
-        h += '<button type="button" ' + (current >= totalPages ? 'disabled' : '') + ' onclick="renderFilteredTable(' + (current + 1) + ')" title="Berikutnya"><i class="fas fa-chevron-right"></i></button>';
+        // Tombol Next
+        h += '<button type="button" ' + (current >= totalPages ? 'disabled' : '') + ' onclick="goToPage(' + (current + 1) + ')" title="Halaman Berikutnya">Next <i class="fas fa-chevron-right"></i></button>';
+
         h += '</div>';
     }
 
@@ -704,7 +775,6 @@ $('logoutBtn').addEventListener('click', async function(ev) {
     window.location.href = '../panel.html';
 });
 
-// Pencarian dengan tombol, Enter, maupun Live Debounce langsung pada data cache
 $('searchBtn').addEventListener('click', function() { renderFilteredTable(1); });
 $('si').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
@@ -720,12 +790,10 @@ $('si').addEventListener('input', function() {
     }, 200);
 });
 
-// Dropdown Filter Status
 $('statusFilter').addEventListener('change', function() {
     renderFilteredTable(1);
 });
 
-// Tombol Reset Filter
 $('resetFilterBtn').addEventListener('click', function() {
     $('si').value = '';
     $('statusFilter').value = '';
